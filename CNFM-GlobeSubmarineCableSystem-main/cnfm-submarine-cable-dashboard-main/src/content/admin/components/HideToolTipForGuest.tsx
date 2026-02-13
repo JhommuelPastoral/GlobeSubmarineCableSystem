@@ -149,7 +149,7 @@ const styles = {
   },
   /// To be update on hover and active
   systemCard: (color: string) => ({
-    background: color,
+    background: 'rgba(0,0,0,0.25)',
     px: 1.15,
     py: 0.9,
     borderRadius: 999,
@@ -166,7 +166,7 @@ const styles = {
     '&:hover': {
       boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
       transform: 'translateY(-1px)',
-      background: 'rgba(0,0,0,0.32)'
+      background: color
     },
     alignSelf: 'flex-end'
   })
