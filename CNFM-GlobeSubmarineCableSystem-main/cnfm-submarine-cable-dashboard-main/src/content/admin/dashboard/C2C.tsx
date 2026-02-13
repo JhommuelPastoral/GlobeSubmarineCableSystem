@@ -199,10 +199,8 @@ function C2C() {
 
     // Run immediately on mount
     fetchData();
-
     // Set up interval to retry every 2s if no data yet
     interval = setInterval(fetchData, 2000);
-
     return () => clearInterval(interval); // Cleanup on unmount
   }, [apiBaseUrl, port]);
 

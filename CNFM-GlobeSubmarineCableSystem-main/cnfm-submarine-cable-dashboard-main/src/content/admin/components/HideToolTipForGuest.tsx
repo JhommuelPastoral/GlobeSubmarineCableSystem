@@ -324,7 +324,7 @@ const SystemCard: React.FC<{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        boxShadow: '0 2px 6px rgba(0,0,0,0.25)'
+        boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
       }}
     >
       <Typography
