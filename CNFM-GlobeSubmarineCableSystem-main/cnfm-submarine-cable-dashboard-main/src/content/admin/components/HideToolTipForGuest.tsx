@@ -149,7 +149,7 @@ const styles = {
   },
   /// To be update on hover and active
   systemCard: (color: string) => ({
-    background: 'rgba(0,0,0,0.25)',
+    background: color,
     px: 1.15,
     py: 0.9,
     borderRadius: 999,
