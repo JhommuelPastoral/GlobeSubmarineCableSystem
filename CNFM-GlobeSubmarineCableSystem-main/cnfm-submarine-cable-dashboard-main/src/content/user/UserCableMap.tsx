@@ -1056,7 +1056,7 @@ const UserCableMap = React.memo<UserCableMapProps>(
                 className="hover-box"
                 sx={{
                   position: 'absolute',
-                  right: '100%', 
+                  right: '102%', 
                   top: '50%',
                   transform: 'translateX(-10px) translateY(-50%)',
                   opacity: 0,
@@ -1070,8 +1070,8 @@ const UserCableMap = React.memo<UserCableMapProps>(
                   whiteSpace: 'nowrap'
                 }}
               >
-                <Typography variant="caption" sx={{ mt: 1, color: '#e0e0e0' }}>
-                  {lastUpdateQuery ? `Latest Update: ${lastUpdateQuery}` : 'Fetching latest update...'}
+                <Typography variant="caption" sx={{ mt: 1, color: '#e0e0e0', textTransform: 'none' }}>
+                  {lastUpdateQuery ? `${lastUpdateQuery}` : 'Placeholder for updated file name'}
                 </Typography>                    
               </Box>
 
