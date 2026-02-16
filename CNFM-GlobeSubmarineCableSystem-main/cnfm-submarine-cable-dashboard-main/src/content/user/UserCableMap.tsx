@@ -941,6 +941,37 @@ const UserCableMap = React.memo<UserCableMapProps>(
       });
     }, []);
 
+
+    // Get Latest updates // 
+    const [latestUpdate, setLatestUpdate] = useState<string | null>(null);
+    useEffect(() => {
+
+      let interval: NodeJS.Timeout;
+      const fetchLastUpdate = async () => {
+        try {
+            const response = await fetch(`${apiConfig.apiBaseUrl}${apiConfig.port}/latest-update`);
+            if(!response.ok) throw new Error('Failed to fetch latest update');
+            const result = await response.json();
+            const date = formatDate(result?.update?.date_time);
+            setLatestUpdate(date);
+            clearInterval(interval);
+          }
+          catch (error) {
+            console.error('Error fetching latest update:', error);
+          }
+          
+        }
+        
+        // Run immediately on mount
+        fetchLastUpdate();
+        // Set up interval to retry every 2s if no data yet
+        interval = setInterval(fetchLastUpdate, 2000);
+        return () => clearInterval(interval); // Cleanup on unmount
+
+    },[apiConfig.apiBaseUrl, apiConfig.port]);
+
+
+
     // Marker style function removed - functionality now handled by DeletedCablesSidebar
 
     return (
@@ -1077,6 +1108,39 @@ const UserCableMap = React.memo<UserCableMapProps>(
               </Suspense>
             </Box>
           </Box>
+          {/* Latest Updates */}
+          <Box
+            sx={{
+              position: 'absolute',
+              right: 10,
+              width: 300,
+              bottom: 10,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-end',
+              gap: 1.25,
+              zIndex: 1251
+            }}>
+              <Box
+                  sx={{
+                  backgroundColor: 'rgba(0, 0, 0, 0.25)',
+                  padding: '12px 14px',
+                  borderRadius: '14px',
+                  minWidth: 'unset',
+                  width: 'max-content',
+                  boxShadow: '0 8px 16px rgba(0,0,0,0.25)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  backdropFilter: 'blur(8px)',
+                  color: '#FFFFFF',
+                  alignSelf: 'flex-end'
+                }}
+              >
+                <Typography variant="caption" sx={{ mt: 1, color: '#e0e0e0' }}>
+                  {latestUpdate ? `Latest Update: ${latestUpdate}` : 'Fetching latest update...'}
+                </Typography>         
+
+              </Box>
+            </Box>
 
           {/* 
         ==========================================
@@ -1281,6 +1345,7 @@ const UserCableMap = React.memo<UserCableMapProps>(
               <Suspense fallback={null}>
                 <TGNIARoutes />
               </Suspense>
+
 
               {/* Custom deleted cable popup removed - functionality now handled by DeletedCablesSidebar */}
 
