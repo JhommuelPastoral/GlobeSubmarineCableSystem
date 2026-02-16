@@ -162,7 +162,7 @@ function RPLTGNIA11() {
       try {
         const response = await fetch(`${apiBaseUrl}${port}/tgnia-rpl-s11`);
         const result = await response.json();
-
+        console.log('Fetched polyline data: tgnia-rpl-s11', result);
         if (Array.isArray(result) && result.length > 0) {
           const cumulativeValues = result
             .map((item: any) => item.cable_cumulative_total)

@@ -37,7 +37,6 @@ function AdminDashboard() {
     try {
       const response = await fetch(`${apiBaseUrl}${port}/latest-update`);
       const data = await response.json();
-
       if (data?.update?.date_time && data.update.file_name) {
         const fileName = data.update.file_name;
         // Fix: Remove both '.csv' and 'csv' at the end
@@ -260,6 +259,7 @@ function AdminDashboard() {
                           ref={fileInputRef}
                           onChange={handleFileChange}
                           style={{ display: 'none' }}
+                          
                         />
                         <SegmentUpdate />
                       </Box>

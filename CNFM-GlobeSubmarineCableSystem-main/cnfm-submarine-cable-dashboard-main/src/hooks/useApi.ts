@@ -140,7 +140,6 @@ const fetchLastUpdate = async (): Promise<string> => {
   }
   
   const data = await response.json();
-  
   if (data?.update?.date_time) {
     const fileName = data.update.file_name;
     return fileName ? fileName.replace(/\.csv$/i, '') : fileName || '';
