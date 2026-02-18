@@ -34,6 +34,7 @@ const AdminDashboard = Loader(
   lazy(() => import('src/content/admin/dashboard'))
 );
 
+const Phil = Loader(lazy(() => import('src/phil')));
 // Status
 const Status401 = Loader(lazy(() => import('src/content/status/Status401')));
 const Status404 = Loader(lazy(() => import('src/content/status/Status404')));
@@ -53,6 +54,8 @@ const routes: RouteObject[] = [
       { path: '/', element: <Navigate to="home" replace /> },
       { path: '/login', element: <LoginPage /> },
       { path: '/register', element: <RegisterPage /> },
+      { path: '/phil', element: <Phil />},
+      
       {
         path: 'change-password',
         element: <PrivateRoute element={ChangePassword} />

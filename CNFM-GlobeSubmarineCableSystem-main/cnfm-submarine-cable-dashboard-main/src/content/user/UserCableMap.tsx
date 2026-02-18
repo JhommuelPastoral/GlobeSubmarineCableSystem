@@ -215,7 +215,7 @@ type DynamicMarkerProps = {
 const DynamicMarker = React.memo<DynamicMarkerProps>(
   ({ position, label, icon }) => {
     const map = useMap();
-
+    
     useEffect(() => {
       if (!position || !map) return;
 
@@ -368,7 +368,7 @@ const UserCableMap = React.memo<UserCableMapProps>(
       avgUtilization: 0,
       zeroUtilizationCount: 0
     }));
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(true);
     const [lastUpdate, setLastUpdate] = useState<string | null>(null);
     const mapCenter = useMemo(() => [18, 134] as L.LatLngExpression, []);
     const mapZoom = 4;
@@ -1192,6 +1192,7 @@ const UserCableMap = React.memo<UserCableMapProps>(
                     // update local lastUpdate state and refetch query to keep UI in sync
                     setLastUpdate(val);
                     refetchLastUpdate();
+                    console.log('Last update set to:', val);
                   }}
                   isAdmin={isAdminLoggedIn} // Enable admin functionality only for administrators
                   isUser={true} // Enable user functionality

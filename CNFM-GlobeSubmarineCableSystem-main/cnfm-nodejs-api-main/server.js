@@ -2881,7 +2881,7 @@ app.post("/change-password", async (req, res) => {
 
 app.post("/register", async (req, res) => {
   const { user_fname, user_lname, user_email, user_password } = req.body;
-
+  
   const checkEmailSql = "SELECT * FROM users WHERE user_email = ?";
   db.query(checkEmailSql, [user_email], async (error, results) => {
     if (error)
