@@ -24,6 +24,8 @@ import C2CJapan from '../charts/C2C/C2CJapan';
 //import C2CHongkong from '../charts/C2C/C2CHongkong';
 //import C2CJapan from '../charts/C2C/C2CJapan';
 
+
+import { useStore } from '../../../store/store';
 function DynamicMarker({ position, label, count, onClick }) {
   const map = useMap();
 
@@ -143,7 +145,6 @@ function C2C() {
   const [value, setValue] = useState(0);
   const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
   const port = process.env.REACT_APP_PORT;
-
   // ✅ Combine all related state values into one object
   const [stats, setStats] = useState({
     data: [],
@@ -151,6 +152,7 @@ function C2C() {
     avgUtilization: 0,
     zeroUtilizationCount: 0
   });
+  const { title } = useStore();
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -245,7 +247,7 @@ function C2C() {
         positions={positions}
         pathOptions={{
           color: 'gray',
-          weight: 4
+          weight: title === 'C2C' ? 6 : 4, // Highlight if this system is hovered
         }}
         eventHandlers={{
           click: handleOpenDefine // Open modal on click
@@ -256,7 +258,7 @@ function C2C() {
         positions={hongKongToNasugbu}
         pathOptions={{
           color: 'gray',
-          weight: 4
+          weight: title === 'C2C' ? 6 : 4, // Highlight if this system is hovered
         }}
         eventHandlers={{
           click: handleOpenDefine // Open modal on click

@@ -29,6 +29,8 @@ import {
   usePrefetchData
 } from '../../hooks/useApi';
 
+import { useStore } from '../../store/store';
+
 // Lazy load heavy components for better performance
 const DeletedCablesSidebar = lazy(
   () => import('../admin/components/DeletedCablesSidebar')
@@ -940,7 +942,11 @@ const UserCableMap = React.memo<UserCableMapProps>(
       });
     }, []);
 
-
+    // System hover handler - now just calls the store action, no local state needed
+    const handleSystemHover = (title: string) => {
+      console.log('Hovered over system:', title);
+      useStore.getState().onHover(title);
+    };
 
 
     // Marker style function removed - functionality now handled by DeletedCablesSidebar
@@ -1106,7 +1112,7 @@ const UserCableMap = React.memo<UserCableMapProps>(
               <Suspense
                 fallback={<LoadingSpinner message="Loading overview..." />}
               >
-                <HideToolTipForGuest />
+                <HideToolTipForGuest onHover={handleSystemHover} />
               </Suspense>
             </Box>
           </Box>
@@ -1192,7 +1198,6 @@ const UserCableMap = React.memo<UserCableMapProps>(
                     // update local lastUpdate state and refetch query to keep UI in sync
                     setLastUpdate(val);
                     refetchLastUpdate();
-                    console.log('Last update set to:', val);
                   }}
                   isAdmin={isAdminLoggedIn} // Enable admin functionality only for administrators
                   isUser={true} // Enable user functionality

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Polyline, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import CableCutMarkers from 'src/content/environment/components/CableCutFetching';
+import { useStore } from 'src/store/store';
 
 type DynamicMarkerProps = {
   position: [number, number];
@@ -294,7 +295,8 @@ function RPLTGNIA1() {
   const getPathOptions = () => {
     // Always use yellow for TGN-IA segments
     const baseColor = '#FFFF00';
-
+    const {title} = useStore();
+    const isTGNIA = title === 'TGN-IA';
     if (isHovered) {
       return {
         color: baseColor,
@@ -307,7 +309,7 @@ function RPLTGNIA1() {
 
     return {
       color: baseColor,
-      weight: 4,
+      weight: 4 + (isTGNIA ? 2 : 0),
       opacity: 0.8
     };
   };

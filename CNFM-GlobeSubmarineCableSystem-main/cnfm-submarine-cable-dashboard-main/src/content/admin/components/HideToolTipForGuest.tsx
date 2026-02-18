@@ -287,8 +287,9 @@ const CapacityCard: React.FC<{
 const SystemCard: React.FC<{
   system: CableSystemData;
   onClick: (system: CableSystemData) => void;
-}> = ({ system, onClick }) => (
-  <Paper onClick={() => onClick(system)} sx={styles.systemCard(system.color)}>
+  onHover?: (title: string) => void;
+}> = ({ system, onClick, onHover }) => (
+  <Paper onClick={() => onClick(system)} sx={styles.systemCard(system.color)} onMouseEnter={()=> onHover?.(system.name) } onMouseLeave={() => onHover?.('')} >
     <Box
       sx={{
         display: 'flex',
@@ -475,7 +476,7 @@ const SegmentRow: React.FC<{
 );
 
 // Main Component
-const HideToolTipForGuest: React.FC = () => {
+const HideToolTipForGuest: React.FC<{ onHover: (title: string) => void }> = ({ onHover }) => {
   const [ipopUtilization, setIpopUtilization] = useState('0%');
   const [ipopDifference, setIpopDifference] = useState('0%');
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
@@ -759,6 +760,8 @@ const HideToolTipForGuest: React.FC = () => {
           key={system.name}
           system={system}
           onClick={handleSystemClick}
+          onHover={(systemName) => onHover(systemName)}
+
         />
       ))}
 

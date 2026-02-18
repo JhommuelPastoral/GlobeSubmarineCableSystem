@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Polyline, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import CableCutMarkers from 'src/content/environment/components/CableCutFetching';
+import { useStore } from 'src/store/store';
 
 type DynamicMarkerProps = {
   position: [number, number];
@@ -274,7 +275,8 @@ function RPLSJC11() {
       // Define polyline path options
   const getPathOptions = () => {
     const baseColor = '#005DFF';
-
+    const {title} = useStore();
+    const isSJC = title === 'SJC';
     return {
       color: baseColor,
       weight: isHovered ? 6 : 4,
