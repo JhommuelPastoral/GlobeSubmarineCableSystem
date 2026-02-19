@@ -4,9 +4,11 @@ import {
   Snackbar,
   Alert,
   Button,
-  IconButton
+  IconButton,
+  Tooltip
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { MapContainer, TileLayer, useMap, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import {
@@ -968,9 +970,13 @@ const UserCableMap = React.memo<UserCableMapProps>(
                 boxShadow: '0 10px 22px rgba(0,0,0,0.28)',
                 padding: '6px 10px',
                 border: '1px solid rgba(255,255,255,0.55)',
-                backdropFilter: 'blur(10px)'
+                backdropFilter: 'blur(10px)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1
               }}
             >
+              {/* Menu Button */}
               <IconButton
                 sx={{
                   background: 'rgba(255,255,255,0.65)',
@@ -992,8 +998,60 @@ const UserCableMap = React.memo<UserCableMapProps>(
               >
                 <MenuIcon sx={{ fontSize: 28, color: '#1d2a3d' }} />
               </IconButton>
+              
+              <Tooltip
+                title="Login"
+                placement="right"
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      backgroundColor: 'rgba(0, 0, 0, 0.25)',
+                      fontWeight: 800,
+                      letterSpacing: 0.4,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      boxShadow: '0 8px 16px rgba(0,0,0,0.25)',
+                      border: '1px solid rgba(255,255,255,0.12)',
+                      backdropFilter: 'blur(8px)',
+                      pointerEvents: 'none',
+                      transition: 'all 0.3s ease',
+                      color: '#fff',
+                      padding: '10px 14px',
+                      borderRadius: '12px',
+                      whiteSpace: 'nowrap'
+                    }
+                  },
+                }}
+              >
+                <IconButton
+                  sx={{
+                    background: 'rgba(255,255,255,0.65)',
+                    boxShadow: '0 6px 14px rgba(0,0,0,0.25)',
+                    borderRadius: '10px',
+                    p: 1,
+                    border: '1px solid rgba(255,255,255,0.6)',
+                    '&:hover': {
+                      background: 'rgba(255,255,255,0.78)',
+                      transform: 'scale(1.05)',
+                      transition: 'all 0.2s ease'
+                    },
+                    '&:active': {
+                      transform: 'scale(0.98)'
+                    }
+                  }}
+                  onClick={() => {
+                    window.location.href = '/login';
+                  }}
+                >
+                  <AccountCircleIcon sx={{ fontSize: 28, color: '#1d2a3d' }} />
+                </IconButton>
+              </Tooltip>
+
+              {/* Login Button */}
             </Box>
           )}
+
           {/* When sidebar is open, do not render the hamburger/toggle button inside the sidebar area */}
 
           {/* Right column: login, overview, and system details */}
@@ -1010,7 +1068,8 @@ const UserCableMap = React.memo<UserCableMapProps>(
               zIndex: 1250
             }}
           >
-            <Button
+            {/* Login Button Before */}
+            {/* <Button
               variant="contained"
               color="primary"
               sx={{
@@ -1034,7 +1093,7 @@ const UserCableMap = React.memo<UserCableMapProps>(
               }}
             >
               Log In
-            </Button>
+            </Button> */}
 
             <Box
               sx={{
@@ -1167,23 +1226,95 @@ const UserCableMap = React.memo<UserCableMapProps>(
                 gap: 1
               }}
             >
-              <Box
+              <Box 
                 sx={{
-                  alignSelf: 'flex-start',
-                  px: 1.75,
-                  py: 0.75,
-                  borderRadius: 999,
-                  background: 'rgba(255,255,255,0.1)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  color: '#FFFFFF',
-                  fontWeight: 800,
-                  letterSpacing: 0.4,
-                  boxShadow: '0 6px 14px rgba(0,0,0,0.25)',
-                  backdropFilter: 'blur(6px)'
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  width: '100%',                 
                 }}
               >
-                Active Cable Faults
+                {/* Left: Active Cable Faults */}
+                <Box
+                  sx={{
+                    px: 1.75,
+                    py: 0.75,
+                    borderRadius: 999,
+                    background: 'rgba(255,255,255,0.1)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    color: '#FFFFFF',
+                    fontWeight: 800,
+                    letterSpacing: 0.4,
+                    boxShadow: '0 6px 14px rgba(0,0,0,0.25)',
+                    backdropFilter: 'blur(6px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1
+                  }}
+                >
+                  <Typography>
+                    Active Cable Faults
+                  </Typography>
+                </Box>
+
+                {/* Right: Button */}
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center', 
+                  }}
+                >
+                  <Tooltip
+                    title="Login"
+                    placement="right"
+                    componentsProps={{
+                      tooltip: {
+                        sx: {
+                          backgroundColor: 'rgba(0, 0, 0, 0.25)',
+                          fontWeight: 800,
+                          letterSpacing: 0.4,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1,
+                          boxShadow: '0 8px 16px rgba(0,0,0,0.25)',
+                          border: '1px solid rgba(255,255,255,0.12)',
+                          backdropFilter: 'blur(8px)',
+                          pointerEvents: 'none',
+                          transition: 'all 0.3s ease',
+                          color: '#fff',
+                          padding: '10px 14px',
+                          borderRadius: '12px',
+                          whiteSpace: 'nowrap'
+                        }
+                      },
+                    }}
+                  >
+                    <IconButton
+                      sx={{
+                        background: 'rgba(255,255,255,0.65)',
+                        boxShadow: '0 6px 14px rgba(0,0,0,0.25)',
+                        borderRadius: '10px',
+                        p: 1,
+                        border: '1px solid rgba(255,255,255,0.6)',
+                        '&:hover': {
+                          background: 'rgba(255,255,255,0.78)',
+                          transform: 'scale(1.05)',
+                          transition: 'all 0.2s ease'
+                        },
+                        '&:active': {
+                          transform: 'scale(0.98)'
+                        }
+                      }}
+                      onClick={() => {
+                        window.location.href = '/login';
+                      }}
+                    >
+                      <AccountCircleIcon sx={{ fontSize: 28, color: '#1d2a3d' }} />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
               </Box>
+
               <Suspense
                 fallback={<LoadingSpinner message="Loading sidebar..." />}
               >
