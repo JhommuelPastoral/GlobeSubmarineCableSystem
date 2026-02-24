@@ -54,7 +54,7 @@ const routes: RouteObject[] = [
       { path: '/', element: <Navigate to="home" replace /> },
       { path: '/login', element: <LoginPage /> },
       { path: '/register', element: <RegisterPage /> },
-      { path: '/phil', element: <Phil />},
+      // { path: '/phil', element: <Phil />},
       
       {
         path: 'change-password',
