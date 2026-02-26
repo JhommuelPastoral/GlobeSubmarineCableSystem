@@ -48,9 +48,110 @@ db.connect((err) => {
   }
 });
 
-// Default Route
-app.get("/", (req, res) => {
-  return res.json("Node Server has been initialized...");
+
+// Nasugbo Mamborao 1 
+app.get("/nasugbo_mamburao_1", (req, res) => {
+  const query = "SELECT * FROM nasugbo_mamburao_1";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/san_jose_mamburao", (req, res) => {
+  const query = "SELECT * FROM san_jose_mamburao";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/san_jose_roxas", (req, res) => {
+  const query = "SELECT * FROM san_jose_roxas";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/cadiz_roxas", (req, res) => {
+  const query = "SELECT * FROM cadiz_roxas";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/san_remigio_cadiz", (req, res) => {
+  const query = "SELECT * FROM san_remigio_cadiz";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/bacong_talisay", (req, res) => {
+  const query = "SELECT * FROM bacong_talisay";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/bacong_maticao", (req, res) => {
+  const query = "SELECT * FROM bacong_maticao";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/san_remigio_lilo", (req, res) => {
+  const query = "SELECT * FROM san_remigio_lilo";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
 });
 
 // API: Delete specific cable cut data by cut_id
@@ -1838,6 +1939,8 @@ const tgnia_headers = [
   "water_depth",
   "comments",
 ];
+
+app.get("/")
 
 // Fixed version of the CSV upload handler
 app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {

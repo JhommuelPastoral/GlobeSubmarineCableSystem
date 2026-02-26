@@ -13,7 +13,7 @@ import UserDashboard from './content/user';
 import ViewerLayout from './layouts/ViewerLayout';
 import SimulatorDashboard from './content/simulator';
 import ChangePassword from './content/authentication/change-password';
-
+import PhilMap from './phil/index';
 const Loader = (Component) => (props) =>
   (
     <Suspense fallback={<SuspenseLoader />}>
@@ -54,7 +54,7 @@ const routes: RouteObject[] = [
       { path: '/', element: <Navigate to="home" replace /> },
       { path: '/login', element: <LoginPage /> },
       { path: '/register', element: <RegisterPage /> },
-      // { path: '/phil', element: <Phil />},
+      { path: '/phil', element: <PhilMap />},
       
       {
         path: 'change-password',

@@ -316,6 +316,8 @@ function RPLSeaUS1() {
       className: isHovered ? 'segment-highlight' : undefined
     };
   };
+
+  
   const segmentLengthLabel = segmentLengthKm !== null
     ? `${segmentLengthKm.toFixed(3)} km`
     : '-- km';
