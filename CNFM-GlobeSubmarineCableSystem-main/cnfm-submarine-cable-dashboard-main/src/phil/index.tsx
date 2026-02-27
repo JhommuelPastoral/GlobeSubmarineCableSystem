@@ -14,6 +14,13 @@ const AllRoutes = lazy(() =>
     import("./routeposition/san_remigio_lilo"),
     import("./routeposition/bacong_maticao"),
     import("./routeposition/bacong_talisay"),
+    // Second set of routes
+    import("./routeposition/legaspi_calbayog"),
+    import("./routeposition/duero_maasin"),
+    import("./routeposition/potuhan_talisay"),
+    import("./routeposition/maasin_cabadbaran"),
+    import("./routeposition/banate_bacolod"),
+    import("./routeposition/capoocan_calbayog"),
     // you can add more routes here if needed
   ]).then((modules) => ({
     default: () => (
@@ -93,8 +100,6 @@ export default function PhilMap() {
       <ZoomControl position="bottomleft" />
       
       <Suspense fallback={null}>
-        {/* <NasugboMamburao />
-        <SanJoseMamburao/> */}
         <AllRoutes />
       </Suspense>
 

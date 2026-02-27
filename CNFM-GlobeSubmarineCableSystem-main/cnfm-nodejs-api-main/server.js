@@ -154,6 +154,87 @@ app.get("/san_remigio_lilo", (req, res) => {
   });
 });
 
+
+app.get("/legaspi_calbayog", (req, res) => {
+  const query = "SELECT * FROM legaspi_calbayog";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/duero_maasin", (req, res) => {
+  const query = "SELECT * FROM duero_maasin";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/potuhan_talisay", (req, res) => {
+  const query = "SELECT * FROM potuhan_talisay";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/maasin_cabadbaran", (req, res) => {
+  const query = "SELECT * FROM maasin_cabadbaran";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/banate_bacolod", (req, res) => {
+  const query = "SELECT * FROM banate_bacolod";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/capoocan_calbayog", (req, res) => {
+  const query = "SELECT * FROM capoocan_calbayog";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+
+
 // API: Delete specific cable cut data by cut_id
 app.delete("/delete-single-cable-cuts/:cutId", async (req, res) => {
   try {

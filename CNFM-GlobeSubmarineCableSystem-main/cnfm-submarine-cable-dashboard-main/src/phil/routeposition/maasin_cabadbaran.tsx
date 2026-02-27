@@ -5,7 +5,7 @@ import "leaflet/dist/leaflet.css"
 
 
 
-export default function BacongMaticao() {
+export default function MaasinCabadbaran() {
 
   const [Polyline, setPolyline] = useState<any>(null);
   const [Data, setData] = useState(null);
@@ -24,7 +24,7 @@ export default function BacongMaticao() {
     []
   )
   const getPathOptions = () => {
-    const baseColor = 'green';
+    const baseColor = 'yellow';
 
     return {
       color: baseColor,
@@ -36,11 +36,11 @@ export default function BacongMaticao() {
   // Load React Leaflet dynamically (fix for Next.js SSR)
   useEffect(() => {
     const loadMap = async () => {
-      const RL = await import("react-leaflet");
-      setPolyline(() => RL.Polyline);
+      const RL = await import("react-leaflet")
+      setPolyline(() => RL.Polyline)
     }
 
-    loadMap();
+    loadMap()
   }, [apiConfig]);
 
 
@@ -48,7 +48,7 @@ export default function BacongMaticao() {
   useEffect(()=>{
     const fetchPolylines = async () => {
       try {
-        const response = await fetch(`${apiConfig.apiBaseUrl}${apiConfig.port}/bacong_maticao`);
+        const response = await fetch(`${apiConfig.apiBaseUrl}${apiConfig.port}/maasin_cabadbaran`);
         const result = await response.json();
         const formatted = result
           .filter((item: any) =>
@@ -105,7 +105,7 @@ export default function BacongMaticao() {
             const layer = e.target;
             const latlng = e.latlng;
             layer
-              .bindTooltip(`<div style="text-align: center; font-size: 12.5px; line-height: 1.35;"><div style="font-weight: 600; font-size: 13px; margin-bottom: 2px;">Bacong - Maticao </div><div style="color: #4b5563; margin-bottom: 4px;">${totalLengthKm.toFixed(4)} Km</div><div style="color: #111827;">${segmentEventLabel} </div></div>`, {
+              .bindTooltip(`<div style="text-align: center; font-size: 12.5px; line-height: 1.35;"><div style="font-weight: 600; font-size: 13px; margin-bottom: 2px;">Maasin - Cabadbaran </div><div style="color: #4b5563; margin-bottom: 4px;">${totalLengthKm.toFixed(4)} Km</div><div style="color: #111827;">${segmentEventLabel} </div></div>`, {
                 permanent: false,
                 direction: 'top',
                 offset: [0, -10],
