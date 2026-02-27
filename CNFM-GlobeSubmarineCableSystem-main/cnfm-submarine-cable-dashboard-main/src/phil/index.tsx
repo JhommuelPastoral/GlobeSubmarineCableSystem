@@ -21,6 +21,15 @@ const AllRoutes = lazy(() =>
     import("./routeposition/maasin_cabadbaran"),
     import("./routeposition/banate_bacolod"),
     import("./routeposition/capoocan_calbayog"),
+
+    // Third set of routes
+    import("./routeposition/boracay_caticlan"),
+    // import("./routeposition/taytay_san_jose"),
+    import("./routeposition/taytay_bu"),
+    import("./routeposition/bu_san_jose"),
+    import("./routeposition/bu_coron"),
+
+
     // you can add more routes here if needed
   ]).then((modules) => ({
     default: () => (

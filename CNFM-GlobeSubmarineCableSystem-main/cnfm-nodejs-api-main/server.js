@@ -233,7 +233,70 @@ app.get("/capoocan_calbayog", (req, res) => {
   });
 });
 
+app.get("/boracay_caticlan", (req, res) => {
+  const query = "SELECT * FROM boracay_caticlan";
 
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/taytay_san_jose", (req, res) => {
+  const query = "SELECT * FROM taytay_san_jose";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/taytay_bu", (req, res) => {
+  const query = "SELECT * FROM taytay_bu";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/bu_san_jose", (req, res) => {
+  const query = "SELECT * FROM bu_san_jose";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/bu_coron", (req, res) => {
+  const query = "SELECT * FROM bu_coron";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
 
 // API: Delete specific cable cut data by cut_id
 app.delete("/delete-single-cable-cuts/:cutId", async (req, res) => {
