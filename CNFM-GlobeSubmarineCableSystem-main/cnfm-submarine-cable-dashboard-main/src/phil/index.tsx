@@ -29,6 +29,17 @@ const AllRoutes = lazy(() =>
     import("./routeposition/bu_san_jose"),
     import("./routeposition/bu_coron"),
 
+    // Fourth set of routes
+    import("./routeposition/dalahican_mansalay"),
+    import("./routeposition/mansalay_hamtik"),
+    import("./routeposition/hamtik_tigbaunan"),
+    import("./routeposition/telicphil_seg4"),
+    import("./routeposition/bacong_bayawan"),
+    import("./routeposition/telicphil_seg6"),
+    import("./routeposition/telicphil_seg7"),
+
+
+
 
     // you can add more routes here if needed
   ]).then((modules) => ({

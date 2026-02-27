@@ -298,6 +298,101 @@ app.get("/bu_coron", (req, res) => {
   });
 });
 
+app.get("/dalahican_mansalay", (req, res) => {
+  const query = "SELECT * FROM dalahican_mansalay";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+
+app.get("/mansalay_hamtik", (req, res) => {
+  const query = "SELECT * FROM mansalay_hamtik";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/hamtik_tigbauan", (req, res) => {
+  const query = "SELECT * FROM hamtik_tigbauan";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/telicphil_seg4", (req, res) => {
+  const query = "SELECT * FROM telicphil_seg4";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+
+app.get("/bacong_bayawan", (req, res) => {
+  const query = "SELECT * FROM bacong_bayawan";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/telicphil_seg6", (req, res) => {
+  const query = "SELECT * FROM telicphil_seg6";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+
+app.get("/telicphil_seg7", (req, res) => {
+  const query = "SELECT * FROM telicphil_seg7";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+
 // API: Delete specific cable cut data by cut_id
 app.delete("/delete-single-cable-cuts/:cutId", async (req, res) => {
   try {
