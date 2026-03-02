@@ -1,12 +1,9 @@
-import React from 'react';
 import { useMap } from 'react-leaflet';
 import { useEffect } from 'react';
 import L from 'leaflet';
-import { useNavigate } from 'react-router-dom';
-import {changeSimulator} from 'src/store/store'
-const ResetButton = () => {
+const Fobn1Button = () => {
   const map = useMap();
-  const {nav, onChangeNav} = changeSimulator(); 
+
   useEffect(() => {
     // Remove default attribution control
     map.attributionControl.remove();
@@ -31,12 +28,12 @@ const ResetButton = () => {
         const button = document.createElement('button');
         button.innerHTML = `
           <span style="display: flex; align-items: center; justify-content: center; gap: 5px;">
-            <span>Reset Simulation</span>
+            <span>CUT - FOBN1</span>
           </span>
         `;
 
         // Style the button like Material UI contained button
-        button.style.backgroundColor = 'Gray'; // Primary color
+        button.style.backgroundColor = 'Green'; // Primary color
         button.style.color = 'white';
         button.style.border = 'none';
         button.style.borderRadius = '10px';
@@ -52,20 +49,16 @@ const ResetButton = () => {
 
         // Add hover effect
         button.onmouseover = function () {
-          button.style.backgroundColor = 'red'; // Darker primary color
-          button.style.fontWeight = '700';
+          button.style.backgroundColor = 'DarkGreen';
         };
 
         button.onmouseout = function () {
-          button.style.backgroundColor = 'Gray'; // Back to primary color
-          button.style.fontWeight = '500';
-
+          button.style.backgroundColor = 'Green';
         };
 
         // Add click behavior
         button.onclick = function () {
-          if(nav === 'Global') onChangeNav('Phil');
-          else onChangeNav('Global');
+          console.log('Button clicked!');
         };
 
         buttonContainer.appendChild(button);
@@ -87,4 +80,4 @@ const ResetButton = () => {
   return null;
 };
 
-export default ResetButton;
+export default Fobn1Button;

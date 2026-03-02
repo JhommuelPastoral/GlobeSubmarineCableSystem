@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import L from 'leaflet';
 import { useNavigate } from 'react-router-dom';
 import {changeSimulator} from 'src/store/store'
-const ResetButton = () => {
+const PhilButton = () => {
   const map = useMap();
   const {nav, onChangeNav} = changeSimulator(); 
   useEffect(() => {
@@ -31,12 +31,12 @@ const ResetButton = () => {
         const button = document.createElement('button');
         button.innerHTML = `
           <span style="display: flex; align-items: center; justify-content: center; gap: 5px;">
-            <span>Reset Simulation</span>
+            <span>${nav === 'Global' ? 'Philipines Simulator' : 'Global Simulator'}</span>
           </span>
         `;
 
         // Style the button like Material UI contained button
-        button.style.backgroundColor = 'Gray'; // Primary color
+        button.style.backgroundColor = '#1976d2'; // Primary color
         button.style.color = 'white';
         button.style.border = 'none';
         button.style.borderRadius = '10px';
@@ -52,14 +52,11 @@ const ResetButton = () => {
 
         // Add hover effect
         button.onmouseover = function () {
-          button.style.backgroundColor = 'red'; // Darker primary color
-          button.style.fontWeight = '700';
+          button.style.backgroundColor = '#115293';
         };
 
         button.onmouseout = function () {
-          button.style.backgroundColor = 'Gray'; // Back to primary color
-          button.style.fontWeight = '500';
-
+          button.style.backgroundColor = '#1976d2';
         };
 
         // Add click behavior
@@ -87,4 +84,4 @@ const ResetButton = () => {
   return null;
 };
 
-export default ResetButton;
+export default PhilButton;

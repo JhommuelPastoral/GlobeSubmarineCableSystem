@@ -58,7 +58,6 @@ export default function TelicPhilSeg7() {
             item.longitude !== null &&
             item.longitude1 !== null &&
             item.longitude1 !== 0
-
           )
           .map((item: any) => {
             let lat = Number(item.latitude) + Number(item.latitude1) 

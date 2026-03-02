@@ -37,10 +37,6 @@ const AllRoutes = lazy(() =>
     import("./routeposition/bacong_bayawan"),
     import("./routeposition/telicphil_seg6"),
     import("./routeposition/telicphil_seg7"),
-
-
-
-
     // you can add more routes here if needed
   ]).then((modules) => ({
     default: () => (
@@ -52,7 +48,7 @@ const AllRoutes = lazy(() =>
       </>
     )
   }))
-)
+);
 
 
 export default function PhilMap() {
@@ -62,13 +58,13 @@ export default function PhilMap() {
     iconSize: [36, 36],
     iconAnchor: [16, 36],
     popupAnchor: [0, -36],
-  })
+  });
 
   // React Leaflet dynamic components
-  const [MapContainer, setMapContainer] = useState<any>(null)
-  const [TileLayer, setTileLayer] = useState<any>(null)
-  const [Marker, setMarker] = useState<any>(null)
-  const [ZoomControl, setZoomControl] = useState<any>(null)
+  const [MapContainer, setMapContainer] = useState<any>(null);
+  const [TileLayer, setTileLayer] = useState<any>(null);
+  const [Marker, setMarker] = useState<any>(null);
+  const [ZoomControl, setZoomControl] = useState<any>(null);
 
 
   // API Config
@@ -79,7 +75,7 @@ export default function PhilMap() {
       mapApiKey: process.env.REACT_APP_GEOAPIFY_API_KEY || "",
     }),
     []
-  )
+  );
 
   // Tile URL (Geoapify or fallback to OSM)
   const tileUrl = useMemo(() => {
@@ -87,9 +83,8 @@ export default function PhilMap() {
       return `https://maps.geoapify.com/v1/tile/klokantech-basic/{z}/{x}/{y}.png?apiKey=${apiConfig.mapApiKey}`
     }
     return "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-  }, [apiConfig])
+  }, [apiConfig]);
 
-  // Load React Leaflet dynamically (fix for Next.js SSR)
   useEffect(() => {
     const loadMap = async () => {
       const RL = await import("react-leaflet")
@@ -100,7 +95,7 @@ export default function PhilMap() {
     }
 
     loadMap()
-  }, [])
+  }, []);
 
 
   if (!MapContainer || !TileLayer || !ZoomControl) {
@@ -113,6 +108,7 @@ export default function PhilMap() {
       zoom={6}
       zoomControl={false} // disable default zoom control
       style={{ height: "100vh", minHeight: "600px", width: "100%" }}
+      
     >
       <TileLayer url={tileUrl} />
       

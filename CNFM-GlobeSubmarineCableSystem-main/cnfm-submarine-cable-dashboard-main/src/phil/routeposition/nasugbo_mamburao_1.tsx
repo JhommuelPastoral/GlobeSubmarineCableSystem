@@ -96,6 +96,8 @@ export default function NasugboMamburao1() {
     segmentFirstEvent && segmentLastEvent
       ? `${segmentFirstEvent} <span aria-hidden="true" style="padding: 0 6px;">&rarr;</span> ${segmentLastEvent}`
       : '--';
+
+  if (!location || !Polyline) return null;
   return (
     <Polyline
       positions={location}

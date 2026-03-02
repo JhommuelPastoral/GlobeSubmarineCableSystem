@@ -392,6 +392,7 @@ app.get("/telicphil_seg7", (req, res) => {
   });
 });
 
+// End of the routes as of now
 
 // API: Delete specific cable cut data by cut_id
 app.delete("/delete-single-cable-cuts/:cutId", async (req, res) => {

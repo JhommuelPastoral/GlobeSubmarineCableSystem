@@ -1,4 +1,4 @@
-import { Box, Typography, IconButton, Paper } from '@mui/material';
+import { Box, Typography, IconButton, Paper, Button } from '@mui/material';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import React, { useEffect, useRef, useState, lazy, Suspense } from 'react';
@@ -48,10 +48,66 @@ import ResetButton from './ResetButton';
 import RPLSeaUS4 from 'src/content/admin/dashboard/RoutePositionList/RPLSeaUS4';
 import RPLSeaUS5 from 'src/content/admin/dashboard/RoutePositionList/RPLSeaUS5';
 import RPLSeaUS6 from 'src/content/admin/dashboard/RoutePositionList/RPLSeaUS6';
+import PhilButton from './Philbutton';
+import { changeSimulator } from 'src/store/store';
+import CircleRoundedIcon from '@mui/icons-material/CircleRounded';
 
 // Lazy load the sidebar and tooltip components for better performance
 const DeletedCablesSidebar = lazy(() => import('src/content/admin/components/DeletedCablesSidebar'));
 const HideToolTip = lazy(() => import('src/content/admin/components/HideToolTip'));
+
+import Fobn1Button from './FOBN1';
+
+const AllRoutes = lazy(() =>
+  Promise.all([
+    import("src/phil/routeposition/nasugbo_mamburao_1"),
+    import("src/phil/routeposition/sanjose_mamburao"),
+    import("src/phil/routeposition/sanjose_roxas"),
+    import("src/phil/routeposition/cadiz_roxas"),
+    import("src/phil/routeposition/san_remigio_cadiz"),
+    import("src/phil/routeposition/san_remigio_lilo"),
+    import("src/phil/routeposition/bacong_maticao"),
+    import("src/phil/routeposition/bacong_talisay"),
+    // Second set of routes
+    import("src/phil/routeposition/legaspi_calbayog"),
+    import("src/phil/routeposition/duero_maasin"),
+    import("src/phil/routeposition/potuhan_talisay"),
+    import("src/phil/routeposition/maasin_cabadbaran"),
+    import("src/phil/routeposition/banate_bacolod"),
+    import("src/phil/routeposition/capoocan_calbayog"),
+
+    // Third set of routes
+    import("src/phil/routeposition/boracay_caticlan"),
+    // import("./routeposition/taytay_san_jose"),
+    import("src/phil/routeposition/taytay_bu"),
+    import("src/phil/routeposition/bu_san_jose"),
+    import("src/phil/routeposition/bu_coron"),
+
+    // Fourth set of routes
+    import("src/phil/routeposition/dalahican_mansalay"),
+    import("src/phil/routeposition/mansalay_hamtik"),
+    import("src/phil/routeposition/hamtik_tigbaunan"),
+    import("src/phil/routeposition/telicphil_seg4"),
+    import("src/phil/routeposition/bacong_bayawan"),
+    import("src/phil/routeposition/telicphil_seg6"),
+    import("src/phil/routeposition/telicphil_seg7"),
+    // you can add more routes here if needed
+  ]).then((modules) => ({
+    default: () => (
+      <>
+        {modules.map((Module, index) => {
+          const Component = Module.default
+          return <Component key={`route-${index}`} />
+        })}
+      </>
+    )
+  }))
+);
+
+
+
+
+
 
 // Loading component for better UX during component loading
 const LoadingSpinner: React.FC<{ message?: string }> = ({ message = 'Loading...' }) => (
@@ -297,6 +353,8 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
     return null;
   };
 
+
+  const {nav} = changeSimulator();
   return (
     <Box sx={{
       position: 'relative',
@@ -324,7 +382,7 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
           }
         }}
       >
-        <ChangeView center={[18, 134]} zoom={4} />
+        <ChangeView center={nav === "Global" ? [18, 134] : [12.8797, 121.7740]} zoom={nav === "Global" ? 4 : 6} />
         <RemoveAttribution />
         {/* Only set initial view on first mount, not on every render */}
         {/* <ChangeView center={[18, 134]} zoom={3.5} /> */}
@@ -332,73 +390,235 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
         <TileLayer
           url={`https://maps.geoapify.com/v1/tile/klokantech-basic/{z}/{x}/{y}.png?apiKey=${mapApiKey}`}
         />
+        {nav === "Global" && (
+          <>
+            {/* Dynamic Hoverable Dot Markers*/}
+            <DynamicMarker
+              position={[1.3678, 125.0788]}
+              label="Kauditan, Indonesia"
+            />
+            <DynamicMarker
+              position={[7.0439, 125.542]}
+              label="Davao, Philippines"
+            />
+            <DynamicMarker position={[13.464717, 144.69305]} label="Piti, Guam" />
+            <DynamicMarker
+              position={[21.4671, 201.7798]}
+              label="Makaha, Hawaii, USA"
+            />
+            <USAMarker />
+            <DynamicMarker
+              position={[14.0679, 120.6262]}
+              label="Nasugbu, Philippines"
+            />
+            <DynamicMarker
+              position={[18.412883, 121.517283]}
+              label="Ballesteros, Philippines"
+            />
+            <JapanMarker />
+            <HongkongMarker />
+            <SingaporeMarker />
+            
+            {/* C2C Cable - Rendered first to appear behind other cables */}
+            <C2C />
+            
+            <RPLSeaUS1 />
+            <RPLSeaUS2 />
+            <RPLSeaUS3 />
+            <RPLSeaUS4 />
+            <RPLSeaUS5 />
+            <RPLSeaUS6 />
+            <RPLSJC1 />
+            <RPLSJC3 />
+            <RPLSJC4 />
+            <RPLSJC5 />
+            <RPLSJC6 />
+            <RPLSJC7 />
+            <RPLSJC8 />
+            <RPLSJC9 />
+            <RPLSJC10 />
+            <RPLSJC11 />
+            <RPLSJC12 />
+            <RPLSJC13 />
+            <RPLTGNIA1 />
+            <RPLTGNIA2 />
+            <RPLTGNIA3 />
+            <RPLTGNIA4 />
+            <RPLTGNIA5 />
+            <RPLTGNIA6 />
+            <RPLTGNIA7 />
+            <RPLTGNIA8 />
+            <RPLTGNIA9 />
+            <RPLTGNIA10 />
+            <RPLTGNIA11 />
+            <RPLTGNIA12 />
+            <ReturnButton />
+            <CutSeaUS />
+            <CutSJC />
+            <CutTGNIA />          
+            <ResetButton />
+            <PhilButton />
+            <Box
+              sx={{
+                position: 'absolute',
+                top: 10,
+                right: 10,
+                backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                color: 'white',
+                padding: '8px 12px',
+                borderRadius: '8px',
+                zIndex: 1000,
+                fontSize: '14px',
+                flexDirection: 'row'
+              }}
+            >
+              <Typography variant="caption" color="gray">
+                Capacity:
+              </Typography>
+              <Typography variant="h4" color="black">
+                {stats.totalGbps} Gbps
+              </Typography>
 
-        {/* Dynamic Hoverable Dot Markers*/}
-        <DynamicMarker
-          position={[1.3678, 125.0788]}
-          label="Kauditan, Indonesia"
-        />
-        <DynamicMarker
-          position={[7.0439, 125.542]}
-          label="Davao, Philippines"
-        />
-        <DynamicMarker position={[13.464717, 144.69305]} label="Piti, Guam" />
-        <DynamicMarker
-          position={[21.4671, 201.7798]}
-          label="Makaha, Hawaii, USA"
-        />
-        <USAMarker />
-        <DynamicMarker
-          position={[14.0679, 120.6262]}
-          label="Nasugbu, Philippines"
-        />
-        <DynamicMarker
-          position={[18.412883, 121.517283]}
-          label="Ballesteros, Philippines"
-        />
-        <JapanMarker />
-        <HongkongMarker />
-        <SingaporeMarker />
+              <Typography variant="caption" color="gray">
+                Average Utilization:
+              </Typography>
+              <Typography variant="h4" color="black">
+                {ipopUtilization}
+                {/* {parseFloat(ipopDifference) !== 0 && (
+                    <Box
+                      sx={(theme) => {
+                        const diff = parseFloat(ipopDifference);
+
+                        return {
+                          display: 'inline-block',
+                          padding: '2px 10px',
+                          borderRadius: '999px',
+                          fontWeight: 'bold',
+                          fontSize: '14px',
+                          backgroundColor:
+                            diff < 0
+                              ? theme.colors.error.lighter
+                              : theme.colors.success.lighter,
+                          color:
+                            diff < 0
+                              ? theme.colors.error.main
+                              : theme.colors.success.main
+                        };
+                      }}
+                    >
+                      {ipopDifference}
+                    </Box>
+                  )} */}
+              </Typography>
+            </Box>
+
+            {/* Right sidebar toggle button */}
+            <IconButton
+              sx={{ position: 'absolute', top: 16, right: 16, zIndex: 1200, background: '#fff', boxShadow: 2 }}
+              onClick={() => {
+                // Use startTransition if available (React 18+), otherwise fallback
+                if (typeof (React as any).startTransition === 'function') {
+                  (React as any).startTransition(() => {
+                    setRightSidebarOpen((open) => !open);
+                  });
+                } else {
+                  setRightSidebarOpen((open) => !open);
+                }
+              }}
+              aria-label="Show Info Sidebar"
+            >
+              <InfoIcon />
+            </IconButton>
+          </>
+        )};
+        {nav === "Phil" && (
+          <>
+            <PhilButton />
+            <Fobn1Button />
+            <Suspense fallback={null}>
+              <AllRoutes />
+            </Suspense>
+
+
+            <Box
+              sx={{
+                position: 'absolute',
+                top: 10,
+                right: 10,
+                backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                color: 'white',
+                padding: '8px 12px',
+                borderRadius: '8px',
+                zIndex: 1000,
+                fontSize: '14px',
+                flexDirection: 'column',
+                justifyContent: 'start',
+                alignItems: 'start',
+                display: 'flex',
+                gap: 1
+              }}
+            >
+              <Typography variant="caption" color="black" 
+                fontWeight="bold" 
+                sx={{ 
+                  textAlign: 'center',
+                  width: '100%',
+                }}>
+                Legends
+              </Typography>
+              <Typography variant="body2" color="black" 
+                sx={{
+                display: 'flex',
+                gap: 2,
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <CircleRoundedIcon sx={{ fontSize: 12, color: 'Green' }} />
+                FOBN1 RPL
+              </Typography>
+              <Typography variant="body2" color="black" 
+                sx={{
+                display: 'flex',
+                gap: 2,
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <CircleRoundedIcon sx={{ fontSize: 12, color: 'Yellow' }} />
+                FOBN2 RPL
+              </Typography>
+              <Typography variant="body2" color="black" 
+                sx={{
+                display: 'flex',
+                gap: 2,
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <CircleRoundedIcon sx={{ fontSize: 12, color: 'Blue' }} />
+                FOBN3 RPL 
+              </Typography>
+              <Typography variant="body2" color="black" 
+                sx={{
+                display: 'flex',
+                gap: 2,
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <CircleRoundedIcon sx={{ fontSize: 12, color: 'Black' }} />
+                NDTN RPL
+              </Typography>
+            </Box>
+
+          </>
+
+          
+        )}
         
-        {/* C2C Cable - Rendered first to appear behind other cables */}
-        <C2C />
-        
-        <RPLSeaUS1 />
-        <RPLSeaUS2 />
-        <RPLSeaUS3 />
-        <RPLSeaUS4 />
-        <RPLSeaUS5 />
-        <RPLSeaUS6 />
-        <RPLSJC1 />
-        <RPLSJC3 />
-        <RPLSJC4 />
-        <RPLSJC5 />
-        <RPLSJC6 />
-        <RPLSJC7 />
-        <RPLSJC8 />
-        <RPLSJC9 />
-        <RPLSJC10 />
-        <RPLSJC11 />
-        <RPLSJC12 />
-        <RPLSJC13 />
-        <RPLTGNIA1 />
-        <RPLTGNIA2 />
-        <RPLTGNIA3 />
-        <RPLTGNIA4 />
-        <RPLTGNIA5 />
-        <RPLTGNIA6 />
-        <RPLTGNIA7 />
-        <RPLTGNIA8 />
-        <RPLTGNIA9 />
-        <RPLTGNIA10 />
-        <RPLTGNIA11 />
-        <RPLTGNIA12 />
-        <ReturnButton />
-        <CutSeaUS />
-        <CutSJC />
-        <CutTGNIA />
-        <ResetButton />
+
+
+
       </MapContainer>
+        
+
 
 
       {/* Show sidebar toggle button only when sidebar is closed */}
@@ -433,23 +653,7 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
       )}
 
 
-      {/* Right sidebar toggle button */}
-      <IconButton
-        sx={{ position: 'absolute', top: 16, right: 16, zIndex: 1200, background: '#fff', boxShadow: 2 }}
-        onClick={() => {
-          // Use startTransition if available (React 18+), otherwise fallback
-          if (typeof (React as any).startTransition === 'function') {
-            (React as any).startTransition(() => {
-              setRightSidebarOpen((open) => !open);
-            });
-          } else {
-            setRightSidebarOpen((open) => !open);
-          }
-        }}
-        aria-label="Show Info Sidebar"
-      >
-        <InfoIcon />
-      </IconButton>
+
 
       {/* Left Sidebar - Deleted Cables */}
       {sidebarOpen && (
@@ -524,59 +728,8 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
       )}
 
       {/* Capacity and Utilization Display */}
-      <Box
-        sx={{
-          position: 'absolute',
-          top: 10,
-          right: 10,
-          backgroundColor: 'rgba(255, 255, 255, 0.7)',
-          color: 'white',
-          padding: '8px 12px',
-          borderRadius: '8px',
-          zIndex: 1000,
-          fontSize: '14px',
-          flexDirection: 'row'
-        }}
-      >
-        <Typography variant="caption" color="gray">
-          Capacity:
-        </Typography>
-        <Typography variant="h4" color="black">
-          {stats.totalGbps} Gbps
-        </Typography>
+      
 
-        <Typography variant="caption" color="gray">
-          Average Utilization:
-        </Typography>
-        <Typography variant="h4" color="black">
-          {ipopUtilization}
-          {/* {parseFloat(ipopDifference) !== 0 && (
-              <Box
-                sx={(theme) => {
-                  const diff = parseFloat(ipopDifference);
-
-                  return {
-                    display: 'inline-block',
-                    padding: '2px 10px',
-                    borderRadius: '999px',
-                    fontWeight: 'bold',
-                    fontSize: '14px',
-                    backgroundColor:
-                      diff < 0
-                        ? theme.colors.error.lighter
-                        : theme.colors.success.lighter,
-                    color:
-                      diff < 0
-                        ? theme.colors.error.main
-                        : theme.colors.success.main
-                  };
-                }}
-              >
-                {ipopDifference}
-              </Box>
-            )} */}
-        </Typography>
-      </Box>
     </Box>
   );
 };
