@@ -3,7 +3,7 @@
 import { lazy, useEffect, useMemo, useState, Suspense } from "react"
 import "leaflet/dist/leaflet.css"
 import L from "leaflet"
-
+import CutCable from "./cutCable"
 const AllRoutes = lazy(() =>
   Promise.all([
     import("./routeposition/nasugbo_mamburao_1"),
@@ -103,22 +103,28 @@ export default function PhilMap() {
   }
 
   return (
-    <MapContainer
-      center={[12.8797, 121.7740]} // Philippines center
-      zoom={6}
-      zoomControl={false} // disable default zoom control
-      style={{ height: "100vh", minHeight: "600px", width: "100%" }}
-      
-    >
-      <TileLayer url={tileUrl} />
-      
-      {/* Custom Zoom Control Position */}
-      <ZoomControl position="bottomleft" />
-      
-      <Suspense fallback={null}>
-        <AllRoutes />
-      </Suspense>
+    <>
+      <MapContainer
+        center={[12.8797, 121.7740]} // Philippines center
+        zoom={6}
+        zoomControl={false} // disable default zoom control
+        style={{ height: "100vh", minHeight: "600px", width: "100%" }}
+        
+      >
+        {/* <CutCable cableSegment="Bacong"/> */}
+        <TileLayer url={tileUrl} />
+        
 
-    </MapContainer>
+        {/* Custom Zoom Control Position */}
+        <ZoomControl position="bottomleft" />
+        
+        <Suspense fallback={null}>
+          <AllRoutes />
+        </Suspense>
+
+      </MapContainer>
+
+
+    </>
   )
 }

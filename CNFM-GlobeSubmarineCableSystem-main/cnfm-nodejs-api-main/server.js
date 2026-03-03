@@ -392,6 +392,109 @@ app.get("/telicphil_seg7", (req, res) => {
   });
 });
 
+
+app.post("/cable_cuts_phil", async (req, res) => {
+  const query = `INSERT INTO cable_cuts_phil (cut_id, distance, cut_type, fault_date, simulated, latitude, longitude, depth, cable_type, point_a, point_b) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+  const {
+    cut_id,
+    distance,
+    cut_type,
+    fault_date,
+    simulated,
+    latitude,
+    longitude,
+    depth,
+    cable_type,
+    point_a,
+    point_b,
+  } = req.body;
+
+  const values = [
+    cut_id,
+    distance,
+    cut_type,
+    fault_date,
+    simulated,
+    latitude,
+    longitude,
+    depth,
+    cable_type,
+    point_a,
+    point_b,
+  ];
+
+  try {
+    const result = db.query(query, values, (err, results) => {
+      if (err) {
+        console.error("Error inserting data:", err);
+        return res.status(500).json({ error: "Failed to insert data" });
+      }
+
+      res.json(results);
+    });
+  } catch (error) {
+    console.error("Error inserting data:", error);
+    return res.status(500).json({ error: "Failed to insert data" });
+  }
+
+});
+
+app.get("/cable_cuts_phil", (req, res) => {
+  const query = "SELECT * FROM cable_cuts_phil";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+
+app.delete("/delete-single-cable-cuts-phil/:cutId", async (req, res) => {
+  try {
+    const { cutId } = req.params;
+
+    // Validate cutId parameter
+    if (!cutId) {
+      return res.status(400).json({
+        success: false,
+        message: "Cut ID is required",
+      });
+    }
+
+    // Delete specific cable cut by cut_id
+    const result = await db.query("DELETE FROM cable_cuts_phil WHERE cut_id = ?", [
+      cutId,
+    ]);
+
+    // Check if any rows were affected
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Cable cut not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: `Cable cut ${cutId} deleted successfully.`,
+      deletedId: cutId,
+      affectedRows: result.affectedRows,
+    });
+  } catch (error) {
+    console.error("Error deleting cable cut:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete cable cut!",
+      error: error.message,
+    });
+  }
+});
+
 // End of the routes as of now
 
 // API: Delete specific cable cut data by cut_id

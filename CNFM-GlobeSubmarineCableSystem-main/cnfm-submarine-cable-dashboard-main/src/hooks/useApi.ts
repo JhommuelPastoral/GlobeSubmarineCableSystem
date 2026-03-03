@@ -195,6 +195,40 @@ export const useLastUpdate = () => {
   });
 };
 
+// Mutation for deleting cables in phil;
+export const useDeleteCablePhil = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (cableId: string) => {
+      const { baseUrl, port } = getApiConfig();
+      const response = await fetch(
+        `${baseUrl}${port}/delete-single-cable-cuts-phil/${cableId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      
+      if (!response.ok) {
+        throw new Error(`Failed to delete cable: ${response.status}`);
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      // Invalidate and refetch deleted cables and last update
+      queryClient.invalidateQueries({ queryKey: queryKeys.deletedCables });
+      queryClient.invalidateQueries({ queryKey: queryKeys.lastUpdate });
+    },
+    onError: (error) => {
+      console.error('Error deleting cable:', error);
+    },
+  });
+};
+
 // Mutation for deleting cables
 export const useDeleteCable = () => {
   const queryClient = useQueryClient();

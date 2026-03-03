@@ -106,7 +106,7 @@ function RPLSeaUS3() {
 
     const fetchData = async () => {
       try {
-        const response = await fetch(`${apiBaseUrl}${port}/sea-us`);
+        const response = await fetch(`${apiBaseUrl}${port}/sea-us-rpl`);
         const result = await response.json();
 
         if (Array.isArray(result) && result.length > 0) {

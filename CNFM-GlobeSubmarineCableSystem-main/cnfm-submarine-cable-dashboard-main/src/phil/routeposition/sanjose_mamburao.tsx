@@ -107,7 +107,7 @@ export default function SanJoseMamburao() {
             const layer = e.target;
             const latlng = e.latlng;
             layer
-              .bindTooltip(`<div style="text-align: center; font-size: 12.5px; line-height: 1.35;"><div style="font-weight: 600; font-size: 13px; margin-bottom: 2px;">San Jose - Mamburao </div><div style="color: #4b5563; margin-bottom: 4px;">${totalLengthKm.toFixed(4)} Km</div><div style="color: #111827;">${segmentEventLabel} </div></div>`, {
+              .bindTooltip(`<div style="text-align: center; font-size: 12.5px; line-height: 1.35;"><div style="font-weight: 600; font-size: 13px; margin-bottom: 2px;">Mamburao - San Jose</div><div style="color: #4b5563; margin-bottom: 4px;">${totalLengthKm.toFixed(4)} Km</div><div style="color: #111827;">${segmentEventLabel} </div></div>`, {
                 permanent: false,
                 direction: 'top',
                 offset: [0, -10],
