@@ -99,7 +99,7 @@ export default function BanateBacolod() {
   return (
 
     <>
-      <CutCable cableSegment="Banate" />
+      <CutCable cableSegment="Banate-Bacolod" />
 
       <Polyline
         positions={location}

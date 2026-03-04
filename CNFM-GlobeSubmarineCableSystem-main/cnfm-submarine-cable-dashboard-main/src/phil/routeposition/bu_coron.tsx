@@ -98,7 +98,7 @@ export default function BuCoron() {
       : '--';
   return (
     <>
-      <CutCable cableSegment="Bu" />
+      <CutCable cableSegment="Bu-Coron" />
       <Polyline
         positions={location}
         pathOptions={getPathOptions()}

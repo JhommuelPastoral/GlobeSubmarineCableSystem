@@ -101,58 +101,58 @@ function RPLSeaUS3() {
     zeroUtilizationCount: 0
   });
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
+  // useEffect(() => {
+  //   let interval: NodeJS.Timeout;
 
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`${apiBaseUrl}${port}/sea-us-rpl`);
-        const result = await response.json();
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await fetch(`${apiBaseUrl}${port}/sea-us-rpl`);
+  //       const result = await response.json();
 
-        if (Array.isArray(result) && result.length > 0) {
-          const totalGbps = result.reduce(
-            (sum, item) => sum + (item.gbps_capacity || 0),
-            0
-          );
+  //       if (Array.isArray(result) && result.length > 0) {
+  //         const totalGbps = result.reduce(
+  //           (sum, item) => sum + (item.gbps_capacity || 0),
+  //           0
+  //         );
 
-          const totalUtilization = result.reduce(
-            (sum, item) => sum + (item.percent_utilization || 0),
-            0
-          );
+  //         const totalUtilization = result.reduce(
+  //           (sum, item) => sum + (item.percent_utilization || 0),
+  //           0
+  //         );
 
-          const avgUtilization = parseFloat(
-            (totalUtilization / result.length).toFixed(2)
-          );
+  //         const avgUtilization = parseFloat(
+  //           (totalUtilization / result.length).toFixed(2)
+  //         );
 
-          const zeroCount = result.filter(
-            (item) => item.percent_utilization === 0
-          ).length;
+  //         const zeroCount = result.filter(
+  //           (item) => item.percent_utilization === 0
+  //         ).length;
 
-          // ✅ Set all state values in a single update
-          setStats({
-            data: result,
-            totalGbps,
-            avgUtilization,
-            zeroUtilizationCount: zeroCount
-          });
+  //         // ✅ Set all state values in a single update
+  //         setStats({
+  //           data: result,
+  //           totalGbps,
+  //           avgUtilization,
+  //           zeroUtilizationCount: zeroCount
+  //         });
 
-          // ✅ Stop interval after successful fetch
-          clearInterval(interval);
-        } else {
-        }
-      } catch (err) {
-        console.error('Error fetching data:', err);
-      }
-    };
+  //         // ✅ Stop interval after successful fetch
+  //         clearInterval(interval);
+  //       } else {
+  //       }
+  //     } catch (err) {
+  //       console.error('Error fetching data:', err);
+  //     }
+  //   };
 
-    // Run immediately on mount
-    fetchData();
+  //   // Run immediately on mount
+  //   fetchData();
 
-    // Set up interval to retry every 2s if no data yet
-    interval = setInterval(fetchData, 2000);
+  //   // Set up interval to retry every 2s if no data yet
+  //   interval = setInterval(fetchData, 2000);
 
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, [apiBaseUrl, port]);
+  //   return () => clearInterval(interval); // Cleanup on unmount
+  // }, [apiBaseUrl, port]);
 
   // Fetch polyline and marker data
   useEffect(() => {
@@ -162,7 +162,6 @@ function RPLSeaUS3() {
       try {
         const response = await fetch(`${apiBaseUrl}${port}/sea-us-rpl-s3`);
         const result = await response.json();
-
         if (Array.isArray(result) && result.length > 0) {
           const cumulativeValues = result
             .map((item: any) => item.cable_cumulative_total)
@@ -215,7 +214,7 @@ function RPLSeaUS3() {
               (item: any) =>
                 [item.full_latitude, item.full_longitude] as [number, number]
             );
-
+          // remove duplicate positions
           setPositions(mappedPositions);
           clearInterval(interval);
         } else {

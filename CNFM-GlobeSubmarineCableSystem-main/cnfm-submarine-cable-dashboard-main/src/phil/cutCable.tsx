@@ -243,7 +243,7 @@ function CutCable({ cableSegment }: CableCutMarkersProps) {
   useEffect(() => {
     setMarkers(queriedMarkers);
   }, [queriedMarkers]);
-
+  // console.log('Markers for segment', cableSegment, markers);
   // Effect to manage markers based on data changes
   useEffect(() => {
     // Get current marker IDs from data

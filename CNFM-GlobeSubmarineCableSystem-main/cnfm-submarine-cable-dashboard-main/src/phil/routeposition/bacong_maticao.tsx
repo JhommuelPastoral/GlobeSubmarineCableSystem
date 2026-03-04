@@ -98,7 +98,7 @@ export default function BacongMaticao() {
       : '--';
   return (
     <>
-      <CutCable cableSegment="Bacong" />
+      <CutCable cableSegment="Bacong-Maticao" />
       <Polyline
         positions={location}
         pathOptions={getPathOptions()}

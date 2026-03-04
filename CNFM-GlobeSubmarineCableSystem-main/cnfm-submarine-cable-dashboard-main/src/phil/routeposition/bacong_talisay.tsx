@@ -98,7 +98,7 @@ export default function BacongTalisay() {
       : '--';
   return (
     <>
-      <CutCable cableSegment="Bacong" />
+      <CutCable cableSegment="Bacong-Talisay" />
       <Polyline
         positions={location}
         pathOptions={getPathOptions()}

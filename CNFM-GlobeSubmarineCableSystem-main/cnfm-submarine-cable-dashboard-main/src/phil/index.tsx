@@ -3,7 +3,6 @@
 import { lazy, useEffect, useMemo, useState, Suspense } from "react"
 import "leaflet/dist/leaflet.css"
 import L from "leaflet"
-import CutCable from "./cutCable"
 const AllRoutes = lazy(() =>
   Promise.all([
     import("./routeposition/nasugbo_mamburao_1"),

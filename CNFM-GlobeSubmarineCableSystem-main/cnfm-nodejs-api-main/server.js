@@ -1748,10 +1748,10 @@ app.get("/sea-us-rpl-s2", (req, res) => {
 
 app.get("/sea-us-rpl-s3", (req, res) => {
   const query = `
-    SELECT
+    SELECT DISTINCT
       event,
-      (latitude + latitude2) AS full_latitude,
-      (longitude + longitude2) AS full_longitude,
+      ROUND((latitude + latitude2),4) AS full_latitude,
+      ROUND((longitude + longitude2),4) AS full_longitude,
       cable_cumulative_total,
       approx_depth AS Depth
     FROM sea_us_rpl_s3
@@ -1765,7 +1765,6 @@ app.get("/sea-us-rpl-s3", (req, res) => {
       console.error("Error fetching sea_us_rpl_s3 data:", err);
       return res.status(500).json({ error: "Failed to fetch data" });
     }
-
     res.json(results);
   });
 });

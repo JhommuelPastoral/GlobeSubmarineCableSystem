@@ -98,7 +98,7 @@ export default function BoracayCaticlan() {
       : '--';
   return (
     <>
-      <CutCable cableSegment="Boracay" />
+      <CutCable cableSegment="Boracay-Caticlan" />
       <Polyline
         positions={location}
         pathOptions={getPathOptions()}

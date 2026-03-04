@@ -33,14 +33,12 @@ type SegmentData = {
 
 // Segment list
 const SEGMENTS: SegmentData[] = [
-  { id: 'S1', label: 'S1 | Nasugbo - Mamburao', start: 'Nasugbo', end: 'Mamburao', endpoint: '/nasugbo_mamburao_1' },
-  { id: 'S2', label: 'S2 | San Jose - Mamburao', start: 'San Jose', end: 'Mamburao', endpoint: '/san_jose_mamburao' },
-  { id: 'S3', label: 'S3 | San Jose - Roxas', start: 'San Jose', end: 'Roxas', endpoint: '/san_jose_roxas' },
-  { id: 'S4', label: 'S4 | Cadiz - Roxas', start: 'Cadiz', end: 'Roxas', endpoint: '/cadiz_roxas' },
-  { id: 'S5', label: 'S5 | San Remigio - Cadiz', start: 'San Remigio', end: 'Cadiz', endpoint: '/san_remigio_cadiz' },
-  { id: 'S6', label: 'S6 | San Remigio - Lilo', start: 'San Remigio', end: 'Lilo', endpoint: '/san_remigio_lilo' },
-  { id: 'S7', label: 'S7 | Bacong - Talisay', start: 'Bacong', end: 'Talisay', endpoint: '/bacong_talisay' },
-  { id: 'S8', label: 'S8 | Bacong - Maticao', start: 'Bacong', end: 'Maticao', endpoint: '/bacong_maticao' }
+  { id: 'S1', label: 'S1 | Legaspi - Calbayog', start: 'Legaspi', end: 'Calbayog', endpoint: '/legaspi_calbayog' },
+  { id: 'S2', label: 'S2 | Duero - Maasin', start: 'Duero', end: 'Maasin', endpoint: '/duero_maasin' },
+  { id: 'S3', label: 'S3 | Potuhan - Talisay', start: 'Potuhan', end: 'Talisay', endpoint: '/potuhan_talisay' },
+  { id: 'S4', label: 'S4 | Maasin - Cabadbaran', start: 'Maasin', end: 'Cabadbaran', endpoint: '/maasin_cabadbaran' },
+  { id: 'S5', label: 'S5 | Banate - Bacolod', start: 'Banate', end: 'Bacolod', endpoint: '/banate_bacolod' },
+  { id: 'S6', label: 'S6 | Capoocan - Calbayog', start: 'Capoocan', end: 'Calbayog', endpoint: '/capoocan_calbayog' },
 ];
 
 const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost';
@@ -286,21 +284,21 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
       console.error("Error preparing cable cut data:", error);
     }
   };
-    const resetForm = () => {
-      setStartSegment('');
-      setEndSegment('');
-      setCutDistance('');
-      setCutType('');
-      setFaultDate('');
-      setFaultTime('');
-      setCutPoint(null);
-      setCable('');
-      setTotalDistance(0);
-    };
-    const handleCloseDialog = () => {
-      resetForm();
-      onClose();
-    };
+  const resetForm = () => {
+    setStartSegment('');
+    setEndSegment('');
+    setCutDistance('');
+    setCutType('');
+    setFaultDate('');
+    setFaultTime('');
+    setCutPoint(null);
+    setCable('');
+    setTotalDistance(0);
+  };
+  const handleCloseDialog = () => {
+    resetForm();
+    onClose();
+  };
   return (
     <Dialog open={open} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
       <DialogTitle sx={{ mt: 2 }}>
@@ -404,7 +402,7 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
 // ---------------------------
 // Button on the Map
 // ---------------------------
-const Fobn1Button = () => {
+const Fobn2Button = () => {
   const [open, setOpen] = useState(false);
   const map = useMap();
 
@@ -419,14 +417,15 @@ const Fobn1Button = () => {
     customControl.onAdd = () => {
       const container = L.DomUtil.create('div');
       const button = document.createElement('button');
-      button.innerHTML = 'CUT - FOBN1';
-      button.style.backgroundColor = 'green';
+      button.innerHTML = 'CUT - FOBN2';
+      button.style.backgroundColor = '#EDD622';
       button.style.color = 'white';
       button.style.border = 'none';
       button.style.borderRadius = '10px';
       button.style.width = '200px';
       button.style.height = '44px';
       button.style.cursor = 'pointer';
+      button.style.color = 'white';
       button.onclick = handleClickOpen;
 
       container.appendChild(button);
@@ -446,4 +445,4 @@ const Fobn1Button = () => {
 
 };
 
-export default Fobn1Button;
+export default Fobn2Button;

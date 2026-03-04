@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import "leaflet/dist/leaflet.css"
+import CutCable from "../cutCable";
 
 
 
@@ -90,40 +91,44 @@ export default function CadizRoxas() {
   },[apiConfig]);
 
 
-  if(!location) return null;
+  if(!location || !Polyline) return null;
   const segmentEventLabel =
     segmentFirstEvent && segmentLastEvent
       ? `${segmentFirstEvent} <span aria-hidden="true" style="padding: 0 6px;">&rarr;</span> ${segmentLastEvent}`
       : '--';
   return (
-    <Polyline
-      positions={location}
-      pathOptions={getPathOptions()}
-      opacity={1}
-      eventHandlers={{
-          mouseover: (e) => {
-            const layer = e.target;
-            const latlng = e.latlng;
-            layer
-              .bindTooltip(`<div style="text-align: center; font-size: 12.5px; line-height: 1.35;"><div style="font-weight: 600; font-size: 13px; margin-bottom: 2px;">Roxas - Cadiz </div><div style="color: #4b5563; margin-bottom: 4px;">${totalLengthKm.toFixed(4)} Km</div><div style="color: #111827;">${segmentEventLabel} </div></div>`, {
-                permanent: false,
-                direction: 'top',
-                offset: [0, -10],
-                className: 'custom-tooltip',
-                opacity: 0.9,
-                sticky: true // This makes the tooltip follow the cursor
-              })
-              .openTooltip(latlng);
-            setIsHovered(true);
+    <>
+    <CutCable cableSegment="Cadiz-Roxas"></CutCable>
+      <Polyline
+        positions={location}
+        pathOptions={getPathOptions()}
+        opacity={1}
+        eventHandlers={{
+            mouseover: (e) => {
+              const layer = e.target;
+              const latlng = e.latlng;
+              layer
+                .bindTooltip(`<div style="text-align: center; font-size: 12.5px; line-height: 1.35;"><div style="font-weight: 600; font-size: 13px; margin-bottom: 2px;">Roxas - Cadiz </div><div style="color: #4b5563; margin-bottom: 4px;">${totalLengthKm.toFixed(4)} Km</div><div style="color: #111827;">${segmentEventLabel} </div></div>`, {
+                  permanent: false,
+                  direction: 'top',
+                  offset: [0, -10],
+                  className: 'custom-tooltip',
+                  opacity: 0.9,
+                  sticky: true // This makes the tooltip follow the cursor
+                })
+                .openTooltip(latlng);
+              setIsHovered(true);
 
-          },
-          mouseout: (e) => {
-            const layer = e.target;
-            layer.closeTooltip();
-            setIsHovered(false);
-          },
-      }}
-            
-    />
+            },
+            mouseout: (e) => {
+              const layer = e.target;
+              layer.closeTooltip();
+              setIsHovered(false);
+            },
+        }}
+              
+      />
+    
+    </>
   )
 }

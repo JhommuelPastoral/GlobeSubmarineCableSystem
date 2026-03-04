@@ -57,6 +57,7 @@ const DeletedCablesSidebar = lazy(() => import('src/content/admin/components/Del
 const HideToolTip = lazy(() => import('src/content/admin/components/HideToolTip'));
 
 import Fobn1Button from './FOBN1';
+import Fobn2Button from './FOBN2';
 
 const AllRoutes = lazy(() =>
   Promise.all([
@@ -535,6 +536,8 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
           <>
             <PhilButton />
             <Fobn1Button />
+            <Fobn2Button />
+  
             <Suspense fallback={null}>
               <AllRoutes />
             </Suspense>
