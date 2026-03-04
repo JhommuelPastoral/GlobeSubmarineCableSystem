@@ -1,8 +1,8 @@
-"use client"
 
 import { useEffect, useMemo, useState } from "react"
 import "leaflet/dist/leaflet.css"
 import CutCable from "../cutCable";
+import { useCableId } from "../../store/store";
 
 
 
@@ -15,6 +15,8 @@ export default function CadizRoxas() {
   const [segmentFirstEvent, setSegmentFirstEvent] = useState<string | null>(null);
   const [segmentLastEvent, setSegmentLastEvent] = useState<string | null>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [isCut, setIsCut] = useState(false);
+  const { cut_id } = useCableId();
   // API Config
   const apiConfig = useMemo(
     () => ({
@@ -23,18 +25,25 @@ export default function CadizRoxas() {
       mapApiKey: process.env.REACT_APP_GEOAPIFY_API_KEY || "",
     }),
     []
-  )
+  );
+  useEffect(() => {
+    if (cut_id.includes("Cadiz-Roxas")) {
+      setIsCut(true);
+    } else {
+      setIsCut(false);
+    }
+
+  }, [cut_id]);
   const getPathOptions = () => {
     const baseColor = 'green';
 
     return {
-      color: baseColor,
+      color: isCut ? 'red' : baseColor,
       weight: isHovered ? 6 : 4, 
       opacity: isHovered ? 1 : 0.8,
       className: isHovered ? 'segment-highlight' : undefined
     };
   };
-  // Load React Leaflet dynamically (fix for Next.js SSR)
   useEffect(() => {
     const loadMap = async () => {
       const RL = await import("react-leaflet")

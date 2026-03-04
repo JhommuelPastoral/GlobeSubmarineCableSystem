@@ -220,8 +220,7 @@ export const useDeleteCablePhil = () => {
     },
     onSuccess: () => {
       // Invalidate and refetch deleted cables and last update
-      queryClient.invalidateQueries({ queryKey: queryKeys.deletedCables });
-      queryClient.invalidateQueries({ queryKey: queryKeys.lastUpdate });
+      queryClient.invalidateQueries({ queryKey: ['cableCuts-Phil'] });
     },
     onError: (error) => {
       console.error('Error deleting cable:', error);

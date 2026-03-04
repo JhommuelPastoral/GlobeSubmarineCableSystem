@@ -133,7 +133,7 @@ function findCableType({lat, lng, rawData}: {lat: number, lng: number, rawData: 
   const cableType = rawData.find((item: any) => {
     const itemLat = Number(item.latitude) + Number(item.latitude1);
     const itemLng = Number(item.longitude) + Number(item.longitude1);
-    return Math.abs(itemLat - lat) < 0.0001 && Math.abs(itemLng - lng) < 0.0001;
+    return Math.abs(itemLat - lat) < 1 && Math.abs(itemLng - lng) < 1;
   });
   return cableType ? cableType.cable_type : 'Unknown';
 }
@@ -200,7 +200,6 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
     setCutPoint(nearest);
     setCable(findCableType({lat: nearest?.lat || 0, lng: nearest?.lng || 0, rawData}));
   };
-  console.log('Cut Point:', cutPoint, 'Cable Type:', cable, 'Error:', error);
 
   const handleStartChange = (value: string) => {
     setStartSegment(value);
@@ -371,7 +370,6 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
             <MenuItem value="" disabled>
               Select cut type
             </MenuItem>
-            <MenuItem value="Shunt Fault">Shunt Fault</MenuItem>
             <MenuItem value="Partial Fiber Break">
               Partial Fiber Break
             </MenuItem>
@@ -419,7 +417,31 @@ const Fobn1Button = () => {
     customControl.onAdd = () => {
       const container = L.DomUtil.create('div');
       const button = document.createElement('button');
-      button.innerHTML = 'CUT - FOBN1';
+      button.innerHTML = `
+      <div style="
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        gap:8px;
+      ">
+        <svg xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="white"
+            stroke="white"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+          <circle cx="6" cy="6" r="3"></circle>
+          <circle cx="6" cy="18" r="3"></circle>
+          <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
+          <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
+          <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
+        </svg>
+        <span>CUT - FOBN1</span>
+      </div>
+      `;
       button.style.backgroundColor = 'green';
       button.style.color = 'white';
       button.style.border = 'none';
@@ -427,6 +449,8 @@ const Fobn1Button = () => {
       button.style.width = '200px';
       button.style.height = '44px';
       button.style.cursor = 'pointer';
+      button.style.color = 'white';
+      button.style.fontWeight = 'bold';
       button.onclick = handleClickOpen;
 
       container.appendChild(button);

@@ -369,7 +369,6 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
             <MenuItem value="" disabled>
               Select cut type
             </MenuItem>
-            <MenuItem value="Shunt Fault">Shunt Fault</MenuItem>
             <MenuItem value="Partial Fiber Break">
               Partial Fiber Break
             </MenuItem>
@@ -417,7 +416,32 @@ const Fobn2Button = () => {
     customControl.onAdd = () => {
       const container = L.DomUtil.create('div');
       const button = document.createElement('button');
-      button.innerHTML = 'CUT - FOBN2';
+      button.innerHTML = `
+      <div style="
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        gap:8px;
+      ">
+        <svg xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="white"
+            stroke="white"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+          <circle cx="6" cy="6" r="3"></circle>
+          <circle cx="6" cy="18" r="3"></circle>
+          <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
+          <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
+          <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
+        </svg>
+        <span>CUT - FOBN2</span>
+      </div>
+      `;
+
       button.style.backgroundColor = '#EDD622';
       button.style.color = 'white';
       button.style.border = 'none';
@@ -426,6 +450,7 @@ const Fobn2Button = () => {
       button.style.height = '44px';
       button.style.cursor = 'pointer';
       button.style.color = 'white';
+      button.style.fontWeight = 'bold';
       button.onclick = handleClickOpen;
 
       container.appendChild(button);

@@ -12,6 +12,10 @@ interface ChangeNav{
   onChangeNav: (nav: string) => void;
 }
 
+interface CableId {
+  cut_id: string[];
+  onCutId: (cut_id: string[]) => void;
+}
 
 export const useStore = create<HoverStore>((set) => ({
   title: '', // initial state
@@ -22,4 +26,9 @@ export const changeSimulator = create<ChangeNav>((set)=> ({
   nav: 'Global',
   onChangeNav: (nav: string) => set({nav}),
 
+}));
+
+export const useCableId = create<CableId>((set)=> ({
+  cut_id: [],
+  onCutId: (cut_id: string[]) => set({cut_id}),
 }));

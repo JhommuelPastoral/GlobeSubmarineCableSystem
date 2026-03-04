@@ -3,6 +3,10 @@
 import { lazy, useEffect, useMemo, useState, Suspense } from "react"
 import "leaflet/dist/leaflet.css"
 import L from "leaflet"
+import {useCableId} from "../store/store"
+import { useQuery } from "@tanstack/react-query"
+
+
 const AllRoutes = lazy(() =>
   Promise.all([
     import("./routeposition/nasugbo_mamburao_1"),
@@ -64,7 +68,7 @@ export default function PhilMap() {
   const [TileLayer, setTileLayer] = useState<any>(null);
   const [Marker, setMarker] = useState<any>(null);
   const [ZoomControl, setZoomControl] = useState<any>(null);
-
+  const {onCutId} = useCableId();
 
   // API Config
   const apiConfig = useMemo(
@@ -76,6 +80,40 @@ export default function PhilMap() {
     []
   );
 
+  const fetchCuts = async () => {
+    const res = await fetch(`${apiConfig.apiBaseUrl}${apiConfig.port}/cable_cuts_phil`, { method: 'GET' });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || 'Failed to fetch cable cuts');
+    }
+    return res.json();
+  };
+
+  const { data: cutsRaw = [], isFetching } = useQuery({
+    queryKey: ['cableCuts-Phil'],
+    queryFn: fetchCuts,
+    // Poll for changes. Adjust interval as necessary for performance.
+    refetchInterval: 2000,
+    staleTime: 5000,
+    refetchOnWindowFocus: false,
+    retry: 1
+  });
+  
+  useEffect(() => {
+    if (cutsRaw.length > 0) {
+      const segmentCuts = cutsRaw
+        .filter((segment: any) => segment.cut_id)
+        .map((segment: any) => {
+          return segment.cut_id
+            .split("-")
+            .slice(0, 2)
+            .join("-")
+        });
+
+
+      onCutId(segmentCuts);
+    }
+  }, [cutsRaw, onCutId]);
   // Tile URL (Geoapify or fallback to OSM)
   const tileUrl = useMemo(() => {
     if (apiConfig.mapApiKey) {

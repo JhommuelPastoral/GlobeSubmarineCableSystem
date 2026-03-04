@@ -1,9 +1,8 @@
-"use client"
 
 import { useEffect, useMemo, useState } from "react"
 import "leaflet/dist/leaflet.css"
 import CutCable from "../cutCable";
-
+import {useCableId} from "../../store/store";
 
 export default function BacongBayawan() {
 
@@ -14,6 +13,8 @@ export default function BacongBayawan() {
   const [segmentFirstEvent, setSegmentFirstEvent] = useState<string | null>(null);
   const [segmentLastEvent, setSegmentLastEvent] = useState<string | null>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [isCut, setIsCut] = useState(false);
+  const {cut_id} = useCableId();
   // API Config
   const apiConfig = useMemo(
     () => ({
@@ -24,7 +25,7 @@ export default function BacongBayawan() {
     []
   )
   const getPathOptions = () => {
-    const baseColor = 'black';
+    const baseColor = 'blue';
 
     return {
       color: baseColor,
@@ -42,7 +43,15 @@ export default function BacongBayawan() {
 
     loadMap()
   }, [apiConfig]);
+  
+  useEffect(() => {
+    if (cut_id.includes("Bacong-Bayawan")) {
+      setIsCut(true);
+    } else {
+      setIsCut(false);
+    }
 
+  }, [cut_id]);
   useEffect(()=>{
     const fetchPolylines = async () => {
       try {

@@ -597,16 +597,6 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
                 justifyContent: 'center'
               }}>
                 <CircleRoundedIcon sx={{ fontSize: 12, color: 'Blue' }} />
-                FOBN3 RPL 
-              </Typography>
-              <Typography variant="body2" color="black" 
-                sx={{
-                display: 'flex',
-                gap: 2,
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <CircleRoundedIcon sx={{ fontSize: 12, color: 'Black' }} />
                 NDTN RPL
               </Typography>
             </Box>
