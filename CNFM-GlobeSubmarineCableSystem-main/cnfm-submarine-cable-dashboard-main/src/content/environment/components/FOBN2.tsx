@@ -126,14 +126,38 @@ function findNearestPoint(route: number[][], distanceKm: number) {
   const last = route[route.length - 1];
   return { lat: last[0], lng: last[1] };
 }
-function findCableType({lat, lng, rawData}: {lat: number, lng: number, rawData: any}): string {
+function findCableType({
+  lat,
+  lng,
+  rawData,
+}: {
+  lat: number;
+  lng: number;
+  rawData: any[];
+}): string {
+  if (!rawData || rawData.length === 0) return 'Unknown';
 
-  const cableType = rawData.find((item: any) => {
+  let closestItem = null;
+  let minDistance = Infinity;
+
+  for (const item of rawData) {
+    if(item.latitude === null ||
+      item.latitude1 === null ||
+      item.longitude === null ||
+      item.longitude1 === null) {
+        continue; // skip invalid entries
+      }
     const itemLat = Number(item.latitude) + Number(item.latitude1);
     const itemLng = Number(item.longitude) + Number(item.longitude1);
-    return Math.abs(itemLat - lat) < 0.0001 && Math.abs(itemLng - lng) < 0.0001;
-  });
-  return cableType ? cableType.cable_type : 'Unknown';
+
+    const distance = haversineDistance(lat, lng, itemLat, itemLng);
+
+    if (distance < minDistance) {
+      minDistance = distance;
+      closestItem = item;
+    }
+  }
+  return closestItem?.cable_type || 'Unknown';
 }
 
 
@@ -198,9 +222,11 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
 
     if(direction === 'reverse') {
       const reversedPosition = [...position].reverse();
+      const reversedRawData = [...rawData].reverse();
       const nearest = findNearestPoint(reversedPosition, num);
+
       setCutPoint(nearest);
-      setCable(findCableType({lat: nearest?.lat || 0, lng: nearest?.lng || 0, rawData}));
+      setCable(findCableType({lat: nearest?.lat || 0, lng: nearest?.lng || 0, rawData:reversedRawData}));
     }
     else{
       const nearest = findNearestPoint(position, num);
@@ -279,7 +305,6 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
       })
         .then((response) => response.json())
         .then((result) => {
-          console.log("Cable cut data submitted:", result);
           // Set to default values
           resetForm();
           onClose();  

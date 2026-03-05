@@ -1047,7 +1047,55 @@ const UserCableMap = React.memo<UserCableMapProps>(
                   <AccountCircleIcon sx={{ fontSize: 28, color: '#1d2a3d' }} />
                 </IconButton>
               </Tooltip>
-
+              <Tooltip
+                title="Philippine Submarine Cables Overview"
+                placement="right"
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      backgroundColor: 'rgba(0, 0, 0, 0.25)',
+                      fontWeight: 800,
+                      letterSpacing: 0.4,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      boxShadow: '0 8px 16px rgba(0,0,0,0.25)',
+                      border: '1px solid rgba(255,255,255,0.12)',
+                      backdropFilter: 'blur(8px)',
+                      pointerEvents: 'none',
+                      transition: 'all 0.3s ease',
+                      color: '#fff',
+                      padding: '10px 14px',
+                      borderRadius: '12px',
+                      whiteSpace: 'nowrap'
+                    }
+                  },
+                }}
+              >
+                <IconButton
+                  sx={{
+                    background: 'rgba(255,255,255,0.65)',
+                    boxShadow: '0 6px 14px rgba(0,0,0,0.25)',
+                    borderRadius: '10px',
+                    p: 1,
+                    border: '1px solid rgba(255,255,255,0.6)',
+                    '&:hover': {
+                      background: 'rgba(255,255,255,0.78)',
+                      transform: 'scale(1.05)',
+                      transition: 'all 0.2s ease'
+                    },
+                    '&:active': {
+                      transform: 'scale(0.98)'
+                    }
+                  }}
+                  onClick={() => {
+                    window.location.href = '/phil';
+                  }}
+                >
+                  <img src="/images/logos/philippine-logo.png" alt="" style={{ width: 28, height: 28 }} />
+                  {/* <AccountCircleIcon sx={{ fontSize: 28, color: '#1d2a3d' }} /> */}
+                </IconButton>
+              </Tooltip>
               {/* Login Button */}
             </Box>
           )}
@@ -1231,7 +1279,8 @@ const UserCableMap = React.memo<UserCableMapProps>(
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  width: '100%',                 
+                  width: '100%',   
+                                
                 }}
               >
                 {/* Left: Active Cable Faults */}
@@ -1262,8 +1311,58 @@ const UserCableMap = React.memo<UserCableMapProps>(
                   sx={{
                     display: 'flex',
                     alignItems: 'center', 
+                    gap: 1
                   }}
                 >
+                  <Tooltip
+                    title="Philippine Submarine Cables Overview"
+                    placement="right"
+                    componentsProps={{
+                      tooltip: {
+                        sx: {
+                          backgroundColor: 'rgba(0, 0, 0, 0.25)',
+                          fontWeight: 800,
+                          letterSpacing: 0.4,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1,
+                          boxShadow: '0 8px 16px rgba(0,0,0,0.25)',
+                          border: '1px solid rgba(255,255,255,0.12)',
+                          backdropFilter: 'blur(8px)',
+                          pointerEvents: 'none',
+                          transition: 'all 0.3s ease',
+                          color: '#fff',
+                          padding: '10px 14px',
+                          borderRadius: '12px',
+                          whiteSpace: 'nowrap'
+                        }
+                      },
+                    }}
+                  >
+                    <IconButton
+                      sx={{
+                        background: 'rgba(255,255,255,0.65)',
+                        boxShadow: '0 6px 14px rgba(0,0,0,0.25)',
+                        borderRadius: '10px',
+                        p: 1,
+                        border: '1px solid rgba(255,255,255,0.6)',
+                        '&:hover': {
+                          background: 'rgba(255,255,255,0.78)',
+                          transform: 'scale(1.05)',
+                          transition: 'all 0.2s ease'
+                        },
+                        '&:active': {
+                          transform: 'scale(0.98)'
+                        }
+                      }}
+                      onClick={() => {
+                        window.location.href = '/phil';
+                      }}
+                    >
+                      <img src="/images/logos/philippine-logo.png" alt="" style={{ width: 28, height: 28 }} />
+                      {/* <AccountCircleIcon sx={{ fontSize: 28, color: '#1d2a3d' }} /> */}
+                    </IconButton>
+                  </Tooltip>
                   <Tooltip
                     title="Login"
                     placement="right"

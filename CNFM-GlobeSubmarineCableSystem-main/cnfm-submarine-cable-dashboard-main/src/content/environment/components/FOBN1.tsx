@@ -153,6 +153,7 @@ function findCableType({
   let minDistance = Infinity;
 
   for (const item of rawData) {
+    if(item.latitude === null || item.latitude1 === null || item.longitude === null || item.longitude1 === null) continue;
     const itemLat = Number(item.latitude) + Number(item.latitude1);
     const itemLng = Number(item.longitude) + Number(item.longitude1);
 
@@ -163,7 +164,7 @@ function findCableType({
       closestItem = item;
     }
   }
-
+  console.log('Distance to nearest point:', minDistance, 'km', closestItem);
   return closestItem?.cable_type || 'Unknown';
 }
 // ---------------------------
@@ -224,9 +225,10 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
     else setError('');
     if(direction === 'reverse') {
       const reversedPosition = [...position].reverse();
+      const reversedRawData = [...rawData].reverse();
       const nearest = findNearestPoint(reversedPosition, num);
       setCutPoint(nearest);
-      setCable(findCableType({lat: nearest?.lat || 0, lng: nearest?.lng || 0, rawData}));
+      setCable(findCableType({lat: nearest?.lat || 0, lng: nearest?.lng || 0, rawData: reversedRawData}));
     }
     else{
       const nearest = findNearestPoint(position, num);
@@ -305,7 +307,6 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
       })
         .then((response) => response.json())
         .then((result) => {
-          console.log("Cable cut data submitted:", result);
           // Set to default values
           resetForm();
           onClose();  
