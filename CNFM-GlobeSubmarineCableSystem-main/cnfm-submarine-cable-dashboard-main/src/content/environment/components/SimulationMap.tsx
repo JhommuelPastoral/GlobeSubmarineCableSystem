@@ -55,9 +55,10 @@ import CircleRoundedIcon from '@mui/icons-material/CircleRounded';
 // Lazy load the sidebar and tooltip components for better performance
 const DeletedCablesSidebar = lazy(() => import('src/content/admin/components/DeletedCablesSidebar'));
 const HideToolTip = lazy(() => import('src/content/admin/components/HideToolTip'));
-
+const DeletedCablesSidebarPhil = lazy(() => import('src/phil/deletedCablePhil'));
 import Fobn1Button from './FOBN1';
 import Fobn2Button from './FOBN2';
+import NDTNButton from './NDTN';
 
 const AllRoutes = lazy(() =>
   Promise.all([
@@ -228,9 +229,10 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
     zeroUtilizationCount: 0
   });
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarPhilOpen, setSidebarPhilOpen] = useState(false);
   const [rightSidebarOpen, setRightSidebarOpen] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<string | null>(null);
-
+  const [lastUpdatePhil, setLastUpdatePhil] = useState<string | null>(null);
   const mapRef = useRef<L.Map | null>(null);
   const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
   const port = process.env.REACT_APP_PORT;
@@ -530,13 +532,94 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
             >
               <InfoIcon />
             </IconButton>
+
+      {/* Show sidebar toggle button only when sidebar is closed */}
+      {!sidebarOpen && (
+        <Box
+          sx={{
+            position: 'absolute',
+            left: 10,
+            top: 78, // below the default zoom controls (which are top: 10px)
+            zIndex: 1200,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+          }}
+        >
+          <IconButton
+            sx={{ background: '#fff', boxShadow: 2 }}
+            onClick={() => {
+              if (typeof (React as any).startTransition === 'function') {
+                (React as any).startTransition(() => {
+                  setSidebarOpen((open) => !open);
+                });
+              } else {
+                setSidebarOpen((open) => !open);
+              }
+            }}
+            aria-label="Show Deleted Cables Sidebar"
+          >
+            <MenuIcon />
+          </IconButton>
+        </Box>
+      )}
+        {/* Left Sidebar - Deleted Cables */}
+        {sidebarOpen && (
+          <Paper
+            elevation={4}
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              height: '100%',
+              width: 360,
+              zIndex: 1100,
+              display: 'flex',
+              flexDirection: 'column',
+              boxShadow: 4,
+              borderRadius: '1px',
+              overflow: 'hidden',
+              background: 'rgba(255, 255, 255, 0.7)',
+              transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
+              transition: 'transform 0.3s ease-in-out',
+              animation: 'slideInFromLeft 0.3s ease-out',
+              '@keyframes slideInFromLeft': {
+                '0%': {
+                  transform: 'translateX(-100%)',
+                  opacity: 0,
+                },
+                '100%': {
+                  transform: 'translateX(0)',
+                  opacity: 1,
+                },
+              },
+            }}
+          >
+            <DeletedCablesSidebar
+              onSelectCable={(cable) => {
+                // Let DeletedCablesSidebar handle all map positioning internally
+                // Don't interfere with map panning to avoid conflicts
+                // console.log('Cable selected and positioned:', cable);
+              }}
+              lastUpdate={lastUpdate}
+              setLastUpdate={setLastUpdate}
+              isAdmin={true}  // Enable admin functionality
+              isUser={true}   // Enable user functionality 
+              mapRef={externalMapRef || mapRef}
+              onCloseSidebar={() => setSidebarOpen(false)} // Add close function
+            />
+          </Paper>
+        )}
+
           </>
         )};
+
         {nav === "Phil" && (
           <>
             <PhilButton />
             <Fobn1Button />
             <Fobn2Button />
+            <NDTNButton/>
   
             <Suspense fallback={null}>
               <AllRoutes />
@@ -601,6 +684,85 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
               </Typography>
             </Box>
 
+          {/* Show sidebar toggle button only when sidebar is closed */}
+          {!sidebarPhilOpen && (
+            <Box
+              sx={{
+                position: 'absolute',
+                left: 10,
+                top: 78, // below the default zoom controls (which are top: 10px)
+                zIndex: 1200,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+              }}
+            >
+              <IconButton
+                sx={{ background: '#fff', boxShadow: 2 }}
+                onClick={() => {
+                  if (typeof (React as any).startTransition === 'function') {
+                    (React as any).startTransition(() => {
+                      setSidebarPhilOpen((open) => !open);
+                    });
+                  } else {
+                    setSidebarPhilOpen((open) => !open);
+                  }
+                }}
+                aria-label="Show Deleted Cables Sidebar"
+              >
+                <MenuIcon />
+              </IconButton>
+            </Box>
+          )}
+
+          {/* Left Sidebar - Deleted Cables */}
+          {sidebarPhilOpen && (
+            <Paper
+              elevation={4}
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                height: '100%',
+                width: 360,
+                zIndex: 1100,
+                display: 'flex',
+                flexDirection: 'column',
+                boxShadow: 4,
+                borderRadius: '1px',
+                overflow: 'hidden',
+                background: 'rgba(255, 255, 255, 0.7)',
+                transform: sidebarPhilOpen ? 'translateX(0)' : 'translateX(-100%)',
+                transition: 'transform 0.3s ease-in-out',
+                animation: 'slideInFromLeft 0.3s ease-out',
+                '@keyframes slideInFromLeft': {
+                  '0%': {
+                    transform: 'translateX(-100%)',
+                    opacity: 0,
+                  },
+                  '100%': {
+                    transform: 'translateX(0)',
+                    opacity: 1,
+                  },
+                },
+              }}
+            >
+              <DeletedCablesSidebarPhil
+                onSelectCable={(cable) => {
+                  // Let DeletedCablesSidebar handle all map positioning internally
+                  // Don't interfere with map panning to avoid conflicts
+                  // console.log('Cable selected and positioned:', cable);
+                }}
+                lastUpdate={lastUpdatePhil}
+                setLastUpdate={setLastUpdatePhil}
+                isAdmin={true}  // Enable admin functionality
+                isUser={true}   // Enable user functionality 
+                mapRef={externalMapRef || mapRef}
+                onCloseSidebar={() => setSidebarPhilOpen(false)} // Add close function
+              />
+            </Paper>
+          )}
+
           </>
 
           
@@ -613,88 +775,6 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
         
 
 
-
-      {/* Show sidebar toggle button only when sidebar is closed */}
-      {!sidebarOpen && (
-        <Box
-          sx={{
-            position: 'absolute',
-            left: 10,
-            top: 78, // below the default zoom controls (which are top: 10px)
-            zIndex: 1200,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-start',
-          }}
-        >
-          <IconButton
-            sx={{ background: '#fff', boxShadow: 2 }}
-            onClick={() => {
-              if (typeof (React as any).startTransition === 'function') {
-                (React as any).startTransition(() => {
-                  setSidebarOpen((open) => !open);
-                });
-              } else {
-                setSidebarOpen((open) => !open);
-              }
-            }}
-            aria-label="Show Deleted Cables Sidebar"
-          >
-            <MenuIcon />
-          </IconButton>
-        </Box>
-      )}
-
-
-
-
-      {/* Left Sidebar - Deleted Cables */}
-      {sidebarOpen && (
-        <Paper
-          elevation={4}
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            height: '100%',
-            width: 360,
-            zIndex: 1100,
-            display: 'flex',
-            flexDirection: 'column',
-            boxShadow: 4,
-            borderRadius: '1px',
-            overflow: 'hidden',
-            background: 'rgba(255, 255, 255, 0.7)',
-            transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
-            transition: 'transform 0.3s ease-in-out',
-            animation: 'slideInFromLeft 0.3s ease-out',
-            '@keyframes slideInFromLeft': {
-              '0%': {
-                transform: 'translateX(-100%)',
-                opacity: 0,
-              },
-              '100%': {
-                transform: 'translateX(0)',
-                opacity: 1,
-              },
-            },
-          }}
-        >
-          <DeletedCablesSidebar
-            onSelectCable={(cable) => {
-              // Let DeletedCablesSidebar handle all map positioning internally
-              // Don't interfere with map panning to avoid conflicts
-              // console.log('Cable selected and positioned:', cable);
-            }}
-            lastUpdate={lastUpdate}
-            setLastUpdate={setLastUpdate}
-            isAdmin={true}  // Enable admin functionality
-            isUser={true}   // Enable user functionality 
-            mapRef={externalMapRef || mapRef}
-            onCloseSidebar={() => setSidebarOpen(false)} // Add close function
-          />
-        </Paper>
-      )}
 
       {/* Right Sidebar - HideToolTip */}
       {rightSidebarOpen && (

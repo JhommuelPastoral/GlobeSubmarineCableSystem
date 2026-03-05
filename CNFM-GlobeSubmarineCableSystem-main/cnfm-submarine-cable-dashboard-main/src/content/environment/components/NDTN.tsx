@@ -33,12 +33,17 @@ type SegmentData = {
 
 // Segment list
 const SEGMENTS: SegmentData[] = [
-  { id: 'S1', label: 'S1 | Legaspi - Calbayog', start: 'Legaspi', end: 'Calbayog', endpoint: '/legaspi_calbayog' },
-  { id: 'S2', label: 'S2 | Duero - Maasin', start: 'Duero', end: 'Maasin', endpoint: '/duero_maasin' },
-  { id: 'S3', label: 'S3 | Potuhan - Talisay', start: 'Potuhan', end: 'Talisay', endpoint: '/potuhan_talisay' },
-  { id: 'S4', label: 'S4 | Maasin - Cabadbaran', start: 'Maasin', end: 'Cabadbaran', endpoint: '/maasin_cabadbaran' },
-  { id: 'S5', label: 'S5 | Banate - Bacolod', start: 'Banate', end: 'Bacolod', endpoint: '/banate_bacolod' },
-  { id: 'S6', label: 'S6 | Capoocan - Calbayog', start: 'Capoocan', end: 'Calbayog', endpoint: '/capoocan_calbayog' },
+  { id: 'S1', label: 'S1 | Boracay - Caticlan', start: 'Boracay', end: 'Caticlan', endpoint: '/boracay_caticlan' },
+  { id: 'S2', label: 'S2 | Taytay - BU', start: 'Taytay', end: 'BU', endpoint: '/taytay_bu' },
+  { id: 'S3', label: 'S3 | BU - San Jose', start: 'Bu', end: 'San Jose', endpoint: '/bu_san_jose' },
+  { id: 'S4', label: 'S4 | Bu - Coron', start: 'Bu', end: 'Coron', endpoint: '/bu_coron' },
+  { id: 'S5', label: 'S5 | Dalahican - Mansalay', start: 'Dalahican', end: 'Mansalay', endpoint: '/dalahican_mansalay' },
+  { id: 'S6', label: 'S6 | Mansalay - Hamtik', start: 'Mansalay', end: 'Hamtik', endpoint: '/mansalay_hamtik' },
+  { id: 'S7', label: 'S7 | Hamtik - Tigbaunan', start: 'Hamtik', end: 'Tigbaunan', endpoint: '/hamtik_tigbauan' },
+  { id: 'S8', label: 'S8 | Telicphil - Seg4', start: 'Telicphil', end: 'Seg4', endpoint: '/telicphil_seg4' },
+  { id: 'S9', label: 'S9 | Bacong - Bayawan', start: 'Bacong', end: 'Bayawan', endpoint: '/bacong_bayawan' },
+  { id: 'S10', label: 'S10 | Telicphil - Seg6', start: 'Telicphil', end: 'Seg6', endpoint: '/telicphil_seg6' },
+  { id: 'S11', label: 'S11 | Telicphil - Seg7', start: 'Telicphil', end: 'Seg7', endpoint: '/telicphil_seg7' },
 ];
 
 const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost';
@@ -226,7 +231,6 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
         if (!response.ok) throw new Error(`Failed to fetch data: ${response.status}`);
 
         const result = await response.json();
-
         const formatted = result
           .filter((item: any) =>
             item.latitude !== null &&
@@ -313,7 +317,7 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
   return (
     <Dialog open={open} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
       <DialogTitle sx={{ mt: 2 }}>
-        <Typography variant="h5">Simulate FOBN2 Cable Fault</Typography>
+        <Typography variant="h5">Simulate NDTN Cable Fault</Typography>
       </DialogTitle>
       <Divider />
       <DialogContent sx={{ pt: 3 }}>
@@ -426,7 +430,7 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
 // ---------------------------
 // Button on the Map
 // ---------------------------
-const Fobn2Button = () => {
+const NDTNButton = () => {
   const [open, setOpen] = useState(false);
   const map = useMap();
 
@@ -463,11 +467,11 @@ const Fobn2Button = () => {
           <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
           <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
         </svg>
-        <span>CUT - FOBN2</span>
+        <span>CUT - NDTN</span>
       </div>
       `;
 
-      button.style.backgroundColor = '#EDD622';
+      button.style.backgroundColor = 'blue';
       button.style.color = 'white';
       button.style.border = 'none';
       button.style.borderRadius = '10px';
@@ -495,4 +499,4 @@ const Fobn2Button = () => {
 
 };
 
-export default Fobn2Button;
+export default NDTNButton;

@@ -534,7 +534,7 @@ const HideToolTipForGuest: React.FC<{ onHover: (title: string) => void }> = ({ o
       console.log(`Fetching ${systemName} ${segmentName} from:`, url);
       const response = await fetch(url);
       const result = await response.json();
-      console.log(`${systemName} ${segmentName} response:`, result);
+      console.log(`${systemName} ${segmentName} response card:`, result);
 
       if (Array.isArray(result) && result.length > 0) {
         const totalCapacity = result.reduce(

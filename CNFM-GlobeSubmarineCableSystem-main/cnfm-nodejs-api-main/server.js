@@ -448,7 +448,6 @@ app.get("/cable_cuts_phil", (req, res) => {
       console.error("Error fetching data:", err);
       return res.status(500).json({ error: "Failed to fetch data" });
     }
-
     res.json(results);
   });
 });

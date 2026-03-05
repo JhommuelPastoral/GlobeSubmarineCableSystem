@@ -37,7 +37,7 @@ export default function BuSanJose() {
     const baseColor = 'blue';
 
     return {
-      color: baseColor,
+      color: isCut ? 'red' : baseColor,
       weight: isHovered ? 6 : 4, 
       opacity: isHovered ? 1 : 0.8,
       className: isHovered ? 'segment-highlight' : undefined

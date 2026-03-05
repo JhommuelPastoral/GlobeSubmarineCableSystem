@@ -128,17 +128,44 @@ function findNearestPoint(route: number[][], distanceKm: number) {
   const last = route[route.length - 1];
   return { lat: last[0], lng: last[1] };
 }
-function findCableType({lat, lng, rawData}: {lat: number, lng: number, rawData: any}): string {
+// function findCableType({lat, lng, rawData}: {lat: number, lng: number, rawData: any}): string {
 
-  const cableType = rawData.find((item: any) => {
+//   const cableType = rawData.find((item: any) => {
+//     const itemLat = Number(item.latitude) + Number(item.latitude1);
+//     const itemLng = Number(item.longitude) + Number(item.longitude1);
+//     return Math.abs(itemLat - lat) < 1 && Math.abs(itemLng - lng) < 1;
+//   });
+//   return cableType ? cableType.cable_type : 'Unknown';
+// }
+
+function findCableType({
+  lat,
+  lng,
+  rawData,
+}: {
+  lat: number;
+  lng: number;
+  rawData: any[];
+}): string {
+  if (!rawData || rawData.length === 0) return 'Unknown';
+
+  let closestItem = null;
+  let minDistance = Infinity;
+
+  for (const item of rawData) {
     const itemLat = Number(item.latitude) + Number(item.latitude1);
     const itemLng = Number(item.longitude) + Number(item.longitude1);
-    return Math.abs(itemLat - lat) < 1 && Math.abs(itemLng - lng) < 1;
-  });
-  return cableType ? cableType.cable_type : 'Unknown';
+
+    const distance = haversineDistance(lat, lng, itemLat, itemLng);
+
+    if (distance < minDistance) {
+      minDistance = distance;
+      closestItem = item;
+    }
+  }
+
+  return closestItem?.cable_type || 'Unknown';
 }
-
-
 // ---------------------------
 // Dialog Component
 // ---------------------------
@@ -157,7 +184,7 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
   const [cutType, setCutType] = useState<string>('');
   const [position, setPosition] = useState<number[][]>([]);
   const [cable, setCable] = useState<string>('');
-
+  const [direction, setDirection] = useState<'forward' | 'reverse'>('forward');
   // const handleChangeCutDistance = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   const value = e.target.value; 
   //   setCutDistance(value);
@@ -195,10 +222,17 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
     if (num <= 0) setError('Distance must be greater than 0');
     else if (num > totalDistance) setError(`Distance cannot exceed total distance (${totalDistance.toFixed(2)} km)`);
     else setError('');
-
-    const nearest = findNearestPoint(position, num);
-    setCutPoint(nearest);
-    setCable(findCableType({lat: nearest?.lat || 0, lng: nearest?.lng || 0, rawData}));
+    if(direction === 'reverse') {
+      const reversedPosition = [...position].reverse();
+      const nearest = findNearestPoint(reversedPosition, num);
+      setCutPoint(nearest);
+      setCable(findCableType({lat: nearest?.lat || 0, lng: nearest?.lng || 0, rawData}));
+    }
+    else{
+      const nearest = findNearestPoint(position, num);
+      setCutPoint(nearest);
+      setCable(findCableType({lat: nearest?.lat || 0, lng: nearest?.lng || 0, rawData}));
+    }
   };
 
   const handleStartChange = (value: string) => {
@@ -295,6 +329,7 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
       setCutPoint(null);
       setCable('');
       setTotalDistance(0);
+      setDirection('forward');
     };
     const handleCloseDialog = () => {
       resetForm();
@@ -323,7 +358,6 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
               ))}
             </Select>
           </FormControl>
-
           {/* Point B (disabled, auto-set) */}
           <FormControl fullWidth>
             <InputLabel id="end-seg-label">Point B</InputLabel>
@@ -331,6 +365,20 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
               <MenuItem value={endSegment}>{endSegment || 'Select Point A first'}</MenuItem>
             </Select>
           </FormControl>
+          <TextField
+            label="Direction"
+            select
+            value={direction }
+            disabled={!startSegment || !endSegment}
+            onChange={(e) => setDirection(e.target.value as any)}
+          >
+            <MenuItem value="forward">
+              {startPosition && endSegment ? `${startPosition} → ${endSegment}` : 'Select segments'}
+            </MenuItem>
+            <MenuItem value="reverse">
+              {startPosition && endSegment ? `${endSegment} → ${startPosition}` : 'Select segments'}
+            </MenuItem>
+          </TextField>
           <TextField
             label="Enter distance (km)"
             type="number"
@@ -341,6 +389,7 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
             inputProps={{ min: 0.01, max: totalDistance, step: 0.01 }}
             fullWidth
             />
+
           {/* Total Distance Display */}
           {totalDistance > 0 && (
             <Typography variant="subtitle1">

@@ -26,7 +26,7 @@ export default function TelicPhilSeg7() {
     []
   );
   useEffect(() => {
-    if (cut_id.includes("TelicPhil-Seg7")) {
+    if (cut_id.includes("Telicphil-Seg7")) {
       setIsCut(true);
     } else {
       setIsCut(false);
@@ -105,7 +105,7 @@ export default function TelicPhilSeg7() {
       : '--';
   return (
     <>  
-      <CutCable cableSegment="Telec Phil-Seg 7"></CutCable>
+      <CutCable cableSegment="Telicphil-Seg7"></CutCable>
       <Polyline
         positions={location}
         pathOptions={getPathOptions()}

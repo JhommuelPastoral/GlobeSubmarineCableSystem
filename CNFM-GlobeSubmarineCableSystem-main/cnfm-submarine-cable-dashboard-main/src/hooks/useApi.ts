@@ -184,6 +184,40 @@ export const useDeletedCables = (lastUpdate?: string) => {
   });
 };
 
+export const useDeletedCablesPhil = (lastUpdate?: string) => {
+  return useQuery({
+    queryKey: [lastUpdate],
+    queryFn: fetchDeletedCablesPhil,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    retry: 3,
+  });
+};
+const fetchDeletedCablesPhil = async (): Promise<CableCut[]> => {
+  const { baseUrl, port } = getApiConfig();
+  const response = await fetch(`${baseUrl}${port}/cable_cuts_phil`, { method: 'GET' });
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch deleted cables: ${response.status}`);
+  }
+  
+  const result = await response.json();
+  console.log('Fetched deleted cables (Philippines):', result);
+  if (!Array.isArray(result)) {
+    return [];
+  }
+  
+  // Sort by fault_date in descending order (newest first)
+  const sortedData = [...result].sort((a, b) => {
+    const dateA = a.fault_date ? new Date(a.fault_date) : new Date(0);
+    const dateB = b.fault_date ? new Date(b.fault_date) : new Date(0);
+    return dateB.getTime() - dateA.getTime();
+  });
+  
+  return sortedData;
+};
+
+
 export const useLastUpdate = () => {
   return useQuery({
     queryKey: queryKeys.lastUpdate,
