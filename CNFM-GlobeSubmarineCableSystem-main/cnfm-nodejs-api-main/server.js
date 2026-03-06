@@ -50,8 +50,8 @@ db.connect((err) => {
 
 
 // Nasugbo Mamborao 1 
-app.get("/nasugbo_mamburao_1", (req, res) => {
-  const query = "SELECT * FROM nasugbo_mamburao_1";
+app.get("/nasugbo_mamburao", (req, res) => {
+  const query = "SELECT * FROM nasugbo_mamburao";
 
   db.query(query, (err, results) => {
     if (err) {
@@ -2281,6 +2281,31 @@ const tgnia_headers = [
   "comments",
 ];
 
+const fobn1_headers = [
+  "id",
+  "ship_operation",
+  "ship_date",
+  "latitude",
+  "latitude1",
+  'latitude2',
+  'longitude',
+  'longitude1',
+  'longitude2',
+  'event',
+  'repeater',
+  'cable_line',
+  'cable_type',
+  'cable_type_length',
+  'section_length_km',
+  'total_length_km',
+  'kp',
+  'slack_between_position',
+  'avge_burial_depth',
+  'corr_depth',
+  'chart_no',
+  'remarks',
+];
+
 app.get("/")
 
 // Fixed version of the CSV upload handler
@@ -2304,8 +2329,10 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
     "sea-us": "sea_us",
     sjc: "sjc",
     tgnia: "tgnia",
+    fobn1: "fobn1",
+    fobn2: "fobn2",
+    fobn3: 'fobn3'
   };
-
   // Get the database table name
   const dbPrefix = cableMapping[cable];
   if (!dbPrefix) {
@@ -2314,8 +2341,15 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
       .status(400)
       .json({ message: `Invalid cable selection: ${cable}` });
   }
-
-  const tableName = `${dbPrefix}_rpl_${segment}`;
+  
+  let tableName ='';
+  if(cable === 'fobn1' || cable === 'fobn2' || cable === 'fobn3'){
+    tableName = segment;
+  }
+  else{
+    tableName = `${dbPrefix}_rpl_${segment}`
+  }
+  // const tableName = `${dbPrefix}_rpl_${segment}`;
   console.log(`Target table: ${tableName}`);
 
   // Determine headers based on cable type and segment
@@ -2338,6 +2372,8 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
     headers = sjc_headers;
   } else if (cable === "tgnia") {
     headers = tgnia_headers;
+  } else if (cable === "fobn1"){
+    headers = fobn1_headers;
   }
 
   // Validate that the table exists
@@ -2369,7 +2405,25 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
         ) {
           return;
         }
+        if(cable === 'fobn1' || cable === 'fobn2' || cable === 'fobn3'){
+            function parseCoordinate(value) {
+              if (!value) return null;
+              // Remove all non-digit/non-dot/non-minus chars
+              const clean = value.replace(/[^0-9.-]/g, '');
+              const num = parseFloat(clean);
+              return isNaN(num) ? null : num;
+            }
+    
+            // then
+            let lat = parseCoordinate(row.latitude1) / 60;
+            let lng = parseCoordinate(row.longitude1) / 60;
+    
+            row.latitude1 = lat !== null ? lat.toFixed(4) : null;
+            row.longitude1 = lng !== null ? lng.toFixed(4) : null;
+            results.push(row);
+        }
         results.push(row);
+
       })
       .on("end", () => {
         console.log(`Processed ${results.length} rows from CSV`);
@@ -2756,7 +2810,60 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
               row.water_depth || null,
               row.comments || null,
             ]);
-          } else {
+          } else if (cable === 'fobn1'){
+          insertQuery = `
+            INSERT INTO ${tableName} (
+              id,
+              ship_operation,
+              ship_date,
+              latitude,
+              latitude1,
+              latitude2,
+              longitude,
+              longitude1,
+              longitude2,
+              event,
+              repeater,
+              cable_line,
+              cable_type,
+              cable_type_length,
+              section_length_km,
+              total_length_km,
+              kp,
+              slack_between_position,
+              avge_burial_depth,
+              corr_depth,
+              chart_no,
+              remarks
+            ) VALUES ?`;
+               values = results.map((row) => [
+                row.id || null,
+                row.ship_operation || null,
+                row.ship_date || null,
+                row.latitude || null,
+                row.latitude1  || null,
+                row.latitude2 || null,  
+                row.longitude || null,
+                row.longitude1  || null,
+                row.longitude2 || null,
+                row.event || null,
+                row.repeater || null,
+                row.cable_line || null,
+                row.cable_type || null,
+                row.cable_type_length || null,
+                row.section_length_km || null,
+                row.total_length_km || null,
+                row.kp || null,
+                row.slack_between_positions || null,
+                row.avge_burial_depth || null,
+                row.corr_depth || null,
+                row.chart_no || null,
+                row.remarks || null
+    
+              ]);
+          }
+         
+          else {
             // Handle unexpected cable/segment combinations
             fs.unlinkSync(filePath);
             return res.status(400).json({

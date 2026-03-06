@@ -59,7 +59,7 @@ export default function NasugboMamburao1() {
   useEffect(()=>{
     const fetchPolylines = async () => {
       try {
-        const response = await fetch(`${apiConfig.apiBaseUrl}${apiConfig.port}/nasugbo_mamburao_1`);
+        const response = await fetch(`${apiConfig.apiBaseUrl}${apiConfig.port}/nasugbo_mamburao`);
         const result = await response.json();
         const formatted = result
           .filter((item: any) =>

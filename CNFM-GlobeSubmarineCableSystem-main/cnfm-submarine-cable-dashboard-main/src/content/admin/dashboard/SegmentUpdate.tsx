@@ -32,7 +32,10 @@ const SegmentUpdate = () => {
   const cables = [
     { id: 'sea-us', name: 'SEA-US Submarine Cable' },
     { id: 'sjc', name: 'Southeast Asia-Japan Cable (SJC)' },
-    { id: 'tgnia', name: 'Tata TGN-Intra Asia (TGN-IA)' }
+    { id: 'tgnia', name: 'Tata TGN-Intra Asia (TGN-IA)' },
+    { id: 'fobn1', name: 'FOBN1 Submarine Cable' },
+    { id: 'fobn2', name: 'FOBN2 Submarine Cable' },
+    { id: 'ndtn', name: 'NDTN  Submarine Cable' }
   ];
 
   // Segments data matching your database table names
@@ -73,7 +76,40 @@ const SegmentUpdate = () => {
         { id: 's10', name: 'Segment 10' },
         { id: 's11', name: 'Segment 11' },
         { id: 's12', name: 'Segment 12' }
+      ],
+      fobn1: [
+        { id: 's1', name: 'Nasugbo-Mamburao' },
+        { id: 's2', name: 'San Jose-Mamburao' },
+        { id: 's3', name: 'San Jose-Roxas' },
+        { id: 's4', name: 'Cadiz-Roxas' },
+        { id: 's5', name: 'San Remigio-Cadiz' },
+        { id: 's6', name: 'San Remigio-Lilo' },
+        { id: 's7', name: 'Bacong-Talisay' },
+        { id: 's8', name: 'Bacong-Maticao' },
+      ],
+      fobn2:[
+        {id: 's1', name: 'Legaspi-Calbayog'},
+        {id: 's2', name: 'Duero-Maasin'},
+        {id: 's3', name: 'Potuhan-Talisay'},
+        {id: 's4', name: 'Maasin-Cabadbaran'},
+        {id: 's5', name: 'Banate-Bacolod'},
+        {id: 's6', name: 'Capoocan-Calbayog'},
+
+      ],
+      ndtn: [
+        {id: 's1' , name: 'Boracay-Caticlan'},
+        {id: 's2' , name: 'Taytay-Bu'},
+        {id: 's3' , name: 'Bu-San Jose'},
+        {id: 's4' , name: 'Bu-Coron'},
+        {id: 's5' , name: 'Dalahican-Mansalay'},
+        {id: 's6' , name: 'Mansalay-Hamtik'},
+        {id: 's7' , name: 'Hamtik-Tigbaunan'},
+        {id: 's8' , name: 'Telicphil-Seg4'},
+        {id: 's9' , name: 'Bacong-Bayawan'},
+        {id: 's10', name: 'Telicphil-Seg6'},
+        {id: 's11', name: 'Telicphil-Seg7'},
       ]
+      
     };
     return segmentMap[cableId] || [];
   };
@@ -125,77 +161,156 @@ const SegmentUpdate = () => {
     }
 
     setIsUploading(true);
+    if(philMap.includes(selectedCable)) {
+        try {
+          const segment = getSegmentsForCable(selectedCable).find(segment => segment.id === selectedSegment)?.name;
+          const lowerSegment = segment.toLowerCase().replaceAll('-', '_').replaceAll(' ', '_');
+          // Create FormData and upload to dynamic API endpoint
+          const formData = new FormData();
+          formData.append('file', selectedFile);
+    
+          const uploadUrl = `${apiBaseUrl}${port}/upload-rpl/${selectedCable}/${lowerSegment}`;
+          console.log('Uploading to:', uploadUrl); // Debug log
+    
+          const response = await fetch(uploadUrl, {
+            method: 'POST',
+            body: formData
+          });
+    
+          console.log('Response status:', response.status); // Debug log
+          console.log('Response headers:', response.headers); // Debug log
+    
+          // Check if response is JSON
+          const contentType = response.headers.get('content-type');
+          let data;
+    
+          if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+          } else {
+            // If not JSON, get text response for debugging
+            const textResponse = await response.text();
+            console.log('Non-JSON response:', textResponse);
+            throw new Error(`Server returned non-JSON response: ${textResponse}`);
+          }
+    
+          console.log('Response data:', data); // Debug log
+          if (response.ok) {
+            await Swal.fire({
+              title: 'Success!',
+              text: `File uploaded successfully to ${data.tableName}. ${data.recordsInserted} records inserted.`,
+              icon: 'success',
+              confirmButtonText: 'OK'
+            });
+    
+            // Reset form after successful upload
+            setSelectedFile(null);
+            handleClose();
+    
+            // Force a brief delay to allow database to fully commit the changes
+            // before RPL components start fetching updated data
+            setTimeout(() => {
+              // Trigger a custom event to notify RPL components to refresh
+              window.dispatchEvent(new CustomEvent('rplDataUpdated', {
+                detail: {
+                  cable: selectedCable,
+                  segment: selectedSegment,
+                  tableName: data.tableName
+                }
+              }));
+            }, 1000);
+          } else {
+            throw new Error(
+              data.message || `HTTP ${response.status}: Upload failed`
+            );
+          }
+        } catch (err) {
+          console.error('Upload error details:', err); // Enhanced debug log
+    
+          await Swal.fire({
+            title: 'Upload Failed',
+            text: 'Server error during upload.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        } finally {
+          setIsUploading(false); // This ensures the loading state is reset regardless
+        }
 
-    try {
-      // Create FormData and upload to dynamic API endpoint
-      const formData = new FormData();
-      formData.append('file', selectedFile);
+    }
+    else{
+        try {
+          // Create FormData and upload to dynamic API endpoint
+          const formData = new FormData();
+          formData.append('file', selectedFile);
+    
+          const uploadUrl = `${apiBaseUrl}${port}/upload-rpl/${selectedCable}/${selectedSegment}`;
+          console.log('Uploading to:', uploadUrl); // Debug log
+    
+          const response = await fetch(uploadUrl, {
+            method: 'POST',
+            body: formData
+          });
+    
+          console.log('Response status:', response.status); // Debug log
+          console.log('Response headers:', response.headers); // Debug log
+    
+          // Check if response is JSON
+          const contentType = response.headers.get('content-type');
+          let data;
+    
+          if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+          } else {
+            // If not JSON, get text response for debugging
+            const textResponse = await response.text();
+            console.log('Non-JSON response:', textResponse);
+            throw new Error(`Server returned non-JSON response: ${textResponse}`);
+          }
+    
+          console.log('Response data:', data); // Debug log
+          if (response.ok) {
+            await Swal.fire({
+              title: 'Success!',
+              text: `File uploaded successfully to ${data.tableName}. ${data.recordsInserted} records inserted.`,
+              icon: 'success',
+              confirmButtonText: 'OK'
+            });
+    
+            // Reset form after successful upload
+            setSelectedFile(null);
+            handleClose();
+    
+            // Force a brief delay to allow database to fully commit the changes
+            // before RPL components start fetching updated data
+            setTimeout(() => {
+              // Trigger a custom event to notify RPL components to refresh
+              window.dispatchEvent(new CustomEvent('rplDataUpdated', {
+                detail: {
+                  cable: selectedCable,
+                  segment: selectedSegment,
+                  tableName: data.tableName
+                }
+              }));
+            }, 1000);
+          } else {
+            throw new Error(
+              data.message || `HTTP ${response.status}: Upload failed`
+            );
+          }
+        } catch (err) {
+          console.error('Upload error details:', err); // Enhanced debug log
+    
+          await Swal.fire({
+            title: 'Upload Failed',
+            text: 'Server error during upload.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        } finally {
+          setIsUploading(false); // This ensures the loading state is reset regardless
+        }
 
-      const uploadUrl = `${apiBaseUrl}${port}/upload-rpl/${selectedCable}/${selectedSegment}`;
-      console.log('Uploading to:', uploadUrl); // Debug log
-
-      const response = await fetch(uploadUrl, {
-        method: 'POST',
-        body: formData
-      });
-
-      console.log('Response status:', response.status); // Debug log
-      console.log('Response headers:', response.headers); // Debug log
-
-      // Check if response is JSON
-      const contentType = response.headers.get('content-type');
-      let data;
-
-      if (contentType && contentType.includes('application/json')) {
-        data = await response.json();
-      } else {
-        // If not JSON, get text response for debugging
-        const textResponse = await response.text();
-        console.log('Non-JSON response:', textResponse);
-        throw new Error(`Server returned non-JSON response: ${textResponse}`);
-      }
-
-      console.log('Response data:', data); // Debug log
-      if (response.ok) {
-        await Swal.fire({
-          title: 'Success!',
-          text: `File uploaded successfully to ${data.tableName}. ${data.recordsInserted} records inserted.`,
-          icon: 'success',
-          confirmButtonText: 'OK'
-        });
-
-        // Reset form after successful upload
-        setSelectedFile(null);
-        handleClose();
-
-        // Force a brief delay to allow database to fully commit the changes
-        // before RPL components start fetching updated data
-        setTimeout(() => {
-          // Trigger a custom event to notify RPL components to refresh
-          window.dispatchEvent(new CustomEvent('rplDataUpdated', {
-            detail: {
-              cable: selectedCable,
-              segment: selectedSegment,
-              tableName: data.tableName
-            }
-          }));
-        }, 1000);
-      } else {
-        throw new Error(
-          data.message || `HTTP ${response.status}: Upload failed`
-        );
-      }
-    } catch (err) {
-      console.error('Upload error details:', err); // Enhanced debug log
-
-      await Swal.fire({
-        title: 'Upload Failed',
-        text: 'Server error during upload.',
-        icon: 'error',
-        confirmButtonText: 'OK'
-      });
-    } finally {
-      setIsUploading(false); // This ensures the loading state is reset regardless
+      
     }
   };
 
@@ -210,6 +325,8 @@ const SegmentUpdate = () => {
     }
   };
 
+  const philMap = ['fobn1', 'fobn2', 'ndtn'];
+
   // Get the target table name for display
   const getTargetTableName = () => {
     if (!selectedCable || !selectedSegment) return '';
@@ -217,8 +334,13 @@ const SegmentUpdate = () => {
     const cableMapping = {
       'sea-us': 'sea_us',
       sjc: 'sjc',
-      tgnia: 'tgnia'
-    };
+      tgnia: 'tgnia',
+    };  
+    if(philMap.includes(selectedCable)) {
+      const segment = getSegmentsForCable(selectedCable).find(segment => segment.id === selectedSegment)?.name;
+      const lowerSegment = segment.toLowerCase().replaceAll('-', '_').replaceAll(' ', '_');
+      return `${lowerSegment}`
+    }
 
     return `${cableMapping[selectedCable]}_rpl_${selectedSegment}`;
   };
