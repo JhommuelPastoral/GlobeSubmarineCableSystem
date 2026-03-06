@@ -103,7 +103,7 @@ const SegmentUpdate = () => {
         {id: 's4' , name: 'Bu-Coron'},
         {id: 's5' , name: 'Dalahican-Mansalay'},
         {id: 's6' , name: 'Mansalay-Hamtik'},
-        {id: 's7' , name: 'Hamtik-Tigbaunan'},
+        {id: 's7' , name: 'Hamtik-Tigbauan'},
         {id: 's8' , name: 'Telicphil-Seg4'},
         {id: 's9' , name: 'Bacong-Bayawan'},
         {id: 's10', name: 'Telicphil-Seg6'},

@@ -2305,7 +2305,53 @@ const fobn1_headers = [
   'chart_no',
   'remarks',
 ];
+const ndtn_headers_dahican_mansalay = [
+  "id",
+  "ship_operation",
+  "ship_date",
+  "latitude",
+  "latitude1",
+  'latitude2',
+  'longitude',
+  'longitude1',
+  'longitude2',
+  'event',
+  'repeater',
+  'cable_line',
+  'cable_type',
+  'section_length_km',
+  'total_length_km',
+  'slack_between_position',
+  'burial_depth',
+  'corr_depth',
+  'chart_no',
+  'remarks',
+];
 
+const ndtn_headers = [
+  "id",
+  "ship_operation",
+  "ship_date",
+  "latitude",
+  "latitude1",
+  'latitude2',
+  'longitude',
+  'longitude1',
+  'longitude2',
+  'event',
+  'repeater',
+  'cable_line',
+  'cable_type',
+  'cable_type_length',
+  'section_length_km',
+  'total_length_km',
+  'kp',
+  'slack_between_position',
+  'avge_burial_depth',
+  'corr_depth',
+  'chart_no',
+  'remarks',
+];
 app.get("/")
 
 // Fixed version of the CSV upload handler
@@ -2331,7 +2377,7 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
     tgnia: "tgnia",
     fobn1: "fobn1",
     fobn2: "fobn2",
-    fobn3: 'fobn3'
+    ndtn: 'ndtn'
   };
   // Get the database table name
   const dbPrefix = cableMapping[cable];
@@ -2341,9 +2387,8 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
       .status(400)
       .json({ message: `Invalid cable selection: ${cable}` });
   }
-  
   let tableName ='';
-  if(cable === 'fobn1' || cable === 'fobn2' || cable === 'fobn3'){
+  if(cable === 'fobn1' || cable === 'fobn2' || cable === 'ndtn'){
     tableName = segment;
   }
   else{
@@ -2372,8 +2417,14 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
     headers = sjc_headers;
   } else if (cable === "tgnia") {
     headers = tgnia_headers;
-  } else if (cable === "fobn1"){
+  } else if (cable === "fobn1" || cable === 'fobn2'){
     headers = fobn1_headers;
+  } else if(cable === 'ndtn'){
+      if(segment === 'dalahican_mansalay' || segment === 'telicphil_seg4' || segment === 'bacong_bayawan' || segment === 'telicphil_seg6' || segment === 'telicphil_seg7'){
+        headers = ndtn_headers_dahican_mansalay;
+      }else{
+        headers = ndtn_headers;
+      }
   }
 
   // Validate that the table exists
@@ -2388,6 +2439,7 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
 
     if (result.length === 0) {
       fs.unlinkSync(filePath);
+      console.log(`Table ${tableName} does not exist`);
       return res
         .status(400)
         .json({ message: `Table ${tableName} does not exist` });
@@ -2405,7 +2457,7 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
         ) {
           return;
         }
-        if(cable === 'fobn1' || cable === 'fobn2' || cable === 'fobn3'){
+        if(cable === 'fobn1' || cable === 'fobn2' || cable === 'ndtn'){
             function parseCoordinate(value) {
               if (!value) return null;
               // Remove all non-digit/non-dot/non-minus chars
@@ -2413,8 +2465,9 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
               const num = parseFloat(clean);
               return isNaN(num) ? null : num;
             }
-    
-            // then
+            if (!row.id || Number(row.id.trim()) === 0 || row.id.trim() === '0' || isNaN(Number(row.id.trim()))) {
+              return;
+            }
             let lat = parseCoordinate(row.latitude1) / 60;
             let lng = parseCoordinate(row.longitude1) / 60;
     
@@ -2422,7 +2475,9 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
             row.longitude1 = lng !== null ? lng.toFixed(4) : null;
             results.push(row);
         }
-        results.push(row);
+        else{
+          results.push(row);
+        }
 
       })
       .on("end", () => {
@@ -2810,7 +2865,7 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
               row.water_depth || null,
               row.comments || null,
             ]);
-          } else if (cable === 'fobn1'){
+          } else if (cable === 'fobn1' || cable === 'fobn2') {
           insertQuery = `
             INSERT INTO ${tableName} (
               id,
@@ -2854,13 +2909,115 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
                 row.section_length_km || null,
                 row.total_length_km || null,
                 row.kp || null,
-                row.slack_between_positions || null,
+                row.slack_between_position || null,
                 row.avge_burial_depth || null,
                 row.corr_depth || null,
                 row.chart_no || null,
                 row.remarks || null
     
               ]);
+          } else if(cable === 'ndtn'){
+            if(segment === 'dalahican_mansalay' || segment === 'telicphil_seg4' || segment === 'bacong_bayawan' || segment === 'telicphil_seg6' || segment === 'telicphil_seg7'){
+                insertQuery = `
+                  INSERT INTO ${tableName} (
+                    id,
+                    ship_operation,
+                    ship_date,
+                    latitude,
+                    latitude1,
+                    latitude2,
+                    longitude,
+                    longitude1,
+                    longitude2,
+                    event,
+                    repeater,
+                    cable_line,
+                    cable_type,
+                    section_length_km,
+                    total_length_km,
+                    slack_between_position,
+                    burial_depth,
+                    corr_depth,
+                    chart_no,
+                    remarks
+                  ) VALUES ?`;
+                  values = results.map((row) => [
+                  row.id || null,
+                  row.ship_operation || null,
+                  row.ship_date || null,
+                  row.latitude || null,
+                  row.latitude1  || null,
+                  row.latitude2 || null,  
+                  row.longitude || null,
+                  row.longitude1  || null,
+                  row.longitude2 || null,
+                  row.event || null,
+                  row.repeater || null,
+                  row.cable_line || null,
+                  row.cable_type || null,
+                  row.section_length_km || null,
+                  row.total_length_km || null,
+                  row.slack_between_position || null,
+                  row.burial_depth || null,
+                  row.corr_depth || null,
+                  row.chart_no || null,
+                  row.remarks || null
+      
+                  ]);
+
+            }
+            else{
+              insertQuery = `
+                INSERT INTO ${tableName} (
+                  id,
+                  ship_operation,
+                  ship_date,
+                  latitude,
+                  latitude1,
+                  latitude2,
+                  longitude,
+                  longitude1,
+                  longitude2,
+                  event,
+                  repeater,
+                  cable_line,
+                  cable_type,
+                  cable_type_length,
+                  section_length_km,
+                  total_length_km,
+                  kp,
+                  slack_between_position,
+                  avge_burial_depth,
+                  corr_depth,
+                  chart_no,
+                  remarks
+                ) VALUES ?`;
+                  values = results.map((row) => [
+                    row.id || null,
+                    row.ship_operation || null,
+                    row.ship_date || null,
+                    row.latitude || null,
+                    row.latitude1  || null,
+                    row.latitude2 || null,  
+                    row.longitude || null,
+                    row.longitude1  || null,
+                    row.longitude2 || null,
+                    row.event || null,
+                    row.repeater || null,
+                    row.cable_line || null,
+                    row.cable_type || null,
+                    row.cable_type_length || null,
+                    row.section_length_km || null,
+                    row.total_length_km || null,
+                    row.kp || null,
+                    row.slack_between_position || null,
+                    row.avge_burial_depth || null,
+                    row.corr_depth || null,
+                    row.chart_no || null,
+                    row.remarks || null
+        
+                  ]);              
+            }
           }
          
           else {

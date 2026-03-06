@@ -595,7 +595,16 @@ export default function PhilMap() {
             }}>
             Legends
           </Typography> */}
-          
+          <Typography variant="body2" color="black" 
+            sx={{
+            display: 'flex',
+            gap: 1,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <RectangleIcon sx={{ fontSize: 15, color: 'red' }} />
+            Segment Down
+          </Typography>        
           <Typography variant="body2" color="black" 
             sx={{
             display: 'flex',
