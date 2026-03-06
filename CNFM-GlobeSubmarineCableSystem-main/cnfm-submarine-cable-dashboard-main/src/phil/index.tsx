@@ -10,7 +10,7 @@ import { IconButton, Tooltip, Typography } from "@mui/material"
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuIcon from '@mui/icons-material/Menu';
 import DeletedCablesSidebar from "./deletedCablePhil"
-
+import RectangleIcon from '@mui/icons-material/Rectangle';
 const AllRoutes = lazy(() =>
   Promise.all([
     import("./routeposition/nasugbo_mamburao_1"),
@@ -562,6 +562,73 @@ export default function PhilMap() {
             </Suspense>
           </Box>
         )}
+
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 10,
+            right: 10,
+            width: 'auto',
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)', // for Safari
+            color: 'white',
+            padding: '12px 16px',
+            borderRadius: '10px',
+            border: '1px solid rgba(255,255,255,0.2)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
+            zIndex: 1000,
+            fontSize: '14px',
+            // flexDirection: 'column',
+            justifyContent: 'flex-start',
+            alignItems: 'flex-start',
+            display: 'flex',
+            gap: 3,
+            
+          }}
+        >
+          {/* <Typography variant="caption" color="black" 
+            fontWeight="bold" 
+            sx={{ 
+              textAlign: 'center',
+              width: '100%',
+            }}>
+            Legends
+          </Typography> */}
+          
+          <Typography variant="body2" color="black" 
+            sx={{
+            display: 'flex',
+            gap: 1,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <RectangleIcon sx={{ fontSize: 15, color: 'Green' }} />
+            FOBN1 RPL
+          </Typography>
+
+
+          <Typography variant="body2" color="black" 
+            sx={{
+            display: 'flex',
+            gap: 1,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+          <RectangleIcon sx={{ fontSize: 15, color: 'Yellow', }} />
+            FOBN2 RPL
+          </Typography>
+          <Typography variant="body2" color="black" 
+            sx={{
+            display: 'flex',
+            gap: 1,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <RectangleIcon sx={{ fontSize: 15, color: 'Blue' }} />
+            NDTN RPL
+          </Typography>
+        </Box>
     </Box>
 
 
