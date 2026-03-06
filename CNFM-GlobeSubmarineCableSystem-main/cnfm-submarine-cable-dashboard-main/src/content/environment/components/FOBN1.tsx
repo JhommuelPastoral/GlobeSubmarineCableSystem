@@ -33,7 +33,7 @@ type SegmentData = {
 
 // Segment list
 const SEGMENTS: SegmentData[] = [
-  { id: 'S1', label: 'S1 | Nasugbo - Mamburao', start: 'Nasugbo', end: 'Mamburao', endpoint: '/nasugbo_mamburao_1' },
+  { id: 'S1', label: 'S1 | Nasugbo - Mamburao', start: 'Nasugbo', end: 'Mamburao', endpoint: '/nasugbo_mamburao' },
   { id: 'S2', label: 'S2 | San Jose - Mamburao', start: 'San Jose', end: 'Mamburao', endpoint: '/san_jose_mamburao' },
   { id: 'S3', label: 'S3 | San Jose - Roxas', start: 'San Jose', end: 'Roxas', endpoint: '/san_jose_roxas' },
   { id: 'S4', label: 'S4 | Cadiz - Roxas', start: 'Cadiz', end: 'Roxas', endpoint: '/cadiz_roxas' },
