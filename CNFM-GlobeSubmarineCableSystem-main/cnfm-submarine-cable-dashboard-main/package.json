@@ -5,7 +5,9 @@
   "description": "",
   "author": {
     "name": "xtan404",
-    "url": "https://github.com/xtan404"
+    "url": "https://github.com/xtan404",
+    "author1": "Jhommuel Pastoral",
+    "url1": "https://github.com/JhommuelPastoral"
   },
   "private": false,
   "dependencies": {
