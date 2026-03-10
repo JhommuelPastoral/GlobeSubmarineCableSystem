@@ -1412,8 +1412,8 @@ app.get("/sjc-rpl-s3", (req, res) => {
   const query = `
     SELECT
       event,
-      (latitude + latitude2) AS full_latitude,
-      (longitude + longitude2) AS full_longitude,
+      (latitude + (latitude2 * 60)) AS full_latitude,
+      (longitude + (longitude2 * 60)) AS full_longitude,
       cable_cumulative_total,
       approx_depth AS Depth,
       date_installed
@@ -1699,8 +1699,8 @@ app.get("/sea-us-rpl-s1", (req, res) => {
   const query = `
     SELECT
       event,
-      (latitude + latitude2) AS full_latitude,
-      (longitude + longitude2) AS full_longitude,
+      (latitude + (latitude2 * 60)) AS full_latitude,
+      (longitude + (longitude2 * 60)) AS full_longitude,
       cable_cumulative_total,
       approx_depth AS Depth
     FROM sea_us_rpl_s1
@@ -1723,8 +1723,8 @@ app.get("/sea-us-rpl-s2", (req, res) => {
   const query = `
     SELECT
       event,
-      (latitude + latitude2) AS full_latitude,
-      (longitude + longitude2) AS full_longitude,
+      (latitude + (latitude2 )) AS full_latitude,
+      (longitude + (longitude2 )) AS full_longitude,
       cable_cumulative_total,
       approx_depth AS Depth,
       date_installed
@@ -1749,8 +1749,8 @@ app.get("/sea-us-rpl-s3", (req, res) => {
   const query = `
     SELECT DISTINCT
       event,
-      ROUND((latitude + latitude2),4) AS full_latitude,
-      ROUND((longitude + longitude2),4) AS full_longitude,
+      ROUND((latitude + (latitude2 *60)),4) AS full_latitude,
+      ROUND((longitude + (longitude2 *60)),4) AS full_longitude,
       cable_cumulative_total,
       approx_depth AS Depth
     FROM sea_us_rpl_s3
@@ -1773,6 +1773,7 @@ app.get("/sea-us-rpl-s4", (req, res) => {
     SELECT
       event,
       latitude AS full_latitude,
+      longitude AS full_longitude,
       CASE 
         WHEN (longitude + longitude2) < 0 
         THEN (longitude + longitude2) + 360 
@@ -1839,7 +1840,7 @@ app.get("/sea-us-rpl-s6", (req, res) => {
     FROM sea_us_rpl_s6
     WHERE 
       (latitude + latitude2) != 0 
-      AND (longitude + longitude2) != 0 
+      AND (longitude + longitude2) != 0
   `;
 
   db.query(query, (err, results) => {
@@ -1847,7 +1848,6 @@ app.get("/sea-us-rpl-s6", (req, res) => {
       console.error("Error fetching sea_us_rpl_s6 data:", err);
       return res.status(500).json({ error: "Failed to fetch data" });
     }
-
     res.json(results);
   });
 });

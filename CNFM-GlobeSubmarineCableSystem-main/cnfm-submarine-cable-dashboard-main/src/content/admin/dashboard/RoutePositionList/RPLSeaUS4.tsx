@@ -152,7 +152,6 @@ function RPLSeaUS4() {
       try {
         const response = await fetch(`${apiBaseUrl}${port}/sea-us-rpl-s4`);
         const result = await response.json();
-
         if (Array.isArray(result) && result.length > 0) {
           const cumulativeValues = result
             .map((item: any) => item.cable_cumulative_total)
@@ -197,13 +196,10 @@ function RPLSeaUS4() {
             .map((item: any, index: number) => {
               // Try different possible coordinate field names
               const lat = item.full_latitude ?? item.latitude ?? item.lat;
-              const lng =
-                item.full_longitude ?? item.longitude ?? item.lng ?? item.lon;
-
+              const lng = item.full_longitude ?? item.longitude ?? item.lng ?? item.lon;
               // Convert strings to numbers if needed
               const parsedLat = typeof lat === 'string' ? parseFloat(lat) : lat;
               const parsedLng = typeof lng === 'string' ? parseFloat(lng) : lng;
-
               return {
                 lat: parsedLat,
                 lng: parsedLng,

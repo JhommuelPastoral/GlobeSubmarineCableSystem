@@ -112,6 +112,7 @@ const CutTGNIA: React.FC = () => {
   const [faultDate, setFaultDate] = useState<string>('');
   const [faultTime, setFaultTime] = useState<string>('');
   const [submitting, setSubmitting] = useState(false);
+  const [nodePath, setNodePath] = useState([]);
   const [toast, setToast] = useState<{
     open: boolean;
     message: string;
@@ -195,6 +196,33 @@ const CutTGNIA: React.FC = () => {
     }
   }, [apiBaseUrl, port, location.search]);
 
+// ---------------------------
+// Haversine Helpers
+// ---------------------------
+function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 6371; // Earth radius in km
+  const toRad = (deg: number) => deg * (Math.PI / 180);
+
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) ** 2;
+
+  const c = 2 * Math.asin(Math.sqrt(a));
+
+  return R * c;
+}
+
+function getTotalDistance(route: number[][]) {
+  let total = 0;
+  for (let i = 0; i < route.length - 1; i++) {
+    total += haversineDistance(route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
+  }
+  return total;
+}
   // Fetch all segment routes
   useEffect(() => {
     let isMounted = true;
@@ -240,7 +268,6 @@ const CutTGNIA: React.FC = () => {
             return { id: seg.id, store: { coords, meta } as SegmentStore };
           })
         );
-
         if (!isMounted) return;
         const merged: Record<string, SegmentStore> = {};
         results.forEach(({ id, store }) => {
@@ -263,6 +290,7 @@ const CutTGNIA: React.FC = () => {
     };
   }, [apiBaseUrl, port]);
 
+
   const getSegmentLength = (segmentId: string) => {
     const bounds = getSegmentBounds(segmentId);
     return bounds.length;
@@ -270,15 +298,69 @@ const CutTGNIA: React.FC = () => {
 
   const getSegmentBounds = (segmentId: string) => {
     const pts = routes[segmentId]?.meta || [];
+    const formatted = pts
+      .filter((item: any) => item.lat !== null && item.lng !== null)
+      .map((item: any) => [item.lat, item.lng]);
+    // console.log('formatted', formatted);
+
     if (!pts.length) return { min: 0, max: 0, length: 0 };
     const kms = pts.map((p) => p.km).filter((v) => Number.isFinite(v));
     const min = Math.min(...kms);
     const max = Math.max(...kms);
-    const length = Math.max(0, max - min);
+    // const length = Math.max(0, max - min);
+    const length = getTotalDistance(formatted);
     return { min, max, length };
   };
+  function findPath(graph, start, end) {
+    const queue = [[start]];
+    const visited = new Set();
 
+    while (queue.length > 0) {
+      const path = queue.shift();
+      const node = path[path.length - 1];
+
+      if (node === end) {
+        return path;
+      }
+
+      if (!visited.has(node)) {
+        visited.add(node);
+
+        for (const neighbor of graph[node]) {
+          const newPath = [...path, neighbor];
+          queue.push(newPath);
+        }
+      }
+    }
+
+    return null;
+  }
   const pathSegments = useMemo(() => {
+    const graph = {
+      S1: ["S7"],
+
+      S2: ["S7", "S3", "S8"],
+
+      S3: ["S2", "S4", "S9"],
+
+      S4: ["S3", "S5", "S10"],
+
+      S5: ["S4", "S6", "S11"],
+
+      S6: ["S5", "S12"],
+
+      S7: ["S1", "S2"],
+
+      S8: ["S2"],
+
+      S9: ["S3"],
+
+      S10: ["S4"],
+
+      S11: ["S5"],
+
+      S12: ["S6"]
+    };
     const ids = SEGMENTS.map((s) => s.id);
     const startIdx = ids.indexOf(startSegment);
     if (startIdx === -1) return [];
@@ -287,17 +369,21 @@ const CutTGNIA: React.FC = () => {
     if (endIdx === -1) return [startSegment];
     const from = Math.min(startIdx, endIdx);
     const to = Math.max(startIdx, endIdx);
-    const slice = ids.slice(from, to + 1);
-    return startIdx <= endIdx ? slice : slice.reverse();
+    // const slice = ids.slice(from, to + 1);
+    const path = findPath(graph, startSegment, endSegment).sort();
+    setNodePath(path);
+    console.log('path');
+    return startIdx <= endIdx ? path : path.reverse();
   }, [startSegment, endSegment]);
 
   const totalSpan = useMemo(() => {
     return pathSegments.reduce((sum, segId) => {
       const len = getSegmentLength(segId);
+      console.log('len', len);
       return Number.isFinite(len) ? sum + len : sum;
     }, 0);
   }, [pathSegments, routes]);
-
+  
   useEffect(() => {
     setTargetKm(0);
     setTargetKmInput('');
@@ -343,7 +429,7 @@ const CutTGNIA: React.FC = () => {
   const resolveSegmentForKm = (km: number) => {
     if (!pathSegments.length) return null;
     let remaining = km;
-
+    console.log('pathsegmentlength', pathSegments.length);
     for (let i = 0; i < pathSegments.length; i++) {
       const segId = pathSegments[i];
       const segLen = getSegmentLength(segId);
@@ -826,6 +912,7 @@ const CutTGNIA: React.FC = () => {
     }
     const bounded = clampTarget(targetKm);
     const point = preview;
+    // console.log('point', point);
     if (!point) {
       setToast({
         open: true,
@@ -869,8 +956,9 @@ const CutTGNIA: React.FC = () => {
     payload.cable = 'tgnia';
     payload.segment = `s${segNum}`;
     payload.source_table = `tgnia_rpl_s${segNum}`;
+    
     if (shouldRename) payload.new_cut_id = finalCutId;
-
+    // console.log(`Payload Data`, payload);
     setSubmitting(true);
     try {
       const url = editingCutId
