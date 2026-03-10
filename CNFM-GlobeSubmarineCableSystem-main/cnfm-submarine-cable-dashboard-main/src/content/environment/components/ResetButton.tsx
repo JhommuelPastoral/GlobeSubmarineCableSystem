@@ -4,9 +4,48 @@ import { useEffect } from 'react';
 import L from 'leaflet';
 import { useNavigate } from 'react-router-dom';
 import {changeSimulator} from 'src/store/store'
+import Swal from 'sweetalert2';
+
 const ResetButton = () => {
   const map = useMap();
   const {nav, onChangeNav} = changeSimulator(); 
+  const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+  const port = process.env.REACT_APP_PORT;
+
+
+  const handleReset = async () => {
+    const confirm = await Swal.fire({
+      title: 'Reset simulation?',
+      text: 'This will remove all simulated cable cuts.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Yes, reset',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    try {
+      const response = await fetch(`${apiBaseUrl}${port}/delete-cable-cuts`, {
+        method: 'DELETE'
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        await Swal.fire('Reset complete', 'Simulation has been cleared.', 'success');
+        window.location.reload();
+      } else {
+        throw new Error(result.message || 'Failed to clear data');
+      }
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Something went wrong';
+      Swal.fire('Error!', message, 'error');
+    }
+  };  
   useEffect(() => {
     // Remove default attribution control
     map.attributionControl.remove();
@@ -64,8 +103,7 @@ const ResetButton = () => {
 
         // Add click behavior
         button.onclick = function () {
-          if(nav === 'Global') onChangeNav('Phil');
-          else onChangeNav('Global');
+          handleReset();
         };
 
         buttonContainer.appendChild(button);

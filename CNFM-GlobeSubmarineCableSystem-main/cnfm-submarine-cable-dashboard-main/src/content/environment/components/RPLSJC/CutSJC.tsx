@@ -469,14 +469,58 @@ const CutSJC: React.FC = () => {
     };
   }, [apiBaseUrl, port]);
 
-  const getSegmentLength = (segmentId: string) => {
-    if (!segmentId) return 0;
-    const pts = routes[segmentId]?.meta || [];
-    if (!pts.length) return 0;
-    return pts[pts.length - 1].km;
-  };
+const getSegmentLength = (segmentId: string) => {
+  if (!segmentId) return 0;
+
+  const pts = routes[segmentId]?.meta || [];
+  if (!pts.length) return 0;
+
+  const first = pts[0].km;
+  const last = pts[pts.length - 1].km;
+
+  return Math.abs(last - first);
+};
+  function findPath(graph, start, end) {
+    const queue = [[start]];
+    const visited = new Set();
+
+    while (queue.length > 0) {
+      const path = queue.shift();
+      const node = path[path.length - 1];
+
+      if (node === end) {
+        return path;
+      }
+
+      if (!visited.has(node)) {
+        visited.add(node);
+
+        for (const neighbor of graph[node]) {
+          const newPath = [...path, neighbor];
+          queue.push(newPath);
+        }
+      }
+    }
+
+    return null;
+  }
 
   const pathSegments = useMemo(() => {
+    const graph = {
+      S1: ["S3"],
+      S3: ["S4", "S1"],
+      S4: ["S5", "S3"],
+      S5: ["S4", "S6", "S7"],
+      S6: ["S5"],
+      S7: ["S5", "S9", "S8"],
+      S8: ["S7"],
+      S9: ["S7", "S10", "S11"],
+      S10: ["S9"],
+      S11: ["S9", "S12", "S13"],
+      S12: ["S11"],
+      S13: ["S11"]
+    };
+
     const ids = SEGMENTS.map((s) => s.id);
     const startIdx = ids.indexOf(startSegment);
     if (startIdx === -1) return [];
@@ -486,7 +530,9 @@ const CutSJC: React.FC = () => {
     const from = Math.min(startIdx, endIdx);
     const to = Math.max(startIdx, endIdx);
     const slice = ids.slice(from, to + 1);
-    return startIdx <= endIdx ? slice : slice.reverse();
+    const path = findPath(graph, startSegment, endSegment)
+      .sort((a, b) => Number(a.slice(1)) - Number(b.slice(1)));  
+    return startIdx <= endIdx ? path : path.reverse();
   }, [startSegment, endSegment]);
 
   const totalSpan = useMemo(() => {

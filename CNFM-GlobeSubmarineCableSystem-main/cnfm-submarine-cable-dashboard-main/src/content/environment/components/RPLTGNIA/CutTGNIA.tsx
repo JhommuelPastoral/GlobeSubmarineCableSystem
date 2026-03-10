@@ -370,7 +370,8 @@ function getTotalDistance(route: number[][]) {
     const from = Math.min(startIdx, endIdx);
     const to = Math.max(startIdx, endIdx);
     // const slice = ids.slice(from, to + 1);
-    const path = findPath(graph, startSegment, endSegment).sort();
+    const path = findPath(graph, startSegment, endSegment)
+      .sort((a, b) => Number(a.slice(1)) - Number(b.slice(1)));
     setNodePath(path);
     console.log('path');
     return startIdx <= endIdx ? path : path.reverse();
@@ -429,7 +430,6 @@ function getTotalDistance(route: number[][]) {
   const resolveSegmentForKm = (km: number) => {
     if (!pathSegments.length) return null;
     let remaining = km;
-    console.log('pathsegmentlength', pathSegments.length);
     for (let i = 0; i < pathSegments.length; i++) {
       const segId = pathSegments[i];
       const segLen = getSegmentLength(segId);
