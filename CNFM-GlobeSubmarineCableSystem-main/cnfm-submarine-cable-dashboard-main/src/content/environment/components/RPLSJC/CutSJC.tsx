@@ -506,20 +506,36 @@ const getSegmentLength = (segmentId: string) => {
   }
 
   const pathSegments = useMemo(() => {
+    // const graph = {
+    //   S1: ["S3"],
+    //   S3: ["S4", "S1"],
+    //   S4: ["S5", "S3"],
+    //   S5: ["S4", "S6", "S7"],
+    //   S6: ["S5"],
+    //   S7: ["S5", "S9", "S8"],
+    //   S8: ["S7"],
+    //   S9: ["S7", "S10", "S11"],
+    //   S10: ["S9"],
+    //   S11: ["S9", "S12", "S13"],
+    //   S12: ["S11"],
+    //   S13: ["S11"]
+    // };
+
     const graph = {
       S1: ["S3"],
       S3: ["S4", "S1"],
       S4: ["S5", "S3"],
       S5: ["S4", "S6", "S7"],
-      S6: ["S5"],
+      S6: ["S5", "S7"],
       S7: ["S5", "S9", "S8"],
-      S8: ["S7"],
-      S9: ["S7", "S10", "S11"],
-      S10: ["S9"],
-      S11: ["S9", "S12", "S13"],
-      S12: ["S11"],
-      S13: ["S11"]
+      S8: ["S7","S9"],
+      S9: ["S7", "S10", "S11", "S8"],
+      S10: ["S9" , "S11"],
+      S11: ["S9", "S12", "S13", "S10"],
+      S12: ["S11", "S13"],
+      S13: ["S11", "S12"]
     };
+
 
     const ids = SEGMENTS.map((s) => s.id);
     const startIdx = ids.indexOf(startSegment);
@@ -531,7 +547,8 @@ const getSegmentLength = (segmentId: string) => {
     const to = Math.max(startIdx, endIdx);
     const slice = ids.slice(from, to + 1);
     const path = findPath(graph, startSegment, endSegment)
-      .sort((a, b) => Number(a.slice(1)) - Number(b.slice(1)));  
+      .sort((a, b) => Number(a.slice(1)) - Number(b.slice(1))); 
+    console.log("PATH", path); 
     return startIdx <= endIdx ? path : path.reverse();
   }, [startSegment, endSegment]);
 
