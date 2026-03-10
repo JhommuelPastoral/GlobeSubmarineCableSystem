@@ -336,28 +336,53 @@ function getTotalDistance(route: number[][]) {
     return null;
   }
   const pathSegments = useMemo(() => {
+    // const graph = {
+    //   S1: ["S7"],
+
+    //   S2: ["S7", "S3", "S8"],
+
+    //   S3: ["S2", "S4", "S9"],
+
+    //   S4: ["S3", "S5", "S10"],
+
+    //   S5: ["S4", "S6", "S11"],
+
+    //   S6: ["S5", "S12"],
+
+    //   S7: ["S1", "S2"],
+
+    //   S8: ["S2"],
+
+    //   S9: ["S3"],
+
+    //   S10: ["S4"],
+
+    //   S11: ["S5"],
+
+    //   S12: ["S6"]
+    // };
     const graph = {
-      S1: ["S7"],
+      S1: ["S7", "S2"],
 
-      S2: ["S7", "S3", "S8"],
+      S2: ["S7", "S3", "S8", "S1"],
 
-      S3: ["S2", "S4", "S9"],
+      S3: ["S2", "S4", "S9", "S8"],
 
-      S4: ["S3", "S5", "S10"],
+      S4: ["S3", "S5", "S10", "S9"],
 
-      S5: ["S4", "S6", "S11"],
+      S5: ["S4", "S6", "S11", "S10"],
 
-      S6: ["S5", "S12"],
+      S6: ["S5", "S12", "S11"],
 
       S7: ["S1", "S2"],
 
-      S8: ["S2"],
+      S8: ["S2", "S3"],
 
-      S9: ["S3"],
+      S9: ["S3", "S4"],
 
-      S10: ["S4"],
+      S10: ["S4", "S5"],
 
-      S11: ["S5"],
+      S11: ["S5", "S6"],
 
       S12: ["S6"]
     };
@@ -373,7 +398,8 @@ function getTotalDistance(route: number[][]) {
     const path = findPath(graph, startSegment, endSegment)
       .sort((a, b) => Number(a.slice(1)) - Number(b.slice(1)));
     setNodePath(path);
-    console.log('path');
+    const notSortedPath = findPath(graph, startSegment, endSegment);
+    console.log('path', notSortedPath);
     return startIdx <= endIdx ? path : path.reverse();
   }, [startSegment, endSegment]);
 
