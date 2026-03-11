@@ -51,7 +51,30 @@ export default function BuSanJose() {
 
     loadMap()
   }, [apiConfig]);
+function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 6371; // Earth radius in km
+  const toRad = (deg: number) => deg * (Math.PI / 180);
 
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) ** 2;
+
+  const c = 2 * Math.asin(Math.sqrt(a));
+
+  return R * c;
+}
+
+function getTotalDistance(route: number[][]) {
+  let total = 0;
+  for (let i = 0; i < route.length - 1; i++) {
+    total += haversineDistance(route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
+  }
+  return total;
+}
 
   // fetch polylines data
   useEffect(()=>{
@@ -78,13 +101,13 @@ export default function BuSanJose() {
             return [lat, lng]
         });
 
-        const formattedTotalLengthKm = result
-          .filter((item: any) => item.total_length_km !== null && item.total_length_km !== 0)
-          .reduce((sum: any, item: any) => sum + item.total_length_km, 0);
+        // const formattedTotalLengthKm = result
+        //   .filter((item: any) => item.total_length_km !== null && item.total_length_km !== 0)
+        //   .reduce((sum: any, item: any) => sum + item.total_length_km, 0);
 
         // Filtered the repeater;
         const filteredRepeater = result.filter((item: any) => item.repeater !== null && item.repeater !== "").map((item: any) => item.repeater);
-
+        const formattedTotalLengthKm = getTotalDistance(formatted);
         setLocation(formatted);
         setTotalLengthKm(formattedTotalLengthKm);
         setData(result);

@@ -113,6 +113,7 @@ const CutTGNIA: React.FC = () => {
   const [faultTime, setFaultTime] = useState<string>('');
   const [submitting, setSubmitting] = useState(false);
   const [nodePath, setNodePath] = useState([]);
+  const [isReversed, setIsReversed] = useState(false);
   const [toast, setToast] = useState<{
     open: boolean;
     message: string;
@@ -307,8 +308,8 @@ function getTotalDistance(route: number[][]) {
     const kms = pts.map((p) => p.km).filter((v) => Number.isFinite(v));
     const min = Math.min(...kms);
     const max = Math.max(...kms);
-    // const length = Math.max(0, max - min);
-    const length = getTotalDistance(formatted);
+    const length = Math.max(0, max - min);
+    // const length = getTotalDistance(formatted);
     return { min, max, length };
   };
   function findPath(graph, start, end) {
@@ -395,14 +396,18 @@ function getTotalDistance(route: number[][]) {
     const from = Math.min(startIdx, endIdx);
     const to = Math.max(startIdx, endIdx);
     // const slice = ids.slice(from, to + 1);
-    const path = findPath(graph, startSegment, endSegment)
-      .sort((a, b) => Number(a.slice(1)) - Number(b.slice(1)));
-    setNodePath(path);
+    const path = findPath(graph, startSegment, endSegment);
+      // .sort((a, b) => Number(a.slice(1)) - Number(b.slice(1)));
+    setNodePath(path.slice(1, path.length));
     const notSortedPath = findPath(graph, startSegment, endSegment);
     console.log('path', notSortedPath);
-    return startIdx <= endIdx ? path : path.reverse();
+    if(startIdx > endIdx) setIsReversed(true);
+    else setIsReversed(false);
+    
+    return path
+    // return startIdx <= endIdx ? path : path.reverse();
   }, [startSegment, endSegment]);
-
+  
   const totalSpan = useMemo(() => {
     return pathSegments.reduce((sum, segId) => {
       const len = getSegmentLength(segId);
@@ -745,7 +750,8 @@ function getTotalDistance(route: number[][]) {
     const { min, max, length } = getSegmentBounds(segmentId);
     const segLen = length;
     const kmClamped = Math.min(Math.max(km, 0), segLen);
-    const mirror = isSegmentMirrored(segmentId);
+    // const mirror = isSegmentMirrored(segmentId);
+    const mirror = isReversed ? nodePath.includes(segmentId) : false; 
     const kmForLookup = mirror ? max - kmClamped : min + kmClamped;
 
     const cableType = getNearestCableType(meta, kmForLookup);

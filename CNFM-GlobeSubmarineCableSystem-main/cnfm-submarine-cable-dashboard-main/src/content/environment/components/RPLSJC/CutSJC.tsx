@@ -22,6 +22,7 @@ import {
 } from '@mui/material';
 import ContentCutIcon from '@mui/icons-material/ContentCut';
 import { useDeletedCables } from '../../../../hooks/useApi';
+import { start } from 'node:repl';
 
 type RoutePoint = {
   km: number;
@@ -319,6 +320,8 @@ const CutSJC: React.FC = () => {
   const [faultDate, setFaultDate] = useState<string>('');
   const [faultTime, setFaultTime] = useState<string>('');
   const [submitting, setSubmitting] = useState(false);
+  const [nodePath, setNodePath] = useState([]);
+  const [isReversed, setIsReversed] = useState(false);
   const [toast, setToast] = useState<{
     open: boolean;
     message: string;
@@ -468,17 +471,49 @@ const CutSJC: React.FC = () => {
       isMounted = false;
     };
   }, [apiBaseUrl, port]);
+function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 6371; // Earth radius in km
+  const toRad = (deg: number) => deg * (Math.PI / 180);
 
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) ** 2;
+
+  const c = 2 * Math.asin(Math.sqrt(a));
+
+  return R * c;
+}
+
+function getTotalDistance(route: number[][]) {
+  let total = 0;
+  for (let i = 0; i < route.length - 1; i++) {
+    total += haversineDistance(route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
+  }
+  return total;
+}
 const getSegmentLength = (segmentId: string) => {
   if (!segmentId) return 0;
 
   const pts = routes[segmentId]?.meta || [];
   if (!pts.length) return 0;
-
+  const formatted = pts
+    .filter((item: any) => item.lat !== null && item.lng !== null)
+    .map((item: any) => [item.lat, item.lng]);
   const first = pts[0].km;
   const last = pts[pts.length - 1].km;
-
-  return Math.abs(last - first);
+  const kms = pts.map((p) => p.km).filter((v) => Number.isFinite(v));
+  const min = Math.min(...kms);
+  const max = Math.max(...kms);
+  const length = Math.max(0, max - min);
+  // const length = getTotalDistance(formatted);
+  // console.log(first, last);
+  // return Math.abs(last - first);
+  // return pts[pts.length - 1].km; 
+  return length;
 };
   function findPath(graph, start, end) {
     const queue = [[start]];
@@ -521,21 +556,34 @@ const getSegmentLength = (segmentId: string) => {
     //   S13: ["S11"]
     // };
 
+    // const graph = {
+    //   S1: ["S3"],
+    //   S3: ["S4", "S1"],
+    //   S4: ["S5", "S3"],
+    //   S5: ["S4", "S6", "S7"],
+    //   S6: ["S5", "S7"],
+    //   S7: ["S5", "S9", "S8"],
+    //   S8: ["S7","S9"],
+    //   S9: ["S7", "S10", "S11", "S8"],
+    //   S10: ["S9" , "S11"],
+    //   S11: ["S9", "S12", "S13", "S10"],
+    //   S12: ["S11", "S13"],
+    //   S13: ["S11", "S12"]
+    // };
     const graph = {
       S1: ["S3"],
-      S3: ["S4", "S1"],
-      S4: ["S5", "S3"],
-      S5: ["S4", "S6", "S7"],
-      S6: ["S5", "S7"],
-      S7: ["S5", "S9", "S8"],
+      S3: ["S1","S4","S5"],
+      S4: ["S3","S5"],
+      S5: ["S3","S4","S6","S7"],
+      S6: ["S5","S7"],
+      S7: ["S5","S6","S8","S9"],
       S8: ["S7","S9"],
-      S9: ["S7", "S10", "S11", "S8"],
-      S10: ["S9" , "S11"],
-      S11: ["S9", "S12", "S13", "S10"],
-      S12: ["S11", "S13"],
-      S13: ["S11", "S12"]
+      S9: ["S7","S8","S10","S11"],
+      S10: ["S9","S11"],
+      S11: ["S9","S10","S12","S13"],
+      S12: ["S11","S13"],
+      S13: ["S11","S12"]
     };
-
 
     const ids = SEGMENTS.map((s) => s.id);
     const startIdx = ids.indexOf(startSegment);
@@ -547,9 +595,13 @@ const getSegmentLength = (segmentId: string) => {
     const to = Math.max(startIdx, endIdx);
     const slice = ids.slice(from, to + 1);
     const path = findPath(graph, startSegment, endSegment)
-      .sort((a, b) => Number(a.slice(1)) - Number(b.slice(1))); 
+      // .sort((a, b) => Number(a.slice(1)) - Number(b.slice(1))); 
     console.log("PATH", path); 
-    return startIdx <= endIdx ? path : path.reverse();
+    setNodePath(path.slice(1, path.length));
+    if(startIdx > endIdx) setIsReversed(true);
+    else setIsReversed(false);
+    return path;
+    // return startIdx <= endIdx ? path : path.reverse();
   }, [startSegment, endSegment]);
 
   const totalSpan = useMemo(() => {
@@ -675,7 +727,7 @@ const getSegmentLength = (segmentId: string) => {
     if (prev) return prev.depth;
     return null;
   };
-
+  
   // Mirroring matrix for SJC (normal = current order, mirrored = reversed)
   const shouldMirrorSegment = (segmentId: string, a: string, b: string) => {
     const mirrorMap = SJC_MIRROR_RULES;
@@ -700,6 +752,7 @@ const getSegmentLength = (segmentId: string) => {
       : false;
     return rulesForStart || false;
   };
+  console.log(nodePath)
 
   const interpolatePoint = (
     segmentId: string,
@@ -718,9 +771,15 @@ const getSegmentLength = (segmentId: string) => {
       startSegment,
       endSegment
     );
-    const kmForLookup = shouldMirror
-      ? Math.max(0, segLen - kmClamped)
-      : kmClamped;
+    // const kmForLookup = shouldMirror
+    //   ? Math.max(0, segLen - kmClamped)
+    //   : kmClamped;
+    const kmForLookup =
+      isReversed
+        ? nodePath.includes(segmentId)
+          ? Math.max(0, segLen - kmClamped)
+          : kmClamped : kmClamped;
+
 
     const cableType = getNearestCableType(meta, kmForLookup);
     const depthInterp = getInterpolatedDepth(meta, kmForLookup);
