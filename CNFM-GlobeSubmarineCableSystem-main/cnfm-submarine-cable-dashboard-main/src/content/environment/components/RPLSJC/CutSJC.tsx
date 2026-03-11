@@ -453,7 +453,7 @@ const CutSJC: React.FC = () => {
         if (!isMounted) return;
         const merged: Record<string, SegmentStore> = {};
         results.forEach(({ id, store }) => {
-          merged[id] = store;
+            merged[id] = store;
         });
         setRoutes(merged);
       } catch (err: any) {
@@ -471,6 +471,7 @@ const CutSJC: React.FC = () => {
       isMounted = false;
     };
   }, [apiBaseUrl, port]);
+  console.log("routes", routes);
 function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371; // Earth radius in km
   const toRad = (deg: number) => deg * (Math.PI / 180);
@@ -600,6 +601,7 @@ const getSegmentLength = (segmentId: string) => {
     setNodePath(path.slice(1, path.length));
     if(startIdx > endIdx) setIsReversed(true);
     else setIsReversed(false);
+    // setIsReversed(true);
     return path;
     // return startIdx <= endIdx ? path : path.reverse();
   }, [startSegment, endSegment]);
@@ -752,7 +754,7 @@ const getSegmentLength = (segmentId: string) => {
       : false;
     return rulesForStart || false;
   };
-  console.log(nodePath)
+  console.log(nodePath, 'Is reversed?', isReversed);
 
   const interpolatePoint = (
     segmentId: string,
@@ -766,19 +768,22 @@ const getSegmentLength = (segmentId: string) => {
 
     const segLen = getSegmentLength(segmentId);
     const kmClamped = Math.min(Math.max(km, 0), segLen);
-    const shouldMirror = shouldMirrorSegment(
-      segmentId,
-      startSegment,
-      endSegment
-    );
-    // const kmForLookup = shouldMirror
-    //   ? Math.max(0, segLen - kmClamped)
-    //   : kmClamped;
-    const kmForLookup =
-      isReversed
-        ? nodePath.includes(segmentId)
-          ? Math.max(0, segLen - kmClamped)
-          : kmClamped : kmClamped;
+    // const shouldMirror = shouldMirrorSegment(
+    //   segmentId,
+    //   startSegment,
+    //   endSegment
+    // );
+    const shouldMirror = isReversed ? nodePath.includes(segmentId) : false;
+    // const shouldMirror = segmentId === "S9" && isReversed === false ? false : isReversed ? nodePath.includes(segmentId) : false;
+    const kmForLookup = shouldMirror
+      ? Math.max(0, segLen - kmClamped)
+      : kmClamped;
+    // const kmForLookup =
+    //   isReversed
+    //     ? nodePath.includes(segmentId)
+    //       ? Math.max(0, segLen - kmClamped)
+    //       : kmClamped 
+    //     : kmClamped;
 
 
     const cableType = getNearestCableType(meta, kmForLookup);
