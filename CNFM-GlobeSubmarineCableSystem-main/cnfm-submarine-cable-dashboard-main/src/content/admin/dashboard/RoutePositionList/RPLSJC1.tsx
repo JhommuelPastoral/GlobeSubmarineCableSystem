@@ -163,13 +163,13 @@ function RPLSJC1() {
       try {
         const response = await fetch(`${apiBaseUrl}${port}/sjc-rpl-s1`);
         const result = await response.json();
-
+        // console.log("sjc-rpl-s1",result);
         if (Array.isArray(result) && result.length > 0) {
           const cumulativeValues = result
             .map((item: any) => item.cable_cumulative_total)
             .map((value: any) => (typeof value === 'string' ? parseFloat(value) : value))
             .filter((value: any) => typeof value === 'number' && !Number.isNaN(value));
-
+          console.log('Fetched polyline data: sjc-rpl-s1', cumulativeValues);
           setSegmentLengthKm(
             cumulativeValues.length ? Math.max(...cumulativeValues) : null
           );
@@ -217,7 +217,6 @@ function RPLSJC1() {
               (item: any) =>
                 [item.full_latitude, item.full_longitude] as [number, number]
             );
-
           setPositions(mappedPositions);
           clearInterval(interval);
         } else {

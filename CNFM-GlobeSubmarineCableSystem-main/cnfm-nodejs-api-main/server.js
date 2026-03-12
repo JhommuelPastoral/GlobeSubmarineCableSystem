@@ -557,6 +557,32 @@ app.delete("/delete-cable-cuts", async (req, res) => {
   }
 });
 
+app.delete("/delete-cable-cuts-phil", async (req, res) => {
+  try {
+    // db.query("DELETE FROM cable_cuts_phil" (err, results) => {
+    //   if (err) {
+    //     console.error("Error fetching data:", err);
+    //     return res.status(500).json({ error: "Failed to fetch data" });
+    //   }
+
+    // });
+    await db.query("DELETE FROM cable_cuts_phil");
+
+    res.json({
+      success: true,
+      message: "Cleared all cut simulations successfully.",
+    });
+  } catch (error) {
+    console.error("Error clearing simulation data:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to clear simulation data!",
+      error: error.message,
+    });
+  }
+});
+
+
 // API: Update an existing cable cut
 app.put("/cable-cuts/:cutId", async (req, res) => {
   const { cutId } = req.params;
@@ -1388,8 +1414,8 @@ app.get("/sjc-rpl-s1", (req, res) => {
   const query = `
     SELECT
       event,
-      (latitude + latitude2) AS full_latitude,
-      (longitude + longitude2) AS full_longitude,
+      (latitude + (latitude2 * 60)) AS full_latitude,
+      (longitude + (longitude2 * 60)) AS full_longitude,
       cable_cumulative_total,
       approx_depth AS Depth
     FROM sjc_rpl_s1
@@ -1403,7 +1429,7 @@ app.get("/sjc-rpl-s1", (req, res) => {
       console.error("Error fetching sjc_rpl_s1 data:", err);
       return res.status(500).json({ error: "Failed to fetch data" });
     }
-
+    // console.log(results);
     res.json(results);
   });
 });
@@ -2448,6 +2474,7 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
     // Process the CSV file
     fs.createReadStream(filePath)
       .pipe(csv({ headers: headers, skipLines: 1 }))
+
       .on("data", (row) => {
         // Skip completely empty rows
         if (

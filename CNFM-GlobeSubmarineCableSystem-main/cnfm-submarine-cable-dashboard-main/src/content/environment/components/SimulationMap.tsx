@@ -56,6 +56,7 @@ import CircleRoundedIcon from '@mui/icons-material/CircleRounded';
 const DeletedCablesSidebar = lazy(() => import('src/content/admin/components/DeletedCablesSidebar'));
 const HideToolTip = lazy(() => import('src/content/admin/components/HideToolTip'));
 const DeletedCablesSidebarPhil = lazy(() => import('src/phil/deletedCablePhil'));
+const ResetButtonPhil = lazy(() => import('src/content/environment/components/ResetButton_phil'));
 import Fobn1Button from './FOBN1';
 import Fobn2Button from './FOBN2';
 import NDTNButton from './NDTN';
@@ -620,11 +621,13 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
             <Fobn1Button />
             <Fobn2Button />
             <NDTNButton/>
-  
+            <Suspense>
+            <ResetButtonPhil/>
+              
+            </Suspense>
             <Suspense fallback={null}>
               <AllRoutes />
             </Suspense>
-
 
             <Box
               sx={{

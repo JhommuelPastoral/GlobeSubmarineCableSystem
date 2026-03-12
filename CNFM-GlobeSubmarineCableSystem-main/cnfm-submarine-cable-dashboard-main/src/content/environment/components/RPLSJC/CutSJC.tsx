@@ -453,7 +453,7 @@ const CutSJC: React.FC = () => {
         if (!isMounted) return;
         const merged: Record<string, SegmentStore> = {};
         results.forEach(({ id, store }) => {
-            merged[id] = store;
+              merged[id] = store;
         });
         setRoutes(merged);
       } catch (err: any) {
@@ -471,7 +471,6 @@ const CutSJC: React.FC = () => {
       isMounted = false;
     };
   }, [apiBaseUrl, port]);
-  console.log("routes", routes);
 function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371; // Earth radius in km
   const toRad = (deg: number) => deg * (Math.PI / 180);
@@ -509,7 +508,7 @@ const getSegmentLength = (segmentId: string) => {
   const kms = pts.map((p) => p.km).filter((v) => Number.isFinite(v));
   const min = Math.min(...kms);
   const max = Math.max(...kms);
-  const length = Math.max(0, max - min);
+  const length = Math.max(0, max);
   // const length = getTotalDistance(formatted);
   // console.log(first, last);
   // return Math.abs(last - first);
@@ -599,7 +598,8 @@ const getSegmentLength = (segmentId: string) => {
       // .sort((a, b) => Number(a.slice(1)) - Number(b.slice(1))); 
     console.log("PATH", path); 
     setNodePath(path.slice(1, path.length));
-    if(startIdx > endIdx) setIsReversed(true);
+    const tempHolderPath = path.slice(1, path.length);
+    if(startIdx > endIdx ) setIsReversed(true);
     else setIsReversed(false);
     // setIsReversed(true);
     return path;
@@ -754,7 +754,6 @@ const getSegmentLength = (segmentId: string) => {
       : false;
     return rulesForStart || false;
   };
-  console.log(nodePath, 'Is reversed?', isReversed);
 
   const interpolatePoint = (
     segmentId: string,
@@ -773,7 +772,18 @@ const getSegmentLength = (segmentId: string) => {
     //   startSegment,
     //   endSegment
     // );
-    const shouldMirror = isReversed ? nodePath.includes(segmentId) : false;
+    let shouldMirror = isReversed ? nodePath.includes(segmentId) : false;
+    if(segmentId === "S6" && nodePath.length !== 0 &&  nodePath.includes("S6") || 
+        segmentId === "S13" && nodePath.length !==0 && nodePath.includes("S13") || 
+        segmentId === "S8" && nodePath.length !==0 && nodePath.includes("S8") ||
+        segmentId === "S10" && nodePath.length !==0 && nodePath.includes("S10") || 
+        segmentId === "S12" && nodePath.length !==0 && nodePath.includes("S12")
+       ){ 
+
+      shouldMirror = true;
+    }
+    // shouldMirror = isReversed === false && nodePath.includes("S13") && nodePath.length !==0 ? true : shouldMirror;
+    console.log("shouldMirror", shouldMirror);
     // const shouldMirror = segmentId === "S9" && isReversed === false ? false : isReversed ? nodePath.includes(segmentId) : false;
     const kmForLookup = shouldMirror
       ? Math.max(0, segLen - kmClamped)
@@ -1065,6 +1075,7 @@ const getSegmentLength = (segmentId: string) => {
         severity: 'error'
       });
     } finally {
+      setNodePath([]);
       setSubmitting(false);
     }
   };

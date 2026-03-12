@@ -400,7 +400,6 @@ function getTotalDistance(route: number[][]) {
       // .sort((a, b) => Number(a.slice(1)) - Number(b.slice(1)));
     setNodePath(path.slice(1, path.length));
     const notSortedPath = findPath(graph, startSegment, endSegment);
-    console.log('path', notSortedPath);
     if(startIdx > endIdx) setIsReversed(true);
     else setIsReversed(false);
     
@@ -751,7 +750,16 @@ function getTotalDistance(route: number[][]) {
     const segLen = length;
     const kmClamped = Math.min(Math.max(km, 0), segLen);
     // const mirror = isSegmentMirrored(segmentId);
-    const mirror = isReversed ? nodePath.includes(segmentId) : false; 
+    let mirror = isReversed ? nodePath.includes(segmentId) : false; 
+    if(segmentId === "S8" && nodePath.length !== 0 &&  nodePath.includes("S8") || 
+        segmentId === "S9" && nodePath.length !==0 && nodePath.includes("S9") ||
+        segmentId === "S10" && nodePath.length !==0 && nodePath.includes("S10")
+
+       ){ 
+
+      mirror = true;
+    }
+
     const kmForLookup = mirror ? max - kmClamped : min + kmClamped;
 
     const cableType = getNearestCableType(meta, kmForLookup);
