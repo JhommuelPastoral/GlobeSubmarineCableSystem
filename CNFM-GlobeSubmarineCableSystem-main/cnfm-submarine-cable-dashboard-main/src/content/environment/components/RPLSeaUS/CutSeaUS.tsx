@@ -162,7 +162,8 @@ const CutSeaUS: React.FC = () => {
   });
   const [distanceError, setDistanceError] = useState<string>('');
   const [editingCutId, setEditingCutId] = useState<string | null>(null);
-
+  const [nodePath, setNodePath] = useState([]);
+  const [isReversed, setIsReversed] = useState(false);
   const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost';
   const port = process.env.REACT_APP_PORT || ':8081';
   const { refetch: refetchDeletedCables } = useDeletedCables();
@@ -260,10 +261,10 @@ const CutSeaUS: React.FC = () => {
                   parseNumber(item.cable_cumulative_total) ??
                   parseNumber(item.cumulative_total) ??
                   parseNumber(item.cable_between_positions);
-                const { lat, lng, depth, cableType } = extractLatLng(item);
+                  const { lat, lng, depth, cableType } = extractLatLng(item);
                 if (km == null || !Number.isFinite(km)) return null;
                 return {
-                  km,
+                  km: km,
                   lat: lat ?? null,
                   lng: lng ?? null,
                   depth: depth ?? null,
@@ -271,7 +272,6 @@ const CutSeaUS: React.FC = () => {
                 };
               })
               .filter(Boolean) as RoutePoint[];
-
             const coords = meta.filter(
               (p) =>
                 p.lat != null &&
@@ -285,7 +285,6 @@ const CutSeaUS: React.FC = () => {
             return { id: seg.id, store: { coords, meta } as SegmentStore };
           })
         );
-
         if (!isMounted) return;
         const merged: Record<string, SegmentStore> = {};
         results.forEach(({ id, store }) => {
@@ -307,25 +306,64 @@ const CutSeaUS: React.FC = () => {
       isMounted = false;
     };
   }, [apiBaseUrl, port]);
+  console.log("routes",routes);
 
   const getSegmentLength = (segmentId: string) => {
     if (!segmentId) return 0;
     const pts = routes[segmentId]?.meta || [];
     if (!pts.length) return 0;
+
     return pts[pts.length - 1].km;
   };
+  function findPath(graph, start, end) {
+    const queue = [[start]];
+    const visited = new Set();
 
+    while (queue.length > 0) {
+      const path = queue.shift();
+      const node = path[path.length - 1];
+
+      if (node === end) {
+        return path;
+      }
+
+      if (!visited.has(node)) {
+        visited.add(node);
+
+        for (const neighbor of graph[node]) {
+          const newPath = [...path, neighbor];
+          queue.push(newPath);
+        }
+      }
+    }
+
+    return null;
+  }
   const pathSegments = useMemo(() => {
+    const graph ={
+      S1: ['S2', 'S3'],
+      S2: ['S1', 'S3'],
+      S3: ['S1', 'S2', 'S4'],
+      S4: ['S3', 'S5', "S6"],
+      S5: ['S4', 'S6'],
+      S6: ['S4', 'S5'],
+    }
     const ids = SEGMENTS.map((s) => s.id);
     const startIdx = ids.indexOf(startSegment);
     if (startIdx === -1) return [];
     if (!endSegment || startSegment === endSegment) return [startSegment];
     const endIdx = ids.indexOf(endSegment);
     if (endIdx === -1) return [startSegment];
-    const from = Math.min(startIdx, endIdx);
-    const to = Math.max(startIdx, endIdx);
-    const slice = ids.slice(from, to + 1);
-    return startIdx <= endIdx ? slice : slice.reverse();
+    // const from = Math.min(startIdx, endIdx);
+    // const to = Math.max(startIdx, endIdx);
+    // const slice = ids.slice(from, to + 1);
+    // return startIdx <= endIdx ? slice : slice.reverse();
+
+    const path = findPath(graph, startSegment, endSegment)
+    setNodePath(path.slice(1, path.length));
+    if(startIdx > endIdx ) setIsReversed(false);
+    else setIsReversed(true);
+    return path;
   }, [startSegment, endSegment]);
 
   const totalSpan = useMemo(() => {
@@ -487,7 +525,21 @@ const CutSeaUS: React.FC = () => {
 
     const segLen = getSegmentLength(segmentId);
     const kmClamped = Math.min(Math.max(km, 0), segLen);
-    const shouldMirror = isSegmentMirrored(segmentId);
+    // const shouldMirror = isSegmentMirrored(segmentId);
+    let shouldMirror = isReversed ? nodePath.includes(segmentId) : false;
+    if(
+      segmentId === "S2" && nodePath.length !== 0 &&  nodePath.includes("S2") || 
+      segmentId === "S3" && nodePath.length !==0 && nodePath.includes("S3") || 
+      segmentId === "S5" && nodePath.length !==0 && nodePath.includes("S5") ||
+      segmentId === "S4" && nodePath.length !==0 && nodePath.includes("S4") && !shouldMirror
+    ){
+      
+      shouldMirror = true;
+    }
+    else if (segmentId === "S4" && nodePath.length !== 0 &&  nodePath.includes("S4") && shouldMirror){
+      shouldMirror = false;
+    }
+    console.log("shouldMirror", shouldMirror);
     const kmForLookup = shouldMirror
       ? Math.max(0, segLen - kmClamped)
       : kmClamped;
@@ -777,6 +829,7 @@ const CutSeaUS: React.FC = () => {
         severity: 'error'
       });
     } finally {
+      setNodePath([]);
       setSubmitting(false);
     }
   };
