@@ -1,4 +1,4 @@
-import { Box, Typography, IconButton, Paper } from '@mui/material';
+import { Box, Typography, IconButton, Paper, Tooltip } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import InfoIcon from '@mui/icons-material/Info';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -272,7 +272,6 @@ const CableMap: React.FC<CableMapProps> = ({
     error: lastUpdateError,
     refetch: refetchLastUpdate
   } = useLastUpdate();
-
   // Mutation for deleting cables
   const deleteCableMutation = useDeleteCable();
 
@@ -409,6 +408,7 @@ const CableMap: React.FC<CableMapProps> = ({
   if (ipopError && !ipopData) {
     console.error('Error loading IPOP data:', ipopError);
   }
+const [hovered, setHovered] = useState(false);
 
   return (
     <CableMapErrorBoundary>
@@ -522,7 +522,7 @@ const CableMap: React.FC<CableMapProps> = ({
               flexDirection: 'column',
               boxShadow: 4,
               borderRadius: '4px',
-              overflow: 'hidden',
+              overflow: 'auto',
               background: 'rgba(255, 255, 255, 0.9)',
             }}
           >
@@ -533,6 +533,65 @@ const CableMap: React.FC<CableMapProps> = ({
 
         {/* Capacity and Utilization Display */}
         <Box
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          sx={{
+            position: 'absolute',
+            top: 10,
+            right: 10,
+            backgroundColor: 'rgba(255, 255, 255, 0.7)',
+            color: 'white',
+            padding: '8px 12px',
+            borderRadius: '8px',
+            zIndex: 1000,
+            fontSize: '14px',
+            display: 'flex',
+            flexDirection: 'column',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+          }}
+        >
+          <Typography variant="caption" color="gray">
+            Capacity:
+          </Typography>
+
+          <Typography variant="h4" color="black">
+            {stats.totalGbps} Gbps
+          </Typography>
+
+          <Typography variant="caption" color="gray">
+            Average Utilization:
+          </Typography>
+
+          <Typography variant="h4" color="black">
+            {ipopUtilization}
+          </Typography>
+
+          {/*CUSTOM HOVER TOOLTIP */}
+          <Box
+            sx={{
+              position: 'absolute',
+              right: '102%',
+              top: '50%',
+              transform: hovered
+                ? 'translateX(-10px) translateY(-50%)'
+                : 'translateX(0) translateY(-50%)',
+              opacity: hovered ? 1 : 0,
+              pointerEvents: 'none',
+              transition: 'all 0.3s ease',
+              backgroundColor: 'rgba(0, 0, 0, 0.25)',
+              color: '#fff',
+              padding: '10px 14px',
+              borderRadius: '12px',
+              boxShadow: '0 8px 16px rgba(0,0,0,0.4)',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {lastUpdate ? `Source: ${lastUpdate}` : 'Loading...'}
+          </Box>
+        </Box>
+        
+        {/* <Box
           sx={{
             position: 'absolute',
             top: 10,
@@ -582,9 +641,11 @@ const CableMap: React.FC<CableMapProps> = ({
               >
                 {ipopDifference}
               </Box>
-            )} */}
+            )} 
           </Typography>
-        </Box>
+        </Box> */}
+
+
         <Box
           sx={{
             height: '100%',

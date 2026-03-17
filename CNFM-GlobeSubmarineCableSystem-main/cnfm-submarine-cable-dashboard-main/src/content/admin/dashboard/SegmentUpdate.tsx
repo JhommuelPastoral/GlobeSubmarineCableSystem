@@ -347,10 +347,30 @@ const SegmentUpdate = () => {
 
   return (
     <>
-      <Button variant="outlined" startIcon={<CableIcon />} onClick={handleOpen}>
+      {/* <Button variant="outlined" startIcon={<CableIcon />} 
+       onClick={handleOpen}
+       sx={{
+        mr: 0,
+        px:3
+      }}>
         RPL Update
-      </Button>
+      </Button> */}
+      <Button variant="contained" startIcon={<CableIcon />} 
+       onClick={handleOpen}
+       sx={{
+        mr: 0,
+        px:3,
+      }}>
+        <Typography 
+          sx={{
+            color: 'white',
+            fontWeight: 'bold'
+          }}
+        >
+          RPL Update
 
+        </Typography>
+      </Button>
       {/* Dialog */}
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle>

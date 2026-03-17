@@ -437,7 +437,6 @@ const CutSeaUS: React.FC = () => {
   ): string | null => {
     if (!pts.length) return null;
     let best: { type: string; diff: number; isForward: boolean } | null = null;
-
     for (let i = 0; i < pts.length; i++) {
       const type = pts[i].cableType;
       if (!type) continue;
@@ -451,7 +450,6 @@ const CutSeaUS: React.FC = () => {
         best = { type, diff, isForward };
       }
     }
-
     return best ? best.type : null;
   };
 
@@ -531,7 +529,8 @@ const CutSeaUS: React.FC = () => {
       segmentId === "S2" && nodePath.length !== 0 &&  nodePath.includes("S2") || 
       segmentId === "S3" && nodePath.length !==0 && nodePath.includes("S3") || 
       segmentId === "S5" && nodePath.length !==0 && nodePath.includes("S5") ||
-      segmentId === "S4" && nodePath.length !==0 && nodePath.includes("S4") && !shouldMirror
+      segmentId === "S4" && nodePath.length !==0 && nodePath.includes("S4") && !shouldMirror || 
+      segmentId === "S6" && nodePath.length !==0 && nodePath.includes("S6")
     ){
       
       shouldMirror = true;

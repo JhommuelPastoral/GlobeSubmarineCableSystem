@@ -883,8 +883,9 @@ app.post("/cable-cuts", async (req, res) => {
     segment,
     point_a,
     point_b,
+    cable_type : Cable_Type
   } = req.body;
-
+  console.log(segment, source_table, cable, Cable_Type);
   try {
     let cable_type = null;
 
@@ -977,6 +978,7 @@ app.post("/cable-cuts", async (req, res) => {
           console.log(`Selected cable_type: ${cable_type}`);
         } else {
           // For other cables, use the original logic
+          
           const lookupQuery = `
             SELECT cable_type, ${distanceColumn} as distance_value
             FROM ${tableName} 
@@ -1021,6 +1023,7 @@ app.post("/cable-cuts", async (req, res) => {
       "point_a",
       "point_b",
     ];
+    const isSea_us_rpl_s6 = source_table === "sea_us_rpl_s6";
     const values = [
       cut_id,
       distance,
@@ -1030,7 +1033,8 @@ app.post("/cable-cuts", async (req, res) => {
       latitude,
       longitude,
       depth,
-      cable_type || "Unknown",
+      // cable_type || "Unknown",
+      isSea_us_rpl_s6 ? Cable_Type : cable_type || "Unknown",
       point_a || null,
       point_b || null,
     ];
@@ -1862,7 +1866,8 @@ app.get("/sea-us-rpl-s6", (req, res) => {
         ELSE (longitude + longitude2) 
       END AS full_longitude,
       total_length AS cable_cumulative_total,
-      corr_depth AS Depth
+      corr_depth AS Depth,
+      cable_armour_type AS cable_type
     FROM sea_us_rpl_s6
     WHERE 
       (latitude + latitude2) != 0 
@@ -1874,6 +1879,7 @@ app.get("/sea-us-rpl-s6", (req, res) => {
       console.error("Error fetching sea_us_rpl_s6 data:", err);
       return res.status(500).json({ error: "Failed to fetch data" });
     }
+    // console.log(results);
     res.json(results);
   });
 });
