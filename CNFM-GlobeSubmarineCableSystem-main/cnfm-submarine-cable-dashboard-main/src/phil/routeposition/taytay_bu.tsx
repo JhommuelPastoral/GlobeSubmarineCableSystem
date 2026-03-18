@@ -26,7 +26,7 @@ export default function TaytayBu() {
     []
   );
   useEffect(() => {
-    if (cut_id.includes("Taytay-BU")) {
+    if (cut_id.includes("Taytay-San Jose") || cut_id.includes("Coron-San Jose")) {
       setIsCut(true);
     } else {
       setIsCut(false);
@@ -129,7 +129,9 @@ function getTotalDistance(route: number[][]) {
       : '--';
   return (
     <>
-      <CutCable cableSegment="Taytay-BU"></CutCable>
+      <CutCable cableSegment="Taytay-San Jose"></CutCable>
+      <CutCable cableSegment="Coron-San Jose"></CutCable>
+
       <Polyline
         positions={location}
         pathOptions={getPathOptions()}

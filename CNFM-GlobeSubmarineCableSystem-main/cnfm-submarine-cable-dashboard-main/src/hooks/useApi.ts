@@ -229,6 +229,80 @@ export const useLastUpdate = () => {
   });
 };
 
+type Marker = {
+  id: number;
+  latitude: number;
+  longitude: number;
+  marker_type: string;
+}
+
+const fetchMarker = async (): Promise<Marker[]> => {
+  const { baseUrl, port } = getApiConfig();
+  const response = await fetch(`${baseUrl}${port}/markers`, { method: 'GET' });
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch markers: ${response.status}`);
+  }
+  
+  const result = await response.json();
+  if (!Array.isArray(result)) {
+    return [];
+  }
+  
+  return result;
+}
+
+export const updateMarker = async (updatedMarker: Marker) => {
+  try {
+    const { baseUrl, port } = getApiConfig();
+    const response = await fetch(`${baseUrl}${port}/update-marker/${updatedMarker.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedMarker),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to update marker: ${response.status}`);
+    }
+    
+    return await response.json();
+    
+  } catch (error) {
+    console.log(error);
+    throw new Error(`Failed to update marker: ${error}`);
+  }
+}
+
+
+export const deleteMarker = async(id: number)=>{
+  try{
+    const { baseUrl, port } = getApiConfig();
+    const response = await fetch(`${baseUrl}${port}/delete-marker/${id}`, { method: 'DELETE' });
+    if(!response.ok){
+      console.log(response);
+      throw new Error(`Failed to delete marker: ${response.status}`);
+    }
+    return await response.json();
+  }catch(error){
+    console.log(error);
+    throw new Error(`Failed to delete marker: ${error}`);
+  }
+
+}
+
+export const useGetMarker = () => {
+  return useQuery({
+    queryKey: ['markerData'],
+    queryFn: fetchMarker,
+    staleTime: 30 * 1000, // 30 seconds
+    gcTime: 5 * 60 * 1000, // 5 minutes
+    refetchInterval: 30 * 1000, // Refetch every 30 seconds
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
+  });
+}
 // Mutation for deleting cables in phil;
 export const useDeleteCablePhil = () => {
   const queryClient = useQueryClient();

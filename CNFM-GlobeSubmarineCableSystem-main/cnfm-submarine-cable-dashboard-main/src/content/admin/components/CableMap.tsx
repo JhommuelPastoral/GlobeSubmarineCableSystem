@@ -47,7 +47,7 @@ import RPLTGNIA12 from '../dashboard/RoutePositionList/RPLTGNIA12';
 import RPLSeaUS4 from '../dashboard/RoutePositionList/RPLSeaUS4';
 import RPLSeaUS5 from '../dashboard/RoutePositionList/RPLSeaUS5';
 import RPLSeaUS6 from '../dashboard/RoutePositionList/RPLSeaUS6';
-
+import GetMarker from 'src/content/environment/components/GetMarker';
 // Import TanStack Query hooks
 import {
   useDataSummary,
@@ -225,6 +225,7 @@ const CableMap: React.FC<CableMapProps> = ({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [rightSidebarOpen, setRightSidebarOpen] = useState(false);
+  const [hovered, setHovered] = useState(false);
 
   // Refs for cleanup
   const mapRef = useRef<any>(null);
@@ -408,7 +409,6 @@ const CableMap: React.FC<CableMapProps> = ({
   if (ipopError && !ipopData) {
     console.error('Error loading IPOP data:', ipopError);
   }
-const [hovered, setHovered] = useState(false);
 
   return (
     <CableMapErrorBoundary>
@@ -669,7 +669,7 @@ const [hovered, setHovered] = useState(false);
             <DynamicMarker position={[21.4671, 201.7798]} label="Makaha, Hawaii, USA" />
             <DynamicMarker position={[14.0679, 120.6262]} label="Nasugbu, Philippines" />
             <DynamicMarker position={[18.412883, 121.517283]} label="Ballesteros, Philippines" />
-
+            <GetMarker/>
             {/* Country markers */}
             <USAMarker />
             <JapanMarker />

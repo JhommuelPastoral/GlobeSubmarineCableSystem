@@ -134,7 +134,7 @@ export default function NasugboMamburao1() {
   if (!location || !Polyline) return null;
   return (
     <>
-      <CutCable cableSegment="Nasugbo-Mamburao" />
+      <CutCable cableSegment={"Nasugbo-Mamburao"} />
     
       <Polyline
         positions={location}

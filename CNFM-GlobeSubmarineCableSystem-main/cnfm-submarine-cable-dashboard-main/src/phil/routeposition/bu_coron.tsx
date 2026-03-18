@@ -27,7 +27,7 @@ export default function BuCoron() {
     []
   );
   useEffect(() => {
-    if (cut_id.includes("Bu-Coron")) {
+    if (cut_id.includes("Coron-Taytay") || cut_id.includes("Coron-San Jose")) {
       setIsCut(true);
     } else {
       setIsCut(false);
@@ -130,7 +130,9 @@ function getTotalDistance(route: number[][]) {
       : '--';
   return (
     <>
-      <CutCable cableSegment="Bu-Coron" />
+      <CutCable cableSegment="Coron-Taytay" />
+      <CutCable cableSegment="Coron-San Jose" />
+
       <Polyline
         positions={location}
         pathOptions={getPathOptions()}

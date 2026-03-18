@@ -34,9 +34,9 @@ type SegmentData = {
 // Segment list
 const SEGMENTS: SegmentData[] = [
   { id: 'S1', label: 'S1 | Boracay - Caticlan', start: 'Boracay', end: 'Caticlan', endpoint: '/boracay_caticlan' },
-  { id: 'S2', label: 'S2 | Taytay - BU', start: 'Taytay', end: 'BU', endpoint: '/taytay_bu' },
-  { id: 'S3', label: 'S3 | BU - San Jose', start: 'Bu', end: 'San Jose', endpoint: '/bu_san_jose' },
-  { id: 'S4', label: 'S4 | Bu - Coron', start: 'Bu', end: 'Coron', endpoint: '/bu_coron' },
+  { id: 'S2', label: 'S2 | Taytay - San Jose', start: 'Taytay', end: 'San Jose', endpoint: '/taytay_san_jose' },
+  { id: 'S3', label: 'S3 | Coron - San Jose', start: 'Coron', end: 'San Jose', endpoint: '/bu_san_jose' },
+  { id: 'S4', label: 'S4 | Coron - Taytay', start: 'Coron', end: 'Taytay', endpoint: '/bu_coron' },
   { id: 'S5', label: 'S5 | Dalahican - Mansalay', start: 'Dalahican', end: 'Mansalay', endpoint: '/dalahican_mansalay' },
   { id: 'S6', label: 'S6 | Mansalay - Hamtik', start: 'Mansalay', end: 'Hamtik', endpoint: '/mansalay_hamtik' },
   { id: 'S7', label: 'S7 | Hamtik - Tigbaunan', start: 'Hamtik', end: 'Tigbaunan', endpoint: '/hamtik_tigbauan' },
@@ -185,7 +185,7 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
   const [position, setPosition] = useState<number[][]>([]);
   const [cable, setCable] = useState<string>('');
   const [direction, setDirection] = useState<'forward' | 'reverse'>('forward');
-  
+  const map = useMap();
 
   // const handleChangeCutDistance = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   const value = e.target.value; 
@@ -252,29 +252,118 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
       if (!endpoint) return;
 
       try {
-        const response = await fetch(`${apiBaseUrl}${port}${endpoint}`);
-        if (!response.ok) throw new Error(`Failed to fetch data: ${response.status}`);
 
-        const result = await response.json();
-        const formatted = result
-          .filter((item: any) =>
-            item.latitude !== null &&
-            item.lattitude1 !== null &&
-            item.longitude1 !== 0 &&
-            item.longitude !== null &&
-            item.longitude1 !== null &&
-            item.longitude1 !== 0
-          )
-          .map((item: any) => {
-            let lat = Number(item.latitude) + Number(item.latitude1);
-            lat = Math.round(lat * 10000) / 10000;
-            let lng = Number(item.longitude) + Number(item.longitude1);
-            lng = Math.round(lng * 10000) / 10000;
-            return [lat, lng];
-          });
-        setRawData(result);
-        setPosition(formatted);
-        setTotalDistance(getTotalDistance(formatted));
+        if(startPosition === "Coron" &&  endSegment === "Taytay"){
+          const response1 = await fetch(`${apiBaseUrl}${port}/bu_coron`);
+          if (!response1.ok) throw new Error(`Failed to fetch data: ${response1.status}`);
+          const result1 = await response1.json();
+          const response2 = await fetch(`${apiBaseUrl}${port}/taytay_bu`);
+          if(!response2.ok) throw new Error(`Failed to fetch data: ${response2.status}`);
+          const result2 = await response2.json();
+          const allData = [...[...result1].reverse(), ...[...result2].reverse()];
+          const formatted = allData
+            .filter((item: any) =>
+              item.latitude !== null &&
+              item.lattitude1 !== null &&
+              item.longitude1 !== 0 &&
+              item.longitude !== null &&
+              item.longitude1 !== null &&
+              item.longitude1 !== 0
+            )
+            .map((item: any) => {
+              let lat = Number(item.latitude) + Number(item.latitude1);
+              lat = Math.round(lat * 10000) / 10000;
+              let lng = Number(item.longitude) + Number(item.longitude1);
+              lng = Math.round(lng * 10000) / 10000;
+              return [lat, lng];
+            })
+          setRawData(allData);
+          setPosition(formatted);
+          setTotalDistance(getTotalDistance(formatted));           
+        }
+        else if(startPosition === "Coron" &&  endSegment === "San Jose"){
+          const response1 = await fetch(`${apiBaseUrl}${port}/bu_coron`);
+          if (!response1.ok) throw new Error(`Failed to fetch data: ${response1.status}`);
+          const result1 = await response1.json();
+          const response2 = await fetch(`${apiBaseUrl}${port}/bu_san_jose`);
+          if(!response2.ok) throw new Error(`Failed to fetch data: ${response2.status}`);
+          const result2 = await response2.json();
+          const allData = [...[...result1].reverse(), ...[...result2].reverse()];
+          const formatted = allData
+            .filter((item: any) =>
+              item.latitude !== null &&
+              item.lattitude1 !== null &&
+              item.longitude1 !== 0 &&
+              item.longitude !== null &&
+              item.longitude1 !== null &&
+              item.longitude1 !== 0
+            )
+            .map((item: any) => {
+              let lat = Number(item.latitude) + Number(item.latitude1);
+              lat = Math.round(lat * 10000) / 10000;
+              let lng = Number(item.longitude) + Number(item.longitude1);
+              lng = Math.round(lng * 10000) / 10000;
+              return [lat, lng];
+            })
+          setRawData(allData);
+          setPosition(formatted);
+          setTotalDistance(getTotalDistance(formatted));           
+        }
+        else if(startPosition === "Taytay" &&  endSegment === "San Jose"){
+          const response1 = await fetch(`${apiBaseUrl}${port}/taytay_bu`);
+          if (!response1.ok) throw new Error(`Failed to fetch data: ${response1.status}`);
+          const result1 = await response1.json();
+          const response2 = await fetch(`${apiBaseUrl}${port}/bu_san_jose`);
+          if(!response2.ok) throw new Error(`Failed to fetch data: ${response2.status}`);
+          const result2 = await response2.json();
+          const allData = [...result1, ...result2];
+          const formatted = allData
+            .filter((item: any) =>
+              item.latitude !== null &&
+              item.lattitude1 !== null &&
+              item.longitude1 !== 0 &&
+              item.longitude !== null &&
+              item.longitude1 !== null &&
+              item.longitude1 !== 0
+            )
+            .map((item: any) => {
+              let lat = Number(item.latitude) + Number(item.latitude1);
+              lat = Math.round(lat * 10000) / 10000;
+              let lng = Number(item.longitude) + Number(item.longitude1);
+              lng = Math.round(lng * 10000) / 10000;
+              return [lat, lng];
+            })
+          setRawData(allData);
+          setPosition(formatted);
+          setTotalDistance(getTotalDistance(formatted));           
+        }
+        else{
+          const response = await fetch(`${apiBaseUrl}${port}${endpoint}`);
+          if (!response.ok) throw new Error(`Failed to fetch data: ${response.status}`);
+          const result = await response.json();
+          const formatted = result
+            .filter((item: any) =>
+              item.latitude !== null &&
+              item.lattitude1 !== null &&
+              item.longitude1 !== 0 &&
+              item.longitude !== null &&
+              item.longitude1 !== null &&
+              item.longitude1 !== 0
+            )
+            .map((item: any) => {
+              let lat = Number(item.latitude) + Number(item.latitude1);
+              lat = Math.round(lat * 10000) / 10000;
+              let lng = Number(item.longitude) + Number(item.longitude1);
+              lng = Math.round(lng * 10000) / 10000;
+              return [lat, lng];
+            });
+          setRawData(result);
+          setPosition(formatted);
+          setTotalDistance(getTotalDistance(formatted));
+        }
+
+
+
       } catch (error) {
         console.error(error);
       }
@@ -295,8 +384,8 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
         longitude: cutPoint?.lng || 0,
         depth: 100,
         cable_type: cable,
-        point_a: startPosition,
-        point_b: endSegment
+        point_a: direction === "reverse" ? endSegment : startPosition,
+        point_b: direction === "reverse" ? startPosition : endSegment
       };
 
       fetch(`${apiBaseUrl}${port}/cable_cuts_phil`, {
@@ -311,6 +400,13 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
           // Set to default values
           resetForm();
           onClose();  
+          map.flyTo(
+            [cutPoint?.lat || 0, cutPoint?.lng || 0],
+            10,
+            {
+              duration: 0.5, // default is ~1.0–1.5 → lower = faster
+            }
+          ); 
           // window.location.reload(); // Reload to show updated data
         })
         .catch((error) => {

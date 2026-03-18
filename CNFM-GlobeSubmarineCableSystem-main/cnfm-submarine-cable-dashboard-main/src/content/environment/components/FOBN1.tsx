@@ -186,6 +186,7 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
   const [position, setPosition] = useState<number[][]>([]);
   const [cable, setCable] = useState<string>('');
   const [direction, setDirection] = useState<'forward' | 'reverse'>('forward');
+  const map = useMap();
   // const handleChangeCutDistance = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   const value = e.target.value; 
   //   setCutDistance(value);
@@ -294,8 +295,8 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
         longitude: cutPoint?.lng || 0,
         depth: 100,
         cable_type: cable,
-        point_a: startPosition,
-        point_b: endSegment
+        point_a: direction === "reverse" ? endSegment : startPosition,
+        point_b: direction === "reverse" ? startPosition : endSegment
       };
 
       fetch(`${apiBaseUrl}${port}/cable_cuts_phil`, {
@@ -310,6 +311,13 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
           // Set to default values
           resetForm();
           onClose();  
+          map.flyTo(
+            [cutPoint?.lat || 0, cutPoint?.lng || 0],
+            10,
+            {
+              duration: 0.5, // default is ~1.0–1.5 → lower = faster
+            }
+          );          
           // window.location.reload(); // Reload to show updated data
         })
         .catch((error) => {

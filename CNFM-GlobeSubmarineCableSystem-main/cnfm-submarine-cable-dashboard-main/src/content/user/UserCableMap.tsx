@@ -22,6 +22,7 @@ import {
 } from 'react';
 import L from 'leaflet';
 import React from 'react';
+import GetMarker from '../environment/components/GetMarker';
 // TanStack Query hooks
 import {
   useDataSummary,
@@ -1504,6 +1505,7 @@ const UserCableMap = React.memo<UserCableMapProps>(
                 position={[1.3678, 125.0788]}
                 label="Kauditan, Indonesia"
               />
+
               <DynamicMarker
                 position={[7.0439, 125.542]}
                 label="Davao, Philippines"
@@ -1537,7 +1539,8 @@ const UserCableMap = React.memo<UserCableMapProps>(
               <Suspense fallback={null}>
                 <C2C />
               </Suspense>
-
+              {/* Marker Component */}
+              <GetMarker/>
               {/* Route Components - Lazy loaded and grouped by system for optimal performance */}
               <Suspense fallback={null}>
                 <SeaUSRoutes />

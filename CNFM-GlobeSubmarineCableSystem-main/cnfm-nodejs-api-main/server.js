@@ -1912,6 +1912,75 @@ app.get("/latest-update", (req, res) => {
     }
   });
 });
+// POST Marker Data
+
+app.post("/add-marker", (req, res) => {
+  const { latitude, longitude, markerType } = req.body;
+
+  const query = `
+    INSERT INTO marker (latitude, longitude, marker_type)
+    VALUES (?, ?, ?)
+  `;
+
+  db.query(query, [latitude, longitude, markerType], (err, results) => {
+    if (err) {
+      console.error("Error adding marker:", err);
+      return res.status(500).json({ message: "Error adding marker" });
+    }
+    res.json({ message: "Marker added successfully" });
+  });
+});
+
+app.get("/markers", (req, res) => {
+  const query = `
+    SELECT latitude, longitude, marker_type, id
+    FROM marker
+  `;
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching markers:", err);
+      return res.status(500).json({ message: "Error fetching markers" });
+    }
+    res.json(results);
+  });
+})
+
+// Update specific marker
+
+app.put("/update-marker/:markerId", (req, res) => {
+  const markerId = req.params.markerId;
+  const { latitude, longitude, marker_type } = req.body;
+  const query = `
+    UPDATE marker
+    SET latitude = ?, longitude = ?, marker_type = ?
+    WHERE id = ?
+  `;
+  db.query(query, [latitude, longitude, marker_type, markerId], (err, results) => {
+    if (err) {
+      console.error("Error updating marker:", err);
+      return res.status(500).json({ message: "Error updating marker" });
+    }
+    res.json({ message: "Marker updated successfully" });
+  });
+})
+
+
+// Delete specific marker
+
+app.delete("/delete-marker/:markerId", (req, res) => {
+  const markerId = req.params.markerId;
+  const query = `
+    DELETE FROM marker
+    WHERE id = ?
+  `;
+  db.query(query, [markerId], (err, results) => {
+    if (err) {
+      console.error("Error deleting marker:", err);
+      return res.status(500).json({ message: "Error deleting marker" });
+    }
+    res.json({ message: "Marker deleted successfully" });
+  });
+})
 
 // CSV headers (manually defined)
 const csvHeaders = [

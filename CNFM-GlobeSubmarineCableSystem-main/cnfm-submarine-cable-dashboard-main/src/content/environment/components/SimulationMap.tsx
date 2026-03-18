@@ -57,9 +57,12 @@ const DeletedCablesSidebar = lazy(() => import('src/content/admin/components/Del
 const HideToolTip = lazy(() => import('src/content/admin/components/HideToolTip'));
 const DeletedCablesSidebarPhil = lazy(() => import('src/phil/deletedCablePhil'));
 const ResetButtonPhil = lazy(() => import('src/content/environment/components/ResetButton_phil'));
+const MarkerButton = lazy(() => import('src/content/environment/components/MarkerButton'));
+const GetMarker = lazy(() => import('src/content/environment/components/GetMarker'));
 import Fobn1Button from './FOBN1';
 import Fobn2Button from './FOBN2';
 import NDTNButton from './NDTN';
+import { useLastUpdate } from 'src/hooks/useApi';
 
 const AllRoutes = lazy(() =>
   Promise.all([
@@ -106,9 +109,6 @@ const AllRoutes = lazy(() =>
     )
   }))
 );
-
-
-
 
 
 
@@ -223,6 +223,7 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
   const [mapHeight, setMapHeight] = useState('100%'); // Changed to 100% to fill container
   const [ipopUtilization, setIpopUtilization] = useState('0%');
   const [ipopDifference, setIpopDifference] = useState('0%');
+  const [hovered, setHovered] = useState(false);
   const [stats, setStats] = useState({
     data: [],
     totalGbps: 0,
@@ -356,7 +357,12 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
 
     return null;
   };
-
+  const {
+    data: lastUpdateQuery,
+    isLoading: isLastUpdateLoading,
+    error: lastUpdateError,
+    refetch: refetchLastUpdate
+  } = useLastUpdate();
 
   const {nav} = changeSimulator();
   return (
@@ -422,7 +428,9 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
             <JapanMarker />
             <HongkongMarker />
             <SingaporeMarker />
-            
+            <Suspense>
+              <GetMarker />
+            </Suspense>
             {/* C2C Cable - Rendered first to appear behind other cables */}
             <C2C />
             
@@ -461,8 +469,70 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
             <CutSJC />
             <CutTGNIA />          
             <ResetButton />
+            <Suspense>
+              <MarkerButton/>
+            </Suspense>
             <PhilButton />
+        {/* Capacity and Utilization Display */}
             <Box
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
+              sx={{
+                position: 'absolute',
+                top: 10,
+                right: 10,
+                backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                color: 'white',
+                padding: '8px 12px',
+                borderRadius: '8px',
+                zIndex: 1000,
+                fontSize: '14px',
+                display: 'flex',
+                flexDirection: 'column',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <Typography variant="caption" color="gray">
+                Capacity:
+              </Typography>
+
+              <Typography variant="h4" color="black">
+                {stats.totalGbps} Gbps
+              </Typography>
+
+              <Typography variant="caption" color="gray">
+                Average Utilization:
+              </Typography>
+
+              <Typography variant="h4" color="black">
+                {ipopUtilization}
+              </Typography>
+
+              {/*CUSTOM HOVER TOOLTIP */}
+              <Box
+                sx={{
+                  position: 'absolute',
+                  right: '102%',
+                  top: '50%',
+                  transform: hovered
+                    ? 'translateX(-10px) translateY(-50%)'
+                    : 'translateX(0) translateY(-50%)',
+                  opacity: hovered ? 1 : 0,
+                  pointerEvents: 'none',
+                  transition: 'all 0.3s ease',
+                  backgroundColor: 'rgba(0, 0, 0, 0.25)',
+                  color: '#fff',
+                  padding: '10px 14px',
+                  borderRadius: '12px',
+                  boxShadow: '0 8px 16px rgba(0,0,0,0.4)',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {lastUpdateQuery ? `Source: ${lastUpdateQuery}` : 'Loading...'}
+              </Box>
+            </Box>            
+            {/* <Box
               sx={{
                 position: 'absolute',
                 top: 10,
@@ -512,9 +582,9 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
                     >
                       {ipopDifference}
                     </Box>
-                  )} */}
+                  )} 
               </Typography>
-            </Box>
+            </Box> */}
 
             {/* Right sidebar toggle button */}
             <IconButton
@@ -794,7 +864,7 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
             flexDirection: 'column',
             boxShadow: 4,
             borderRadius: '8px',
-            overflow: 'hidden',
+            overflow: 'auto',
             background: 'rgba(255, 255, 255, 0.9)',
           }}
         >

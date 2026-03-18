@@ -530,7 +530,8 @@ const CutSeaUS: React.FC = () => {
       segmentId === "S3" && nodePath.length !==0 && nodePath.includes("S3") || 
       segmentId === "S5" && nodePath.length !==0 && nodePath.includes("S5") ||
       segmentId === "S4" && nodePath.length !==0 && nodePath.includes("S4") && !shouldMirror || 
-      segmentId === "S6" && nodePath.length !==0 && nodePath.includes("S6")
+      segmentId === "S6" && nodePath.length !==0 && nodePath.includes("S6") || 
+      segmentId === "S1" && nodePath.length !==0 && nodePath.includes("S1")
     ){
       
       shouldMirror = true;
@@ -538,7 +539,6 @@ const CutSeaUS: React.FC = () => {
     else if (segmentId === "S4" && nodePath.length !== 0 &&  nodePath.includes("S4") && shouldMirror){
       shouldMirror = false;
     }
-    console.log("shouldMirror", shouldMirror);
     const kmForLookup = shouldMirror
       ? Math.max(0, segLen - kmClamped)
       : kmClamped;

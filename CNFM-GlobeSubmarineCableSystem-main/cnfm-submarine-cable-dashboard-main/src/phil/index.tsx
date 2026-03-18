@@ -185,7 +185,12 @@ export default function PhilMap() {
   if (!MapContainer || !TileLayer || !ZoomControl) {
     return <p>Loading map...</p>
   }
-
+  // const customIcon = L.icon({
+  //   iconUrl: "/static/images/overview/japan-flag-marker.png",
+  //   iconSize: [32, 32],      
+  //   iconAnchor: [16, 32],    
+  //   popupAnchor: [0, -32],   
+  // });
   return (
     <>
       <Box sx={{ position: 'relative', width: '100%', height: '100vh' }}>
@@ -202,7 +207,6 @@ export default function PhilMap() {
         }}        >
           {/* <CutCable cableSegment="Bacong"/> */}
           <TileLayer url={tileUrl} />
-          
 
           {/* Custom Zoom Control Position */}
           <ZoomControl position="bottomleft" />

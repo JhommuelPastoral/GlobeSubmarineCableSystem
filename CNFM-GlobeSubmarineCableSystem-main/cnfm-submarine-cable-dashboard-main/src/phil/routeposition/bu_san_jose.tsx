@@ -26,7 +26,7 @@ export default function BuSanJose() {
     []
   );
   useEffect(() => {
-    if (cut_id.includes("Bu-San Jose")) {
+    if (cut_id.includes("Taytay-San Jose") || cut_id.includes("Coron-San Jose")) {
       setIsCut(true);
     } else {
       setIsCut(false);
@@ -129,7 +129,9 @@ function getTotalDistance(route: number[][]) {
       : '--';
   return (
     <>
-      <CutCable cableSegment="Bu-San Jose" />
+      <CutCable cableSegment="Taytay-San Jose" />
+      <CutCable cableSegment="Coron-San Jose" />
+
       <Polyline
         positions={location}
         pathOptions={getPathOptions()}
