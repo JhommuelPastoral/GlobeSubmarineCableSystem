@@ -14,7 +14,9 @@ import {
   DialogActions,
   TextField,
   MenuItem, 
-  Divider
+  Divider,
+  Snackbar,
+  Alert
 } from "@mui/material";
 export default function GetMarker() {
   const [Marker, setMarker] = useState<any>(null);
@@ -27,7 +29,15 @@ export default function GetMarker() {
   const [editType, setEditType] = useState('');
   const map = useMap();
   const timeoutRef = useRef<any>(null);
-
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success' as 'success' | 'error' | 'info' | 'warning',
+  });
+  const [latDir, setLatDir] = useState<'N' | 'S'>('N');
+  const [lngDir, setLngDir] = useState<'E' | 'W'>('E');
+  const [latError, setLatError] = useState('');
+  const [lngError, setLngError] = useState('');
   // const customIcon = L.icon({
   //   iconUrl: "/static/images/overview/japan-flag-marker.png",
   //   iconSize: [32, 32],
@@ -38,7 +48,7 @@ export default function GetMarker() {
     return L.icon({
       iconUrl: marker_type === "EarthQuake" ? "/static/images/overview/red-marker.png" :"/static/images/overview/blue-marker.png",
       iconSize: [25, 25 ],
-      iconAnchor: [16, 32],
+      iconAnchor: [12, 25],
     });
   }
 
@@ -58,6 +68,11 @@ export default function GetMarker() {
     mutationFn: deleteMarker,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['markerData'] });
+      setSnackbar({
+        open: true,
+        message: 'The marker has been successfully deleted.',
+        severity: 'success',
+      });
     },
   });
 
@@ -65,6 +80,11 @@ export default function GetMarker() {
     mutationFn: updateMarker,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['markerData'] });
+      setSnackbar({
+        open: true,
+        message: 'The marker has been successfully updated.',
+        severity: 'success',
+      });
     },
   });
 
@@ -90,7 +110,7 @@ export default function GetMarker() {
       showCancelButton: true,
       confirmButtonColor: '#d33',
       cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Yes, reset',
+      confirmButtonText: 'Yes, delete it!',
       cancelButtonText: 'Cancel'
     });
     if(!confirm.isConfirmed) return;
@@ -98,8 +118,6 @@ export default function GetMarker() {
     try {
       deleteMarkerMutation(id);
       map.setView([18, 134], 4);
-      await Swal.fire('Deleted Marker', 'The marker has been Successfully deleted.', 'success');
-
     } catch (error) {
       console.error('Error deleting marker:', error);
     }
@@ -110,32 +128,63 @@ export default function GetMarker() {
     latitude: number;
     longitude: number;
     marker_type: string;
+    latitude_direction: "N" | "S";
+    longitude_direction: "E" | "W";
   };
   // Edit Mutation for markers
   const handleEditMarker = (marker: MarkerType) => {
     setSelectedMarker(marker);
-    setEditLat(marker.latitude.toString());
-    setEditLng(marker.longitude.toString());
+    setEditLat(marker.latitude.toFixed(4));
+    setEditLng(marker.longitude_direction === "W" ? (360 - marker.longitude).toFixed(4) : marker.longitude.toFixed(4));
     setEditType(marker.marker_type);
+    setLatDir(marker.latitude_direction);
+    setLngDir(marker.longitude_direction);
     setOpenEdit(true);
   };
+    const handleChangeLatitude = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseFloat(e.target.value);
+    if(value > 90){
+      setEditLat('90');
+      setLatError('Latitude cannot be greater than 90');
+    }
+    else{
+      setEditLat(e.target.value);
+      setLatError('');
+    }
+  }
+  const handleChangeLongitude = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseFloat(e.target.value);
+    if(value > 360){
+      setEditLng('360');
+      setLngError('Longitude cannot be greater than 360');
+    }
+    else{
+      setEditLng(e.target.value);
+      setLngError('');
+    }
+  }
 
   const handleSubmitEdit = async () => {
   try {
     if (!selectedMarker) return;
-
+    const isLngDirectionWest = lngDir === "W";
+    const isLatDirectionSouth = latDir === "S";
     const updatedMarker : MarkerType = {
       id: selectedMarker.id,
-      latitude: parseFloat(editLat),
-      longitude: parseFloat(editLng),
+      latitude: isLatDirectionSouth ? parseFloat(editLat) * -1 : parseFloat(editLat),
+      longitude: isLngDirectionWest ? (parseFloat(editLng) * -1 )+ 360 : parseFloat(editLng),
       marker_type: editType,
+      latitude_direction: latDir,
+      longitude_direction: lngDir
     };
 
     // Check if there is no change in any field
     if (
       updatedMarker.latitude === selectedMarker.latitude &&
       updatedMarker.longitude === selectedMarker.longitude &&
-      updatedMarker.marker_type === selectedMarker.marker_type
+      updatedMarker.marker_type === selectedMarker.marker_type && 
+      updatedMarker.latitude_direction === selectedMarker.latitude_direction &&
+      updatedMarker.longitude_direction === selectedMarker.longitude_direction
     ) {
       setOpenEdit(false);
       await Swal.fire('No Changes', 'No changes were made to the marker.', 'info');
@@ -151,7 +200,9 @@ export default function GetMarker() {
     setEditLat('');
     setEditLng('');
     setEditType('');
-    await Swal.fire('Updated Marker', 'The marker has been Successfully updated.', 'success');
+    setLatDir('N');
+    setLngDir('E');
+    // await Swal.fire('Updated Marker', 'The marker has been Successfully updated.', 'success');
 
 
     setOpenEdit(false);     
@@ -251,14 +302,14 @@ export default function GetMarker() {
                 Latitude:
               </Typography>
               <Typography fontSize="13px" fontWeight={500}>
-                {hovered.latitude}
+                {hovered.latitude.toFixed(4)} {hovered.latitude_direction}
               </Typography>
 
               <Typography fontSize="12px" color="text.secondary" mt={1}>
                 Longitude:
               </Typography>
               <Typography fontSize="13px" fontWeight={500}>
-                {hovered.longitude}
+                {hovered.longitude_direction === "W" ? (360 - hovered.longitude).toFixed(4) : hovered.longitude} {hovered.longitude_direction}
               </Typography>
             </Box>
 
@@ -320,7 +371,7 @@ export default function GetMarker() {
                 borderTop: "6px solid white",
               }}
               />
-            </Box>
+          </Box>
         );
       })()}
 
@@ -334,18 +385,50 @@ export default function GetMarker() {
             label="Enter Latitude"
             type="number"
             value={editLat}
-            onChange={(e) => setEditLat(e.target.value)}
+            onChange={handleChangeLatitude}
+            error={latError !== ''}
+            helperText={latError}
             fullWidth
+            onKeyDown={(e) => {
+              if (e.key === '-') e.preventDefault();
+              if(e.key === '+') e.preventDefault();
+            }}
+            InputProps={{ inputProps: { min: 0, max: 90 } }}
           />
-
+          <TextField
+            label="Latitude Direction"
+            select
+            value={latDir}
+            onChange={(e) => setLatDir(e.target.value as 'N' | 'S')}
+            fullWidth
+          >
+            <MenuItem value="N">N</MenuItem>
+            <MenuItem value="S">S</MenuItem>
+          </TextField>
           <TextField
             label="Enter Longitude"
             type="number"
             value={editLng}
-            onChange={(e) => setEditLng(e.target.value)}
+            onChange={handleChangeLongitude}
+            error={lngError !== ''}
+            helperText={lngError}
             fullWidth
+            onKeyDown={(e) => {
+              if (e.key === '-') e.preventDefault();
+              if(e.key === '+') e.preventDefault();
+            }}
+            InputProps={{ inputProps: { min: 0, max: 360 } }}
           />
-
+          <TextField
+            label="Longitude Direction"
+            select
+            value={lngDir}
+            onChange={(e) => setLngDir(e.target.value as 'E' | 'W')}
+            fullWidth
+          >
+            <MenuItem value="E">E</MenuItem>
+            <MenuItem value="W">W</MenuItem>
+          </TextField>
           <TextField
             label="Marker Type"
             select
@@ -369,6 +452,16 @@ export default function GetMarker() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity={snackbar.severity} variant="filled">
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

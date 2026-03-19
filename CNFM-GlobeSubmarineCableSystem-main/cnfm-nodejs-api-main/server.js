@@ -1915,14 +1915,14 @@ app.get("/latest-update", (req, res) => {
 // POST Marker Data
 
 app.post("/add-marker", (req, res) => {
-  const { latitude, longitude, markerType } = req.body;
+  const { latitude, longitude, markerType, latDir, lngDir } = req.body;
 
   const query = `
-    INSERT INTO marker (latitude, longitude, marker_type)
-    VALUES (?, ?, ?)
+    INSERT INTO marker (latitude, latitude_direction, longitude, longitude_direction, marker_type)
+    VALUES (?, ?, ?, ?, ?)
   `;
 
-  db.query(query, [latitude, longitude, markerType], (err, results) => {
+  db.query(query, [latitude, latDir, longitude, lngDir, markerType], (err, results) => {
     if (err) {
       console.error("Error adding marker:", err);
       return res.status(500).json({ message: "Error adding marker" });
@@ -1933,7 +1933,7 @@ app.post("/add-marker", (req, res) => {
 
 app.get("/markers", (req, res) => {
   const query = `
-    SELECT latitude, longitude, marker_type, id
+    SELECT *
     FROM marker
   `;
   db.query(query, (err, results) => {
@@ -1949,13 +1949,13 @@ app.get("/markers", (req, res) => {
 
 app.put("/update-marker/:markerId", (req, res) => {
   const markerId = req.params.markerId;
-  const { latitude, longitude, marker_type } = req.body;
+  const { latitude, longitude, marker_type, latitude_direction, longitude_direction  } = req.body;
   const query = `
     UPDATE marker
-    SET latitude = ?, longitude = ?, marker_type = ?
+    SET latitude = ?, longitude = ?, marker_type = ?, latitude_direction = ?, longitude_direction = ?
     WHERE id = ?
   `;
-  db.query(query, [latitude, longitude, marker_type, markerId], (err, results) => {
+  db.query(query, [latitude, longitude, marker_type, latitude_direction, longitude_direction, markerId], (err, results) => {
     if (err) {
       console.error("Error updating marker:", err);
       return res.status(500).json({ message: "Error updating marker" });

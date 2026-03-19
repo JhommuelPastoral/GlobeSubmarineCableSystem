@@ -13,6 +13,7 @@ import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
+import { Snackbar, Alert } from '@mui/material';
 
 // ---------------------------
 // Props
@@ -30,15 +31,21 @@ function MarkerDialog({ open, onClose, onAddMarker }: MarkerButtonProps & { onAd
   const [longitude, setLongitude] = useState('');
   const [markerType, setMarkerType] = useState('');
   const map = useMap();
+  const [latDir, setLatDir] = useState<'N' | 'S'>('N');
+  const [lngDir, setLngDir] = useState<'E' | 'W'>('E');
+  const [latError, setLatError] = useState('');
+  const [lngError, setLngError] = useState('');
   const handleSubmit = () => {
     let lat = parseFloat(latitude);
     let lng = parseFloat(longitude);
-    // if (lng > 180) lng = lng - 360;
-    if (lng < 0) lng = lng + 360;
-    console.log('Adding marker:', lat, lng, markerType);
+    if (latDir === 'S') {lat = -lat};
+    if (lngDir === 'W') {lng = 360 - lng};
+    // if(lat > 180) lat = lat - 180;
     if (!markerType || isNaN(lat) || isNaN(lng)) return;
+    console.log('Adding marker:', lat, lng, markerType, latDir, lngDir);
+    
     try {
-      onAddMarker({ latitude: lat, longitude: lng, markerType });
+      onAddMarker({ latitude: lat, longitude: lng, markerType, latDir, lngDir });
       map.flyTo([lat, lng], 6, {
         duration: 1.5,
         easeLinearity: 0.25
@@ -46,11 +53,36 @@ function MarkerDialog({ open, onClose, onAddMarker }: MarkerButtonProps & { onAd
       setLatitude('');
       setLongitude('');
       setMarkerType('');
+      setLatDir('N');
+      setLngDir('E');
     } catch (error) {
       console.error('Error adding marker:', error);
     }
     onClose();
   };
+
+  const handleChangeLatitude = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseFloat(e.target.value);
+    if(value > 90){
+      setLatitude('90');
+      setLatError('Latitude cannot be greater than 90');
+    }
+    else{
+      setLatitude(e.target.value);
+      setLatError('');
+    }
+  }
+  const handleChangeLongitude = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseFloat(e.target.value);
+    if(value > 360){
+      setLongitude('360');
+      setLngError('Longitude cannot be greater than 360');
+    }
+    else{
+      setLongitude(e.target.value);
+      setLngError('');
+    }
+  }
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -64,16 +96,50 @@ function MarkerDialog({ open, onClose, onAddMarker }: MarkerButtonProps & { onAd
             label="Latitude"
             type="number"
             value={latitude}
-            onChange={(e) => setLatitude(e.target.value)}
+            onChange={handleChangeLatitude}
+            error={latError !== ''}
+            helperText={latError}
+            onKeyDown={(e) => {
+              if (e.key === '-') e.preventDefault();
+              if(e.key === '+') e.preventDefault();
+            }}
+            InputProps={{ inputProps: { min: 0, max: 90 } }}
             fullWidth
           />
+          <TextField
+            label="Latitude Direction"
+            select
+            value={latDir}
+            onChange={(e) => setLatDir(e.target.value as 'N' | 'S')}
+            fullWidth
+          >
+            <MenuItem value="N">N</MenuItem>
+            <MenuItem value="S">S</MenuItem>
+          </TextField>
           <TextField
             label="Longitude"
             type="number"
             value={longitude}
-            onChange={(e) => setLongitude(e.target.value)}
+            onChange={handleChangeLongitude}
+            error={lngError !== ''}
+            helperText={lngError}
+            onKeyDown={(e) => {
+              if (e.key === '-') e.preventDefault();
+              if(e.key === '+') e.preventDefault();
+            }}
+            InputProps={{ inputProps: { min: 0, max: 360 } }}
             fullWidth
           />
+          <TextField
+            label="Longitude Direction"
+            select
+            value={lngDir}
+            onChange={(e) => setLngDir(e.target.value as 'E' | 'W')}
+            fullWidth
+          >
+            <MenuItem value="E">E</MenuItem>
+            <MenuItem value="W">W</MenuItem>
+          </TextField>
           <TextField
             label="Marker Type"
             select
@@ -108,7 +174,11 @@ const MarkerButton = () => {
   const [open, setOpen] = useState(false);
   const map = useMap();
   const queryClient = useQueryClient();
-
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success' as 'success' | 'error' | 'info' | 'warning',
+  });
   // ---------------------------
   // Mutation (all in this file)
   // ---------------------------
@@ -116,7 +186,7 @@ const MarkerButton = () => {
   const port = process.env.REACT_APP_PORT || ':8081';
 
   const addMarkerMutation = useMutation({
-    mutationFn: async (marker: { latitude: number; longitude: number; markerType: string }) => {
+    mutationFn: async (marker: { latitude: number; longitude: number; markerType: string, latDir: string, lngDir: string  }) => {
       const res = await fetch(`${baseUrl}${port}/add-marker`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -126,20 +196,16 @@ const MarkerButton = () => {
       return res.json();
     },
     onSuccess: (data, variables) => {
-      // invalidate queries if needed
-      // map.flyTo(
-      //   [parseFloat(data.latitude), parseFloat(data.longitude)], 
-      //   10,
-      //   {
-      //     duration: 0.5, // default is ~1.0–1.5 → lower = faster
-      //   }
-      // ); 
-      console.log('Marker added:');
       queryClient.invalidateQueries({ queryKey: ['markerData'] });
+      setSnackbar({
+        open: true,
+        message: 'The marker has been successfully added.',
+        severity: 'success',
+      });
     },
   });
 
-  const handleAddMarker = (marker: { latitude: number; longitude: number; markerType: string }) => {
+  const handleAddMarker = (marker: { latitude: number; longitude: number; markerType: string, latDir: string, lngDir: string }) => {
     addMarkerMutation.mutate(marker);
   };
 
@@ -195,7 +261,16 @@ const MarkerButton = () => {
         onAddMarker={handleAddMarker}
       />
 
-
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity={snackbar.severity} variant="filled">
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </>
   );
 };
