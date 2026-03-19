@@ -203,8 +203,6 @@ export default function GetMarker() {
     setLatDir('N');
     setLngDir('E');
     // await Swal.fire('Updated Marker', 'The marker has been Successfully updated.', 'success');
-
-
     setOpenEdit(false);     
     } catch (error) {
       console.error('Error updating marker:', error);      
@@ -302,14 +300,14 @@ export default function GetMarker() {
                 Latitude:
               </Typography>
               <Typography fontSize="13px" fontWeight={500}>
-                {hovered.latitude.toFixed(4)} {hovered.latitude_direction}
+                {hovered.latitude.toFixed(4)}°{hovered.latitude_direction}
               </Typography>
 
               <Typography fontSize="12px" color="text.secondary" mt={1}>
                 Longitude:
               </Typography>
               <Typography fontSize="13px" fontWeight={500}>
-                {hovered.longitude_direction === "W" ? (360 - hovered.longitude).toFixed(4) : hovered.longitude} {hovered.longitude_direction}
+                {hovered.longitude_direction === "W" ? (360 - hovered.longitude).toFixed(4) : hovered.longitude}°{hovered.longitude_direction}
               </Typography>
             </Box>
 
