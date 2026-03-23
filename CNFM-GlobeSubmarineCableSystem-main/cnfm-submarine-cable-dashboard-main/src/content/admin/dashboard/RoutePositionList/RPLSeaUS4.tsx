@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Polyline, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import CableCutMarkers from 'src/content/environment/components/CableCutFetching';
-import { useStore } from 'src/store/store';
+import { useStore, useDownCable } from 'src/store/store';
 
 type DynamicMarkerProps = {
   position: [number, number];
@@ -282,11 +282,13 @@ function RPLSeaUS4() {
 
       // Define polyline path options
   const getPathOptions = () => {
-    const baseColor = '#E60023';
+    const baseColor = 'green';
     const {title} = useStore();
+    const {downCable} = useDownCable();
+    const isDownCable = downCable.includes('SEA-US');
     const isSEAUS = title === 'SEA-US';
     return {
-      color: baseColor,
+      color: isDownCable ? 'red' : baseColor,
       weight: isHovered ? 6 : isSEAUS ? 6 : 4,
       opacity: isHovered ? 1 : 0.8,
       className: isHovered ? 'segment-highlight' : undefined

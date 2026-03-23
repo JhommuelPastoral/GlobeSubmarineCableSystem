@@ -31,6 +31,7 @@ import LosAngeles from '../charts/SeaUS/LosAngeles';
 import C2CSingapore from '../charts/C2C/C2CSingapore';
 import C2CHongkong from '../charts/C2C/C2CHongkong';
 import C2CJapan from '../charts/C2C/C2CJapan';
+import { useDownCable } from 'src/store/store';
 
 // Constants
 const COLORS = {
@@ -487,7 +488,8 @@ const HideToolTipForGuest: React.FC<{ onHover: (title: string) => void }> = ({ o
     avgUtilization: 0,
     zeroUtilizationCount: 0
   });
-
+  const { onDownCable } = useDownCable();
+  const [downCableHolder, setDownCable] = useState([]);
   // Modal state
   const [open, setOpen] = useState(false);
   const [selectedSystem, setSelectedSystem] = useState<CableSystemData | null>(
@@ -548,7 +550,17 @@ const HideToolTipForGuest: React.FC<{ onHover: (title: string) => void }> = ({ o
         const avgUtilization = parseFloat(
           (totalUtilization / result.length).toFixed(2)
         );
+        if(totalUtilization  <= 0 && avgUtilization <= 0){
+          setDownCable(prev => {
+            if(!prev.includes(systemName)){
+              return [...prev, systemName];
+            }
+            return prev;
 
+          });
+
+
+        }
         return {
           capacity: totalCapacity,
           utilization: avgUtilization,
@@ -560,6 +572,10 @@ const HideToolTipForGuest: React.FC<{ onHover: (title: string) => void }> = ({ o
     }
     return { capacity: 0, utilization: 0, rawData: [] };
   };
+  // Set zustand state for down cable
+  useEffect(() => {
+    onDownCable([...downCableHolder] as string[]);
+  },[downCableHolder]);
 
   const fetchCableSystemData = async (system: CableSystemData) => {
     const updatedSegments = await Promise.all(

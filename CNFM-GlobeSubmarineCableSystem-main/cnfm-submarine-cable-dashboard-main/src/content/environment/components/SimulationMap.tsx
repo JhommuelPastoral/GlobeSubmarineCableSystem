@@ -110,8 +110,6 @@ const AllRoutes = lazy(() =>
   }))
 );
 
-
-
 // Loading component for better UX during component loading
 const LoadingSpinner: React.FC<{ message?: string }> = ({ message = 'Loading...' }) => (
   <Box sx={{
@@ -239,7 +237,6 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
   const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
   const port = process.env.REACT_APP_PORT;
   const mapApiKey = process.env.REACT_APP_GEOAPIFY_API_KEY;
-
   // Function to update height dynamically - now uses percentage
   const updateMapHeight = () => {
     // Since we're using a container with fixed height, use 100%

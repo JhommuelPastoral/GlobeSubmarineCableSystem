@@ -17,6 +17,12 @@ interface CableId {
   onCutId: (cut_id: string[]) => void;
 }
 
+interface DownCable{
+  downCable: String [],
+  onDownCable: (downCable: string[]) => void;
+}
+
+
 export const useStore = create<HoverStore>((set) => ({
   title: '', // initial state
   onHover: (title: string) => set({ title }),
@@ -31,4 +37,9 @@ export const changeSimulator = create<ChangeNav>((set)=> ({
 export const useCableId = create<CableId>((set)=> ({
   cut_id: [],
   onCutId: (cut_id: string[]) => set({cut_id}),
+}));
+
+export const useDownCable = create<DownCable>((set)=> ({
+  downCable: [],
+  onDownCable: (downCable: string[]) => set({downCable}),
 }));
