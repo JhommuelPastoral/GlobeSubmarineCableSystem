@@ -788,7 +788,7 @@ const DeletedCablesSidebar: React.FC<DeletedCablesSidebarProps> = ({
                                             variant="body2"
                                             sx={{ color: '#444', mt: 0.2, fontSize: '12px' }}
                                         >
-                                            Depth: {cable.depth ? `${cable.depth}m` : 'Unknown'}
+                                            Depth: {cable.depth ? `${Number(cable.depth).toFixed(4)}m` : 'Unknown'}
                                         </Typography>
                                         <Typography
                                             variant="body2"
