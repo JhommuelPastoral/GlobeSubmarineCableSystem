@@ -78,7 +78,7 @@ const PhilButton = () => {
         const button = document.createElement('button');
         button.innerHTML = `
           <span style="display: flex; align-items: center; justify-content: center; gap: 5px;">
-            <span>${nav === 'Global' ? 'Philipines Simulator' : 'Global Simulator'}</span>
+            <span>${nav === 'Global' ? 'Domestic Simulator' : 'International Simulator'}</span>
           </span>
         `;
 

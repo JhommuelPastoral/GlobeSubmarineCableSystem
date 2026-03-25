@@ -617,7 +617,7 @@ export default function PhilMap() {
             justifyContent: 'center'
           }}>
             <RectangleIcon sx={{ fontSize: 15, color: 'Green' }} />
-            FOBN1 RPL
+            FOBN1 
           </Typography>
 
 
@@ -629,7 +629,7 @@ export default function PhilMap() {
             justifyContent: 'center'
           }}>
           <RectangleIcon sx={{ fontSize: 15, color: 'Yellow', }} />
-            FOBN2 RPL
+            FOBN2 
           </Typography>
           <Typography variant="body2" color="black" 
             sx={{
@@ -639,7 +639,7 @@ export default function PhilMap() {
             justifyContent: 'center'
           }}>
             <RectangleIcon sx={{ fontSize: 15, color: 'Blue' }} />
-            NDTN RPL
+            FOBN3 
           </Typography>
         </Box>
     </Box>

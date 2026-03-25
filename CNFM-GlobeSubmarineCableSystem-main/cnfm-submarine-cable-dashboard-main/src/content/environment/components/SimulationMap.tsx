@@ -696,7 +696,8 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
               <AllRoutes />
             </Suspense>
 
-            <Box
+            {/* Legends */}
+            {/* <Box
               sx={{
                 position: 'absolute',
                 top: 10,
@@ -730,7 +731,7 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
                 justifyContent: 'center'
               }}>
                 <CircleRoundedIcon sx={{ fontSize: 12, color: 'Green' }} />
-                FOBN1 RPL
+                FOBN1
               </Typography>
               <Typography variant="body2" color="black" 
                 sx={{
@@ -740,7 +741,7 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
                 justifyContent: 'center'
               }}>
                 <CircleRoundedIcon sx={{ fontSize: 12, color: 'Yellow' }} />
-                FOBN2 RPL
+                FOBN2
               </Typography>
               <Typography variant="body2" color="black" 
                 sx={{
@@ -750,9 +751,9 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
                 justifyContent: 'center'
               }}>
                 <CircleRoundedIcon sx={{ fontSize: 12, color: 'Blue' }} />
-                NDTN RPL
+                FOBN3 
               </Typography>
-            </Box>
+            </Box> */}
 
           {/* Show sidebar toggle button only when sidebar is closed */}
           {!sidebarPhilOpen && (
