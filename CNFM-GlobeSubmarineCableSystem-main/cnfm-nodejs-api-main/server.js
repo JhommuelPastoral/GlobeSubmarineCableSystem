@@ -2406,7 +2406,7 @@ const fobn1_headers = [
   'chart_no',
   'remarks',
 ];
-const ndtn_headers_dahican_mansalay = [
+const fobn3_headers_dahican_mansalay = [
   "id",
   "ship_operation",
   "ship_date",
@@ -2429,7 +2429,7 @@ const ndtn_headers_dahican_mansalay = [
   'remarks',
 ];
 
-const ndtn_headers = [
+const fobn3_headers = [
   "id",
   "ship_operation",
   "ship_date",
@@ -2478,7 +2478,7 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
     tgnia: "tgnia",
     fobn1: "fobn1",
     fobn2: "fobn2",
-    ndtn: 'ndtn'
+    fobn3: 'fobn3'
   };
   // Get the database table name
   const dbPrefix = cableMapping[cable];
@@ -2489,7 +2489,7 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
       .json({ message: `Invalid cable selection: ${cable}` });
   }
   let tableName ='';
-  if(cable === 'fobn1' || cable === 'fobn2' || cable === 'ndtn'){
+  if(cable === 'fobn1' || cable === 'fobn2' || cable === 'fobn3'){
     tableName = segment;
   }
   else{
@@ -2520,11 +2520,11 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
     headers = tgnia_headers;
   } else if (cable === "fobn1" || cable === 'fobn2'){
     headers = fobn1_headers;
-  } else if(cable === 'ndtn'){
+  } else if(cable === 'fobn3'){
       if(segment === 'dalahican_mansalay' || segment === 'telicphil_seg4' || segment === 'bacong_bayawan' || segment === 'telicphil_seg6' || segment === 'telicphil_seg7'){
-        headers = ndtn_headers_dahican_mansalay;
+        headers = fobn3_headers_dahican_mansalay;
       }else{
-        headers = ndtn_headers;
+        headers = fobn3_headers;
       }
   }
 
@@ -2559,7 +2559,7 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
         ) {
           return;
         }
-        if(cable === 'fobn1' || cable === 'fobn2' || cable === 'ndtn'){
+        if(cable === 'fobn1' || cable === 'fobn2' || cable === 'fobn3'){
             function parseCoordinate(value) {
               if (!value) return null;
               // Remove all non-digit/non-dot/non-minus chars
@@ -2570,8 +2570,8 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
             if (!row.id || Number(row.id.trim()) === 0 || row.id.trim() === '0' || isNaN(Number(row.id.trim()))) {
               return;
             }
-            let lat = parseCoordinate(row.latitude1) / 60;
-            let lng = parseCoordinate(row.longitude1) / 60;
+            let lat = parseCoordinate(row.latitude1) ;
+            let lng = parseCoordinate(row.longitude1);
     
             row.latitude1 = lat !== null ? lat.toFixed(4) : null;
             row.longitude1 = lng !== null ? lng.toFixed(4) : null;
@@ -3018,7 +3018,7 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
                 row.remarks || null
     
               ]);
-          } else if(cable === 'ndtn'){
+          } else if(cable === 'fobn3'){
             if(segment === 'dalahican_mansalay' || segment === 'telicphil_seg4' || segment === 'bacong_bayawan' || segment === 'telicphil_seg6' || segment === 'telicphil_seg7'){
                 insertQuery = `
                   INSERT INTO ${tableName} (

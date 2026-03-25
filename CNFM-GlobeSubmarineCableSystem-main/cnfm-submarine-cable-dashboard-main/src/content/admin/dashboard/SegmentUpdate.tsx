@@ -35,7 +35,7 @@ const SegmentUpdate = () => {
     { id: 'tgnia', name: 'Tata TGN-Intra Asia (TGN-IA)' },
     { id: 'fobn1', name: 'FOBN1 Submarine Cable' },
     { id: 'fobn2', name: 'FOBN2 Submarine Cable' },
-    { id: 'ndtn', name: 'NDTN  Submarine Cable' }
+    { id: 'fobn3', name: 'FOBN3  Submarine Cable' }
   ];
 
   // Segments data matching your database table names
@@ -96,7 +96,7 @@ const SegmentUpdate = () => {
         {id: 's6', name: 'Capoocan-Calbayog'},
 
       ],
-      ndtn: [
+      fobn3: [
         {id: 's1' , name: 'Boracay-Caticlan'},
         {id: 's2' , name: 'Taytay-Bu'},
         {id: 's3' , name: 'Bu-San Jose'},
@@ -325,7 +325,7 @@ const SegmentUpdate = () => {
     }
   };
 
-  const philMap = ['fobn1', 'fobn2', 'ndtn'];
+  const philMap = ['fobn1', 'fobn2', 'fobn3'];
 
   // Get the target table name for display
   const getTargetTableName = () => {
