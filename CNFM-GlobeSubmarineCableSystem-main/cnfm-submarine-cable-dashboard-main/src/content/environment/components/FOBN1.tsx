@@ -255,7 +255,6 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
         if (!response.ok) throw new Error(`Failed to fetch data: ${response.status}`);
 
         const result = await response.json();
-
         const formatted = result
           .filter((item: any) =>
             item.latitude !== null &&
@@ -281,7 +280,7 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
     };
 
     fetchData();
-  }, [endpoint]);
+  }, [endpoint, direction]);
 
   const handleSubmit = () => {
     try {
@@ -368,12 +367,12 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
             </Select>
           </FormControl>
           {/* Point B (disabled, auto-set) */}
-          <FormControl fullWidth>
+          {/* <FormControl fullWidth>
             <InputLabel id="end-seg-label">Point B</InputLabel>
             <Select labelId="end-seg-label" label="Point B" value={endSegment} disabled>
               <MenuItem value={endSegment}>{endSegment || 'Select Point A first'}</MenuItem>
             </Select>
-          </FormControl>
+          </FormControl> */}
           <TextField
             label="Direction"
             select

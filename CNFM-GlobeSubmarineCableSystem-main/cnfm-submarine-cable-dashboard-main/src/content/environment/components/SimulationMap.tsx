@@ -684,6 +684,7 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
 
         {nav === "Phil" && (
           <>
+            <GetMarker/>
             <PhilButton />
             <Fobn1Button />
             <Fobn2Button />

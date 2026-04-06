@@ -11,6 +11,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuIcon from '@mui/icons-material/Menu';
 import DeletedCablesSidebar from "./deletedCablePhil"
 import RectangleIcon from '@mui/icons-material/Rectangle';
+import GetMarker from "src/content/environment/components/GetMarker"
 const AllRoutes = lazy(() =>
   Promise.all([
     import("./routeposition/nasugbo_mamburao_1"),
@@ -214,7 +215,7 @@ export default function PhilMap() {
           <Suspense fallback={null}>
             <AllRoutes />
           </Suspense>
-
+          <GetMarker/>
         </MapContainer>
           {!sidebarOpen && (
           <Box
