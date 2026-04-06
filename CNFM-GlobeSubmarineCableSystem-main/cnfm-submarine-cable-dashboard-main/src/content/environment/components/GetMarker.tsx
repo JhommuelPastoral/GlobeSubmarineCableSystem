@@ -207,7 +207,8 @@ export default function GetMarker() {
       magnitude: editType === "EarthQuake" ? magnitude : null,
       marker_text: editType !== "EarthQuake" ? text : null
     };
-
+      const normalizeTime = (t?: string | null) => t ? t.slice(0,5) : '';
+      const normalizeDate = (d?: string | null) => d ? new Date(d).toISOString().split('T')[0] : '';
     // Check if there is no change in any field
     if (
       updatedMarker.latitude === selectedMarker.latitude &&
@@ -215,8 +216,8 @@ export default function GetMarker() {
       updatedMarker.marker_type === selectedMarker.marker_type && 
       updatedMarker.latitude_direction === selectedMarker.latitude_direction &&
       updatedMarker.longitude_direction === selectedMarker.longitude_direction &&
-      updatedMarker.date === selectedMarker.date &&
-      updatedMarker.time === selectedMarker.time &&
+      normalizeDate(updatedMarker.date) === normalizeDate(selectedMarker.date) &&
+      normalizeTime(updatedMarker.time) === normalizeTime(selectedMarker.time) &&
       updatedMarker.magnitude === selectedMarker.magnitude &&
       updatedMarker.marker_text === selectedMarker.marker_text
     ) {
@@ -393,7 +394,7 @@ export default function GetMarker() {
                   gap:"10px"
                 }}>
                   <Typography fontSize="12px" color="text.secondary">
-                    Fault Date:
+                    Event Date:
                   </Typography>
                   <Typography fontSize="13px" fontWeight={500}>
                   {new Date(hovered.date).toLocaleDateString()}
@@ -405,7 +406,7 @@ export default function GetMarker() {
                   gap:"10px"
                 }}>
                   <Typography fontSize="12px" color="text.secondary" >
-                    Fault Time:
+                    Event Time:
                   </Typography>
                   <Typography fontSize="13px" fontWeight={500}>
                    {formatTime(hovered.time)}
@@ -562,14 +563,14 @@ export default function GetMarker() {
           {editType === 'EarthQuake' && (
             <>
               <TextField
-                label="Fault Date"
+                label="Event Date"
                 type="date"
                 value={new Date(date).toISOString().split('T')[0]}
                 onChange={(e) => setDate(e.target.value)}
                 InputLabelProps={{ shrink: true }}
               />
               <TextField
-                label="Fault Time"
+                label="Event Time"
                 type="time"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}

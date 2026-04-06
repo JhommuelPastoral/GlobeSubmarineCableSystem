@@ -186,13 +186,13 @@ function MarkerDialog({ open, onClose, onAddMarker }: MarkerButtonProps & { onAd
           {markerType === 'EarthQuake' && (
             <>
               <TextField
-                label="Fault Date"
+                label="Event Date"
                 type="date"
                 onChange={(e) => setDate(e.target.value)}
                 InputLabelProps={{ shrink: true }}
               />
               <TextField
-                label="Fault Time"
+                label="Event Time"
                 type="time"
                 onChange={(e) => setTime(e.target.value)}
                 InputLabelProps={{ shrink: true }}
