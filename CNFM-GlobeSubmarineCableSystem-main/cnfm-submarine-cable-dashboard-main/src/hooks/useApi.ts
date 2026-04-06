@@ -230,11 +230,20 @@ export const useLastUpdate = () => {
 };
 
 type Marker = {
-  id: number;
-  latitude: number;
-  longitude: number;
-  marker_type: string;
+    id: number;
+    latitude: number;
+    longitude: number;
+    marker_type: string;
+    latitude_direction: "N" | "S";
+    longitude_direction: "E" | "W";
+    date?: string;
+    time?: string;
+    magnitude?: number;
+    marker_text?: string
+  
 }
+
+
 
 const fetchMarker = async (): Promise<Marker[]> => {
   const { baseUrl, port } = getApiConfig();

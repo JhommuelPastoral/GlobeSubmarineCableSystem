@@ -38,6 +38,12 @@ export default function GetMarker() {
   const [lngDir, setLngDir] = useState<'E' | 'W'>('E');
   const [latError, setLatError] = useState('');
   const [lngError, setLngError] = useState('');
+
+
+  const [magnitude, setMagnitude] = useState(0);
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [text, setText] = useState("");
   // const customIcon = L.icon({
   //   iconUrl: "/static/images/overview/japan-flag-marker.png",
   //   iconSize: [32, 32],
@@ -45,8 +51,9 @@ export default function GetMarker() {
   // });
 
   const customIcon = (marker_type: string) => {
+    const iconUrl = marker_type === "EarthQuake" ? "/static/images/overview/red-marker.png" : marker_type === "Cable Crossing" ? "/static/images/overview/blue-marker.png" :"/static/images/overview/orange-marker.png";
     return L.icon({
-      iconUrl: marker_type === "EarthQuake" ? "/static/images/overview/red-marker.png" :"/static/images/overview/blue-marker.png",
+      iconUrl: iconUrl,
       iconSize: [25, 25 ],
       iconAnchor: [12, 25],
     });
@@ -130,6 +137,10 @@ export default function GetMarker() {
     marker_type: string;
     latitude_direction: "N" | "S";
     longitude_direction: "E" | "W";
+    date?: string;
+    time?: string;
+    magnitude?: number;
+    marker_text?: string
   };
   // Edit Mutation for markers
   const handleEditMarker = (marker: MarkerType) => {
@@ -139,9 +150,13 @@ export default function GetMarker() {
     setEditType(marker.marker_type);
     setLatDir(marker.latitude_direction);
     setLngDir(marker.longitude_direction);
+    setDate(marker.date ?? new Date().toISOString().split('T')[0]);
+    setTime(marker.time !== null ? marker.time.slice(0,5) : new Date().toTimeString().slice(0,5)); 
+    setMagnitude(marker.magnitude ?? 0);
+    setText(marker.marker_text ?? "");
     setOpenEdit(true);
   };
-    const handleChangeLatitude = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeLatitude = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
     if(value > 90){
       setEditLat('90');
@@ -163,6 +178,17 @@ export default function GetMarker() {
       setLngError('');
     }
   }
+  const formatTime = (time: string) => {
+    const [hour, minute] = time.split(':');
+    const date = new Date();
+    date.setHours(Number(hour), Number(minute));
+
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
 
   const handleSubmitEdit = async () => {
   try {
@@ -175,7 +201,11 @@ export default function GetMarker() {
       longitude: isLngDirectionWest ? (parseFloat(editLng) * -1 )+ 360 : parseFloat(editLng),
       marker_type: editType,
       latitude_direction: latDir,
-      longitude_direction: lngDir
+      longitude_direction: lngDir,
+      date: editType === "EarthQuake" ? date : null,
+      time: editType === "EarthQuake" ? time : null,
+      magnitude: editType === "EarthQuake" ? magnitude : null,
+      marker_text: editType !== "EarthQuake" ? text : null
     };
 
     // Check if there is no change in any field
@@ -184,7 +214,11 @@ export default function GetMarker() {
       updatedMarker.longitude === selectedMarker.longitude &&
       updatedMarker.marker_type === selectedMarker.marker_type && 
       updatedMarker.latitude_direction === selectedMarker.latitude_direction &&
-      updatedMarker.longitude_direction === selectedMarker.longitude_direction
+      updatedMarker.longitude_direction === selectedMarker.longitude_direction &&
+      updatedMarker.date === selectedMarker.date &&
+      updatedMarker.time === selectedMarker.time &&
+      updatedMarker.magnitude === selectedMarker.magnitude &&
+      updatedMarker.marker_text === selectedMarker.marker_text
     ) {
       setOpenEdit(false);
       await Swal.fire('No Changes', 'No changes were made to the marker.', 'info');
@@ -208,7 +242,21 @@ export default function GetMarker() {
       console.error('Error updating marker:', error);      
     }
   }
+  const isEarthquakeInvalid =
+    editType === "EarthQuake" &&
+    (!magnitude || !date || !time);
 
+  const isTextInvalid =
+    (editType === "Cable Crossing" || editType === "Others") &&
+    text.trim().length === 0;
+
+  const isLocationInvalid =
+    !editLng || !editLat || !latDir || !lngDir || !editType;
+
+  const isDisabled =
+    isEarthquakeInvalid ||
+    isTextInvalid ||
+    isLocationInvalid;
 
   return (
     <>
@@ -276,7 +324,8 @@ export default function GetMarker() {
                 background:
                   hovered.marker_type === "EarthQuake"
                     ? "linear-gradient(135deg, #ff4d4f, #d9363e)"
-                    : "linear-gradient(135deg, #1677ff, #0958d9)",
+                    : hovered.marker_type === "Cable Crossing" ?
+                    "linear-gradient(135deg, #1677ff, #0958d9)" : "linear-gradient(135deg, #FFA500, #FF7F00)",
                 color: "white",
                 fontWeight: 600,
                 fontSize: "13px",
@@ -295,20 +344,91 @@ export default function GetMarker() {
                 flexDirection: "column",
                 gap: 0.5,
               }}
-            >
-              <Typography fontSize="12px" color="text.secondary">
-                Latitude:
-              </Typography>
-              <Typography fontSize="13px" fontWeight={500}>
-                {hovered.latitude.toFixed(4)}°{hovered.latitude_direction}
-              </Typography>
+            > 
+              <div style={{
+                display:"flex",
+                alignItems: "center",
+                gap:"10px"
+              }}>
+                <Typography fontSize="12px" color="text.secondary">
+                  Latitude:
+                </Typography>
+                <Typography fontSize="13px" fontWeight={500}>
+                  {hovered.latitude.toFixed(2)}°{hovered.latitude_direction}
+                </Typography>
+              </div>
 
-              <Typography fontSize="12px" color="text.secondary" mt={1}>
-                Longitude:
-              </Typography>
-              <Typography fontSize="13px" fontWeight={500}>
-                {hovered.longitude_direction === "W" ? (360 - hovered.longitude).toFixed(4) : hovered.longitude}°{hovered.longitude_direction}
-              </Typography>
+              <div style={{
+                  display:"flex",
+                  alignItems: "center",
+                  gap:"10px"
+                }}>
+                <Typography fontSize="12px" color="text.secondary" >
+                  Longitude:
+                </Typography>
+                <Typography fontSize="13px" fontWeight={500}>
+                  {hovered.longitude_direction === "W" ? (360 - hovered.longitude).toFixed(2) : hovered.longitude.toFixed(2)}°{hovered.longitude_direction}
+                </Typography>
+              </div>
+
+              {hovered.marker_type === "EarthQuake" && (
+                <>
+
+                <div style={{
+                  display:"flex",
+                  alignItems: "center",
+                  gap:"10px"
+                }}>
+                  <Typography fontSize="12px" color="text.secondary" >
+                    Magnitude:
+                  </Typography>
+                  <Typography fontSize="13px" fontWeight={500}>
+                   {hovered.magnitude}
+                  </Typography>
+                </div>                
+                
+                <div style={{
+                  display:"flex",
+                  alignItems: "center",
+                  gap:"10px"
+                }}>
+                  <Typography fontSize="12px" color="text.secondary">
+                    Fault Date:
+                  </Typography>
+                  <Typography fontSize="13px" fontWeight={500}>
+                  {new Date(hovered.date).toLocaleDateString()}
+                  </Typography>
+                </div>
+                <div style={{
+                  display:"flex",
+                  alignItems: "center",
+                  gap:"10px"
+                }}>
+                  <Typography fontSize="12px" color="text.secondary" >
+                    Fault Time:
+                  </Typography>
+                  <Typography fontSize="13px" fontWeight={500}>
+                   {formatTime(hovered.time)}
+                  </Typography> 
+                </div>
+                </>
+              )}
+              {(hovered.marker_type === "Cable Crossing" || hovered.marker_type === "Others") && (
+                <>
+                <div style={{
+                  display:"flex",
+                  alignItems: "center",
+                  gap:"10px"
+                }}>
+                  <Typography fontSize="12px" color="text.secondary" >
+                    Reason:
+                  </Typography>
+                  <Typography fontSize="13px" fontWeight={500}>
+                   {hovered.marker_text}
+                  </Typography>              
+                </div>
+                </>
+              )}
             </Box>
 
             {/* DIVIDER */}
@@ -436,7 +556,47 @@ export default function GetMarker() {
           >
             <MenuItem value="EarthQuake">EarthQuake</MenuItem>
             <MenuItem value="Cable Crossing">Cable Crossing</MenuItem>
+            <MenuItem value="Others">Others</MenuItem>
+
           </TextField>
+          {editType === 'EarthQuake' && (
+            <>
+              <TextField
+                label="Fault Date"
+                type="date"
+                value={new Date(date).toISOString().split('T')[0]}
+                onChange={(e) => setDate(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+              />
+              <TextField
+                label="Fault Time"
+                type="time"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+              />
+              <TextField
+                label="Magnitude"
+                type="number"
+                value={magnitude}
+                onChange={(e) => setMagnitude(parseFloat(e.target.value))}
+                onKeyDown={(e) => {
+                  if (e.key === '-') e.preventDefault();
+                  if(e.key === '+') e.preventDefault();
+                }}
+                fullWidth
+              />
+            </>
+          )}
+          {(editType === 'Cable Crossing' || editType === 'Others') && (
+            <TextField
+              label="Reason"
+              type='text'
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              fullWidth
+            ></TextField>            
+          )}
         </DialogContent>
 
         <DialogActions>
@@ -445,6 +605,7 @@ export default function GetMarker() {
           <Button
             variant="contained"
             onClick={() => handleSubmitEdit()}
+            disabled={isDisabled}
           >
             Save
           </Button>

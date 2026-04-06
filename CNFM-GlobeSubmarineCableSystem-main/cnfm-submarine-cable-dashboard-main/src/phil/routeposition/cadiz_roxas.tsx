@@ -1,6 +1,6 @@
 
 import { useEffect, useMemo, useState } from "react"
-import "leaflet/dist/leaflet.css"
+import "leaflet/dist/leaflet.css";
 import CutCable from "../cutCable";
 import { useCableId } from "../../store/store";
 
@@ -38,7 +38,8 @@ export default function CadizRoxas() {
     const baseColor = 'green';
 
     return {
-      color: isCut ? 'red' : baseColor,
+      // color: isCut ? 'red' : baseColor,
+      color: baseColor,
       weight: isHovered ? 6 : 4, 
       opacity: isHovered ? 1 : 0.8,
       className: isHovered ? 'segment-highlight' : undefined

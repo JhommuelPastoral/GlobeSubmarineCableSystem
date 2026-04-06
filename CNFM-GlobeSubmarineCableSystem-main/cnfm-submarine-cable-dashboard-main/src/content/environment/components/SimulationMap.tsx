@@ -1,6 +1,6 @@
 import { Box, Typography, IconButton, Paper, Button } from '@mui/material';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
+import "leaflet/dist/leaflet.css"
 import React, { useEffect, useRef, useState, lazy, Suspense } from 'react';
 import L from 'leaflet';
 import MenuIcon from '@mui/icons-material/Menu';

@@ -1915,14 +1915,13 @@ app.get("/latest-update", (req, res) => {
 // POST Marker Data
 
 app.post("/add-marker", (req, res) => {
-  const { latitude, longitude, markerType, latDir, lngDir } = req.body;
-
+  const { latitude, longitude, markerType, latDir, lngDir, magnitude, date, time, text } = req.body;
   const query = `
-    INSERT INTO marker (latitude, latitude_direction, longitude, longitude_direction, marker_type)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO marker (latitude, latitude_direction, longitude, longitude_direction, marker_type, date, time, magnitude, marker_text)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
-  db.query(query, [latitude, latDir, longitude, lngDir, markerType], (err, results) => {
+  db.query(query, [latitude, latDir, longitude, lngDir, markerType, date, time, magnitude, text], (err, results) => {
     if (err) {
       console.error("Error adding marker:", err);
       return res.status(500).json({ message: "Error adding marker" });
@@ -1949,13 +1948,13 @@ app.get("/markers", (req, res) => {
 
 app.put("/update-marker/:markerId", (req, res) => {
   const markerId = req.params.markerId;
-  const { latitude, longitude, marker_type, latitude_direction, longitude_direction  } = req.body;
+  const { latitude, longitude, marker_type, latitude_direction, longitude_direction, date, time, magnitude, marker_text  } = req.body;
   const query = `
     UPDATE marker
-    SET latitude = ?, longitude = ?, marker_type = ?, latitude_direction = ?, longitude_direction = ?
+    SET latitude = ?, longitude = ?, marker_type = ?, latitude_direction = ?, longitude_direction = ?, date = ?, time = ?, magnitude = ?, marker_text = ?
     WHERE id = ?
   `;
-  db.query(query, [latitude, longitude, marker_type, latitude_direction, longitude_direction, markerId], (err, results) => {
+  db.query(query, [latitude, longitude, marker_type, latitude_direction, longitude_direction, date, time, magnitude, marker_text, markerId], (err, results) => {
     if (err) {
       console.error("Error updating marker:", err);
       return res.status(500).json({ message: "Error updating marker" });

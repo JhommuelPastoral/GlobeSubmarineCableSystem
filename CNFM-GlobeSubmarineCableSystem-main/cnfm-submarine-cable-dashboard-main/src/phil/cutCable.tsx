@@ -161,7 +161,7 @@ function CutCable({ cableSegment }: CableCutMarkersProps) {
     try {
       // call the centralized delete mutation and await
       await deleteMutation.mutateAsync(cutId);
-      showNotification('Cable deleted successfully', 'success');
+      showNotification('Cable Fault deleted successfully', 'success');
 
       // close any open popup and cleanup marker if still present
       const m = markersRef.current[cutId] as any;

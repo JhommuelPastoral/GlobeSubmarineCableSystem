@@ -35,17 +35,29 @@ function MarkerDialog({ open, onClose, onAddMarker }: MarkerButtonProps & { onAd
   const [lngDir, setLngDir] = useState<'E' | 'W'>('E');
   const [latError, setLatError] = useState('');
   const [lngError, setLngError] = useState('');
+
+  const [magnitude, setMagnitude] = useState(0);
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [text, setText] = useState("");
+
   const handleSubmit = () => {
     let lat = parseFloat(latitude);
     let lng = parseFloat(longitude);
     if (latDir === 'S') {lat = -lat};
     if (lngDir === 'W') {lng = 360 - lng};
     // if(lat > 180) lat = lat - 180;
-    if (!markerType || isNaN(lat) || isNaN(lng)) return;
-    console.log('Adding marker:', lat, lng, markerType, latDir, lngDir);
-    
+    // if (!markerType || isNaN(lat) || isNaN(lng)) return;
+    // // console.log('Adding marker:', lat, lng, markerType, latDir, lngDir);
+    // if(markerType === "EarthQuake"){
+    //   if(!magnitude || !date || !time) return;
+    // }
+    // if(markerType === "Cable Crossing"){
+    //   if(!text) return;
+    // }
+
     try {
-      onAddMarker({ latitude: lat, longitude: lng, markerType, latDir, lngDir });
+      onAddMarker({ latitude: lat, longitude: lng, markerType, latDir, lngDir, magnitude, date, time, text });
       map.flyTo([lat, lng], 6, {
         duration: 1.5,
         easeLinearity: 0.25
@@ -55,6 +67,10 @@ function MarkerDialog({ open, onClose, onAddMarker }: MarkerButtonProps & { onAd
       setMarkerType('');
       setLatDir('N');
       setLngDir('E');
+      setMagnitude(0);
+      setDate('');
+      setTime('');
+      setText('');
     } catch (error) {
       console.error('Error adding marker:', error);
     }
@@ -83,7 +99,21 @@ function MarkerDialog({ open, onClose, onAddMarker }: MarkerButtonProps & { onAd
       setLngError('');
     }
   }
+  const isEarthquakeInvalid =
+    markerType === "EarthQuake" &&
+    (!magnitude || !date || !time);
 
+  const isTextInvalid =
+    (markerType === "Cable Crossing" || markerType === "Others") &&
+    text.trim().length === 0;
+
+  const isLocationInvalid =
+    !latitude || !longitude || !latDir || !lngDir || !markerType;
+
+  const isDisabled =
+    isEarthquakeInvalid ||
+    isTextInvalid ||
+    isLocationInvalid;
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
@@ -150,7 +180,45 @@ function MarkerDialog({ open, onClose, onAddMarker }: MarkerButtonProps & { onAd
             <MenuItem value="" disabled>Select Marker Type</MenuItem>
             <MenuItem value="Cable Crossing">Cable Crossing</MenuItem>
             <MenuItem value="EarthQuake">EarthQuake</MenuItem>
+            <MenuItem value="Others">Others</MenuItem>
+
           </TextField>
+          {markerType === 'EarthQuake' && (
+            <>
+              <TextField
+                label="Fault Date"
+                type="date"
+                onChange={(e) => setDate(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+              />
+              <TextField
+                label="Fault Time"
+                type="time"
+                onChange={(e) => setTime(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+              />
+              <TextField
+                label="Magnitude"
+                type="number"
+                value={magnitude}
+                onChange={(e) => setMagnitude(parseFloat(e.target.value))}
+                onKeyDown={(e) => {
+                  if (e.key === '-') e.preventDefault();
+                  if(e.key === '+') e.preventDefault();
+                }}
+                fullWidth
+              />
+            </>
+          )}
+          {(markerType === 'Cable Crossing' || markerType === 'Others') && (
+            <TextField
+              label="Reason"
+              type='text'
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              fullWidth
+            ></TextField>            
+          )}
         </Box>
       </DialogContent>
       <DialogActions>
@@ -158,7 +226,7 @@ function MarkerDialog({ open, onClose, onAddMarker }: MarkerButtonProps & { onAd
         <Button
           onClick={handleSubmit}
           variant="contained"
-          disabled={!markerType}
+          disabled={isDisabled}
         >
           Add Marker
         </Button>
@@ -186,7 +254,7 @@ const MarkerButton = () => {
   const port = process.env.REACT_APP_PORT || ':8081';
 
   const addMarkerMutation = useMutation({
-    mutationFn: async (marker: { latitude: number; longitude: number; markerType: string, latDir: string, lngDir: string  }) => {
+    mutationFn: async (marker: { latitude: number; longitude: number; markerType: string, latDir: string, lngDir: string, magnitude, date, time, text }) => {
       const res = await fetch(`${baseUrl}${port}/add-marker`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -205,7 +273,7 @@ const MarkerButton = () => {
     },
   });
 
-  const handleAddMarker = (marker: { latitude: number; longitude: number; markerType: string, latDir: string, lngDir: string }) => {
+  const handleAddMarker = (marker: { latitude: number; longitude: number; markerType: string, latDir: string, lngDir: string, magnitude, date, time, text}) => {
     addMarkerMutation.mutate(marker);
   };
 
