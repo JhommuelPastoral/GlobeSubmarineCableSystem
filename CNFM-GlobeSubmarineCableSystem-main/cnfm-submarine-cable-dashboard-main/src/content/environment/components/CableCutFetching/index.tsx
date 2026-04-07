@@ -28,6 +28,8 @@ type MarkerData = {
   cable_type?: string; // <-- Add this
   pointA?: string;
   pointB?: string;
+  cable_status?: string;
+
 };
 
 type CableCutMarkersProps = {
@@ -140,12 +142,20 @@ function CableCutMarkers({ cableSegment }: CableCutMarkersProps) {
     date: string;
     time: string;
     cutType: string;
+    cableStatus: string;
+    original?: {
+      fault_date?: string;
+      cut_type?: string;
+      cable_status?: string;
+      combinedFaultDate?: string;
+    };
   }>({
     open: false,
     cutId: null,
     date: '',
     time: '',
-    cutType: ''
+    cutType: '',
+    cableStatus: ''
   });
   const [savingEdit, setSavingEdit] = useState(false);
 
@@ -234,7 +244,8 @@ function CableCutMarkers({ cableSegment }: CableCutMarkersProps) {
         fault_date: item.fault_date,
         cable_type: item.cable_type,
         pointA: item.point_a || item.pointA || 'Unknown',
-        pointB: item.point_b || item.pointB || 'Unknown'
+        pointB: item.point_b || item.pointB || 'Unknown',
+        cable_status: item.cable_status
       }));
   }, [cutsRaw, cableSegment]);
 
@@ -269,7 +280,12 @@ function CableCutMarkers({ cableSegment }: CableCutMarkersProps) {
         existingMarker.getLatLng().lat !== markerData.latitude ||
         existingMarker.getLatLng().lng !== markerData.longitude ||
         existingMarker.options.icon?.options.className !==
-          `cut-marker-${markerData.cut_type}-${cableSegment}`;
+          `cut-marker-${markerData.cut_type}-${cableSegment}` || 
+        // New Data
+        (existingMarker as any)._data?.cut_type !== markerData.cut_type ||
+        (existingMarker as any)._data?.cable_status !== markerData.cable_status ||
+        (existingMarker as any)._data?.fault_date !== markerData.fault_date ||
+        (existingMarker as any)._data?.distance !== markerData.distance;
 
       // Only recreate marker if it doesn't exist or data has changed
       if (hasDataChanged) {
@@ -417,6 +433,10 @@ function CableCutMarkers({ cableSegment }: CableCutMarkersProps) {
               <td style="text-align: right; padding-bottom: 5px; color: #666; font-size: 11px;">${
                 markerData.cable_type || 'Unknown'
               }</td>
+            </tr>
+            <tr>
+              <td style="font-weight: bold; padding-bottom: 5px; color: #333;">Status:</td>
+              <td style="text-align: right; padding-bottom: 5px; color: #666;">${(markerData.cable_status === null || markerData.cable_status === "") ? "----" : markerData.cable_status}</td>
             </tr>
           </table>
         </div>
@@ -687,27 +707,47 @@ function CableCutMarkers({ cableSegment }: CableCutMarkersProps) {
       parsedDate && !isNaN(parsedDate.getTime())
         ? parsedDate.toISOString().slice(11, 16)
         : '';
+    const combinedFaultDate = parsedDate
+    ? `${dateStr}T${timeStr|| '00:00'}`
+    : undefined;
     setEditDialog({
       open: true,
       cutId: markerData.cut_id,
       date: dateStr,
       time: timeStr,
-      cutType: markerData.cut_type || ''
+      cutType: markerData.cut_type || '',
+      cableStatus: markerData.cable_status,
+      original: {
+        fault_date: markerData.fault_date,
+        cut_type: markerData.cut_type,
+        cable_status: markerData.cable_status,
+        combinedFaultDate: combinedFaultDate
+      }   
     });
   };
 
   const closeEditDialog = () =>
-    setEditDialog({ open: false, cutId: null, date: '', time: '', cutType: '' });
+    setEditDialog({ open: false, cutId: null, date: '', time: '', cutType: '', cableStatus: '' });
 
   const handleSaveEdit = async () => {
     if (!editDialog.cutId) {
       showNotification('Invalid cut id', 'error');
       return;
     }
-    setSavingEdit(true);
     const combinedFaultDate = editDialog.date
       ? `${editDialog.date}T${editDialog.time || '00:00'}`
       : undefined;
+    const isSame =
+      editDialog.original?.cut_type === editDialog.cutType&&
+      editDialog.original.combinedFaultDate === combinedFaultDate &&
+      (editDialog.original?.cable_status || '') === (editDialog.cableStatus || '');
+
+    if (isSame) {
+      showNotification('No changes detected', 'info');
+      return;
+    }
+    setSavingEdit(true);
+
     try {
       const res = await fetch(
         `${apiBaseUrl}${port}/cable-cuts/${editDialog.cutId}`,
@@ -716,7 +756,8 @@ function CableCutMarkers({ cableSegment }: CableCutMarkersProps) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             fault_date: combinedFaultDate,
-            cut_type: editDialog.cutType || undefined
+            cut_type: editDialog.cutType || undefined,
+            cable_status: editDialog.cableStatus
           })
         }
       );
@@ -866,6 +907,29 @@ function CableCutMarkers({ cableSegment }: CableCutMarkersProps) {
             <MenuItem value="Full Cut">Full Cut</MenuItem>
             <MenuItem value="For Verification">For Verification</MenuItem>
           </TextField>
+          <TextField
+            label="Status"
+            type="text"
+            fullWidth
+            sx={{ mt: 1 }}
+            value={editDialog.cableStatus}
+            onChange={(e) =>
+              setEditDialog((prev) => ({ ...prev, cableStatus: e.target.value }))
+            }
+            InputLabelProps={{
+              shrink: true,
+              sx: {
+                color: '#1f2937',
+                fontWeight: 600,
+                backgroundColor: '#fff',
+                px: 0.75,
+                borderRadius: 1,
+                transform: 'translate(12px, -10px) scale(0.9)',
+                zIndex: 1
+              }
+            }}
+            FormHelperTextProps={{ sx: { mt: 0 } }}
+          />
         </DialogContent>
         <DialogActions sx={{ p: 2, gap: 1 }}>
           <Button onClick={closeEditDialog} variant="outlined">
