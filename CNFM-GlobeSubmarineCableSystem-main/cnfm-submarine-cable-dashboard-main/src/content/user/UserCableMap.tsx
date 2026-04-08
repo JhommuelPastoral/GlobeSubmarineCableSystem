@@ -33,6 +33,10 @@ import {
 } from '../../hooks/useApi';
 
 import { useStore } from '../../store/store';
+import { useQuery } from '@tanstack/react-query';
+import { GetMarkerUSGS } from 'src/phil/getMakerUSGS';
+
+
 
 // Lazy load heavy components for better performance
 const DeletedCablesSidebar = lazy(
@@ -183,6 +187,61 @@ type ChangeViewProps = {
 type SummaryItem = {
   gbps?: number;
   percent?: number;
+};
+
+const USGS_PH_URL = (() => {
+  const now = new Date();
+  const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+  const starttime = yesterday.toISOString().split("T")[0]; // YYYY-MM-DD
+  const endtime = now.toISOString().split("T")[0];         // YYYY-MM-DD
+
+  return `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson` +
+         `&minlatitude=1.406109&maxlatitude=39.707187` +
+         `&minlongitude=98.957096&maxlongitude=141.138936` +
+         `&minmagnitude=2.5` +
+         `&starttime=${starttime}&endtime=${endtime}` +
+         `&orderby=time`;
+})();
+// Helper to convert lat/lon to directions
+const getDirection = (lat: number, lon: number) => {
+  const latDir = lat >= 0 ? "N" : "S";
+  const lonDir = lon >= 0 ? "E" : "W";
+  return { latDir, lonDir };
+};
+
+// Fetch function for earthquake data
+const fetchEarthquakes = async () => {
+  const res = await fetch(USGS_PH_URL);
+  if (!res.ok) throw new Error("Failed to fetch earthquakes");
+  const data = await res.json();
+
+  // Transform the GeoJSON features to simple objects
+  return data.features
+    .map((feature: any) => {
+      let [lon, lat, depth] = feature.geometry.coordinates;
+      const { latDir, lonDir } = getDirection(lat, lon);
+      if (lon < 0) {
+        lon = Math.abs(lon + 360);
+      }
+
+      const date = new Date(feature.properties.time);
+      const now = new Date();
+      const diffSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+      return {
+        id: feature.id,
+        lat,
+        lon,
+        latDir,
+        lonDir,
+        magnitude: feature.properties.mag,
+        depth,
+        place: feature.properties.place,
+        time: date.toISOString(),
+        secondsAgo: diffSeconds,
+      };
+    });
 };
 
 const formatGbps = (value?: number) =>
@@ -381,7 +440,14 @@ const UserCableMap = React.memo<UserCableMapProps>(
       () => ({ center: mapCenter, zoom: mapZoom }),
       [mapCenter]
     );
-
+    const { data: earthquakes = [] } = useQuery({
+      queryKey: ["earthquakes"],
+      queryFn: fetchEarthquakes,
+      refetchInterval: 1 * 60 * 1000 , // poll every 5 mins
+      staleTime: 5000,
+      refetchOnWindowFocus: false,
+      retry: 1,
+    });
     // Enhanced notification system for deleted cable information
     const [notification, setNotification] = useState(() => ({
       open: false,
@@ -1505,6 +1571,7 @@ const UserCableMap = React.memo<UserCableMapProps>(
                 position={[1.3678, 125.0788]}
                 label="Kauditan, Indonesia"
               />
+              <GetMarkerUSGS data={earthquakes}/>
 
               <DynamicMarker
                 position={[7.0439, 125.542]}

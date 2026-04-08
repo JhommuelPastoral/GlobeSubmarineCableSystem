@@ -12,6 +12,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import DeletedCablesSidebar from "./deletedCablePhil"
 import RectangleIcon from '@mui/icons-material/Rectangle';
 import GetMarker from "src/content/environment/components/GetMarker"
+import GetMarkerUSGS from "./getMakerUSGS"
 const AllRoutes = lazy(() =>
   Promise.all([
     import("./routeposition/nasugbo_mamburao_1"),
@@ -59,8 +60,79 @@ const AllRoutes = lazy(() =>
 );
 
 
+// USGS GeoJSON feed URL (all earthquakes in the past day)
+
+// Visit this link https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php // 
+// const USGS_URL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson";
+// const USGS_URL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson";
+const USGS_PH_URL = (() => {
+  const now = new Date();
+  const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+  const starttime = yesterday.toISOString().split("T")[0]; // YYYY-MM-DD
+  const endtime = now.toISOString().split("T")[0];         // YYYY-MM-DD
+
+  return `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson` +
+         `&minlatitude=5.441022&maxlatitude=19.766704` +
+         `&minlongitude=116.539649&maxlongitude=127.700261` +
+         `&minmagnitude=2.5` +
+         `&starttime=${starttime}&endtime=${endtime}` +
+         `&orderby=time`;
+})();
+// Helper to convert lat/lon to directions
+const getDirection = (lat: number, lon: number) => {
+  const latDir = lat >= 0 ? "N" : "S";
+  const lonDir = lon >= 0 ? "E" : "W";
+  return { latDir, lonDir };
+};
+
+// Fetch function for earthquake data
+const fetchEarthquakes = async () => {
+  const res = await fetch(USGS_PH_URL);
+  if (!res.ok) throw new Error("Failed to fetch earthquakes");
+  const data = await res.json();
+
+  // Transform the GeoJSON features to simple objects
+  return data.features
+    .map((feature: any) => {
+      let [lon, lat, depth] = feature.geometry.coordinates;
+      const { latDir, lonDir } = getDirection(lat, lon);
+      if (lon < 0) {
+        lon = Math.abs(lon + 360);
+      }
+
+      const date = new Date(feature.properties.time);
+      const now = new Date();
+      const diffSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+      return {
+        id: feature.id,
+        lat,
+        lon,
+        latDir,
+        lonDir,
+        magnitude: feature.properties.mag,
+        depth,
+        place: feature.properties.place,
+        time: date.toISOString(),
+        secondsAgo: diffSeconds,
+      };
+    });
+};
+
 export default function PhilMap() {
-  // Custom Marker Icon
+  
+  // Inside your component
+  const { data: earthquakes = [] } = useQuery({
+    queryKey: ["earthquakes"],
+    queryFn: fetchEarthquakes,
+    refetchInterval: 1 * 60 * 1000 , // poll every 5 mins
+    staleTime: 5000,
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
+
+
   const LoadingSpinner: React.FC<{ message?: string }> = ({
     message = 'Loading...'}) => (
     <Box
@@ -150,6 +222,7 @@ export default function PhilMap() {
       onCutId(segmentCuts);
     }
   }, [cutsRaw, onCutId]);
+
   const handleSidebarToggle = useCallback(() => {
     setSidebarOpen((prev) => !prev);
   }, []);
@@ -173,6 +246,9 @@ export default function PhilMap() {
 
     loadMap()
   }, []);
+
+
+
   const isAdminLoggedIn = useMemo(() => {
     try {
       const loggedIn = localStorage.getItem('loggedIn') === 'true';
@@ -216,6 +292,7 @@ export default function PhilMap() {
             <AllRoutes />
           </Suspense>
           <GetMarker/>
+          <GetMarkerUSGS data={earthquakes}/>
         </MapContainer>
           {!sidebarOpen && (
           <Box

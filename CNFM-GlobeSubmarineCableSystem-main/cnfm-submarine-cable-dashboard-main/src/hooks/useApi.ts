@@ -301,6 +301,7 @@ export const deleteMarker = async(id: number)=>{
 
 }
 
+
 export const useGetMarker = () => {
   return useQuery({
     queryKey: ['markerData'],
@@ -311,7 +312,10 @@ export const useGetMarker = () => {
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
-}
+};
+
+
+
 // Mutation for deleting cables in phil;
 export const useDeleteCablePhil = () => {
   const queryClient = useQueryClient();
