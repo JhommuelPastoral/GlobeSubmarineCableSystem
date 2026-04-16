@@ -3089,8 +3089,8 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
               return;
             }
     
-            row.latitude1 = lat !== null ? (lat / 60).toFixed(4) : null;
-            row.longitude1 = lng !== null ? (lng / 60).toFixed(4) : null;
+            row.latitude1 = lat !== null ?  (lat).toFixed(4) : null;
+            row.longitude1 = lng !== null ? (lng).toFixed(4) : null;
             results.push(row);
         }
         else{
