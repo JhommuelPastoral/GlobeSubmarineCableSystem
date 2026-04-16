@@ -35,7 +35,8 @@ const SegmentUpdate = () => {
     { id: 'tgnia', name: 'Tata TGN-Intra Asia (TGN-IA)' },
     { id: 'fobn1', name: 'FOBN1 Submarine Cable' },
     { id: 'fobn2', name: 'FOBN2 Submarine Cable' },
-    { id: 'fobn3', name: 'FOBN3  Submarine Cable' }
+    { id: 'fobn3', name: 'FOBN3  Submarine Cable' },
+    { id: "pdscn", name: "PDSCN Submarine Cable" }
   ];
 
   // Segments data matching your database table names
@@ -108,6 +109,32 @@ const SegmentUpdate = () => {
         {id: 's9' , name: 'Bacong-Bayawan'},
         {id: 's10', name: 'Telicphil-Seg6'},
         {id: 's11', name: 'Telicphil-Seg7'},
+      ],
+      pdscn:[
+        {id: 's1' , name: 'Ilijan-Pinamalayan'},
+        {id: 's2' , name: 'Pinamalayan-Boracay'},
+        {id: 's3' , name: 'Lucena-Boac'},
+        {id: 's4' , name: 'Boac-Calatrava'},
+        {id: 's5' , name: 'Calatrava-Roxas'},
+        {id: 's6' , name: 'Roxas-Placer'},
+        {id: 's7' , name: 'Iloilo-Bacolod'},
+        {id: 's8' , name: 'San Carlos-Toledo'},
+        {id: 's9' , name: 'Zamboanguita-Dipolog'},
+        {id: 's10', name: 'Mactan-Palompon'},
+        {id: 's11', name: 'Caticlan-Boracay'},
+        // {id: 's12', name: 'Claver-Siargao'},
+        {id: 's13', name: 'Placer-Palompon'},
+        {id: 's14', name: 'Palompon-Boracay'},
+        {id: 's15', name: 'Talisay-Tagbilaran'},
+        {id: 's16', name: 'Baclayon-CDO'},
+        {id: 's17', name: 'Dipolog-CDO'},
+        {id: 's18', name: 'Maasin-Surigao'},
+        {id: 's19', name: 'Calbayog-Palanas'},
+        {id: 's20', name: 'Bulan-Palanas'},
+        {id: 's21', name: 'Siargao-Claver'},
+        {id: 's22', name: 'Kinoguitan-Camiguin'},
+        {id: 's23', name: 'Liloy-Dipolog'},
+        {id: 's24', name: 'Mactan-Maasin'},
       ]
       
     };
@@ -327,7 +354,7 @@ const SegmentUpdate = () => {
     }
   };
 
-  const philMap = ['fobn1', 'fobn2', 'fobn3'];
+  const philMap = ['fobn1', 'fobn2', 'fobn3', 'pdscn'];
 
   // Get the target table name for display
   const getTargetTableName = () => {

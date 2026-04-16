@@ -392,6 +392,299 @@ app.get("/telicphil_seg7", (req, res) => {
 });
 
 
+app.get("/ilijan_pinamalayan", (req, res) => {
+  const query = "SELECT * FROM ilijan_pinamalayan";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/pinamalayan_boracay", (req, res) => {
+  const query = "SELECT * FROM pinamalayan_boracay";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/lucena_boac", (req, res) => {
+  const query = "SELECT * FROM lucena_boac";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/boac_calatrava", (req, res) => {
+  const query = "SELECT * FROM boac_calatrava";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+
+app.get("/calatrava_roxas", (req, res) => {
+  const query = "SELECT * FROM calatrava_roxas";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/roxas_placer", (req, res) => {
+  const query = "SELECT * FROM roxas_placer";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/iloilo_bacolod", (req, res) => {
+  const query = "SELECT * FROM iloilo_bacolod";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/san_carlos_toledo", (req, res) => {
+  const query = "SELECT * FROM san_carlos_toledo";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/zamboanguita_dipolog", (req, res) => {
+  const query = "SELECT * FROM zamboanguita_dipolog";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/mactan_palompon", (req, res) => {
+  const query = "SELECT * FROM mactan_palompon";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+
+app.get("/caticlan_boracay", (req, res) => {
+  const query = "SELECT * FROM caticlan_boracay";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/claver_siargao", (req, res) => {
+  const query = "SELECT * FROM claver_siargao";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/placer_palompon", (req, res) => {
+  const query = "SELECT * FROM placer_palompon";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/talisay_tagbilaran", (req, res) => {
+  const query = "SELECT * FROM talisay_tagbilaran";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/baclayon_cdo", (req, res) => {
+  const query = "SELECT * FROM baclayon_cdo";
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/dipolog_cdo", (req, res) => {
+  const query = "SELECT * FROM dipolog_cdo";
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+
+app.get("/maasin_surigao", (req, res) => {
+  const query = "SELECT * FROM maasin_surigao";
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/calbayog_palanas", (req, res) => {
+  const query = "SELECT * FROM calbayog_palanas";
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/bulan_palanas", (req, res) => {
+  const query = "SELECT * FROM bulan_palanas";
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/siargao_claver", (req, res) => {
+  const query = "SELECT * FROM siargao_claver";
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/kinoguitan_camiguin", (req, res) => {
+  const query = "SELECT * FROM kinoguitan_camiguin";
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/liloy_dipolog", (req, res) => {
+  const query = "SELECT * FROM liloy_dipolog";
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
+app.get("/mactan_maasin", (req, res) => {
+  const query = "SELECT * FROM mactan_maasin";
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
+
 app.post("/cable_cuts_phil", async (req, res) => {
   const query = `INSERT INTO cable_cuts_phil (cut_id, distance, cut_type, fault_date, simulated, latitude, longitude, depth, cable_type, point_a, point_b, cable_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)`;
 
@@ -2649,6 +2942,30 @@ const fobn3_headers = [
   'chart_no',
   'remarks',
 ];
+
+const pdscn_headers = [
+  "id",
+  "event",
+  "latitude",
+  "latitude1",
+  "latitude2",
+  "longitude",
+  "longitude1",
+  "longitude2",
+  "bearing",
+  "distance_between_positions",
+  "distance_cumulative_total",
+  "slack",
+  "cable_between_positions",
+  "cable_cumulative_total",
+  "cable_type",
+  "cable_totals_by_type",
+  "core_depth",
+  "lay_direction",
+  "burial_method",
+  "burial_depth",
+  "remarks"
+]
 app.get("/")
 
 // Fixed version of the CSV upload handler
@@ -2674,7 +2991,8 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
     tgnia: "tgnia",
     fobn1: "fobn1",
     fobn2: "fobn2",
-    fobn3: 'fobn3'
+    fobn3: 'fobn3',
+    pdscn: 'pdscn'
   };
   // Get the database table name
   const dbPrefix = cableMapping[cable];
@@ -2685,7 +3003,7 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
       .json({ message: `Invalid cable selection: ${cable}` });
   }
   let tableName ='';
-  if(cable === 'fobn1' || cable === 'fobn2' || cable === 'fobn3'){
+  if(cable === 'fobn1' || cable === 'fobn2' || cable === 'fobn3' || cable === 'pdscn'){
     tableName = segment;
   }
   else{
@@ -2722,6 +3040,8 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
       }else{
         headers = fobn3_headers;
       }
+  } else if (cable === 'pdscn') {
+    headers = pdscn_headers;
   }
 
   // Validate that the table exists
@@ -2755,7 +3075,7 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
         ) {
           return;
         }
-        if(cable === 'fobn1' || cable === 'fobn2' || cable === 'fobn3'){
+        if(cable === 'fobn1' || cable === 'fobn2' || cable === 'fobn3' || cable === 'pdscn'){
             function parseCoordinate(value) {
               if (!value) return null;
               // Remove all non-digit/non-dot/non-minus chars
@@ -2763,14 +3083,14 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
               const num = parseFloat(clean);
               return isNaN(num) ? null : num;
             }
+            let lat = parseCoordinate(row.latitude1) ;
+            let lng = parseCoordinate(row.longitude1);
             if (!row.id || Number(row.id.trim()) === 0 || row.id.trim() === '0' || isNaN(Number(row.id.trim()))) {
               return;
             }
-            let lat = parseCoordinate(row.latitude1) ;
-            let lng = parseCoordinate(row.longitude1);
     
-            row.latitude1 = lat !== null ? lat.toFixed(4) : null;
-            row.longitude1 = lng !== null ? lng.toFixed(4) : null;
+            row.latitude1 = lat !== null ? (lat / 60).toFixed(4) : null;
+            row.longitude1 = lng !== null ? (lng / 60).toFixed(4) : null;
             results.push(row);
         }
         else{
@@ -3315,8 +3635,59 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
                     row.remarks || null
         
                   ]);              
-            }
+            } 
+          } else if(cable === "pdscn"){
+              insertQuery = `
+                INSERT INTO ${tableName} (
+                  id,
+                  event,
+                  latitude,
+                  latitude1,
+                  latitude2,
+                  longitude,
+                  longitude1,
+                  longitude2,
+                  bearing,
+                  distance_between_positions,
+                  distance_cumulative_total,
+                  slack,
+                  cable_between_positions,
+                  cable_cumulative_total,
+                  cable_type,
+                  cable_totals_by_type,
+                  core_depth,
+                  lay_direction,
+                  burial_method,
+                  burial_depth,
+                  remarks
+                ) VALUES ?`;
+                  values = results.map((row) => [
+                    row.id || null,
+                    row.event || null,
+                    row.latitude || null,
+                    row.latitude1  || null,
+                    row.latitude2 || null,  
+                    row.longitude || null,
+                    row.longitude1  || null,
+                    row.longitude2 || null,
+                    row.bearing || null,
+                    row.distance_between_positions || null,
+                    row.distance_cumulative_total || null,
+                    row.slack || null,
+                    row.cable_between_positions || null,
+                    row.cable_cumulative_total || null,
+                    row.cable_type || null,
+                    row.cable_totals_by_type || null,
+                    row.core_depth || null,
+                    row.lay_direction || null,
+                    row.burial_method || null,
+                    row.burial_depth || null,
+                    row.remarks || null
+             
+        
+                  ]);             
           }
+
          
           else {
             // Handle unexpected cable/segment combinations

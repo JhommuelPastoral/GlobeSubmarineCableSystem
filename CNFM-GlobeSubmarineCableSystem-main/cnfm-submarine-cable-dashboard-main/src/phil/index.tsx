@@ -46,7 +46,31 @@ const AllRoutes = lazy(() =>
     import("./routeposition/bacong_bayawan"),
     import("./routeposition/telicphil_seg6"),
     import("./routeposition/telicphil_seg7"),
-    // you can add more routes here if needed
+    // PDSCN
+    import("./routeposition/ilijan_pinamalayan"),
+    import("./routeposition/pinamalayan_boracay"),
+    import("./routeposition/lucena_boac"),
+    import("./routeposition/boac_calatrava"),
+    import("./routeposition/calatrava_roxas"),
+    import("./routeposition/roxas_placer"),
+    import("./routeposition/iloilo_bacolod"),
+    import("./routeposition/san_carlos_toledo"),
+    import("./routeposition/zamboanguita_dipolog"),
+    import("./routeposition/mactan_palompon"),
+    import('./routeposition/caticlan_boracay'),
+    // import('./routeposition/claver_siargao'),
+    import('./routeposition/placer_palompon'),
+    import('./routeposition/talisay_tagbilaran'),
+    import('./routeposition/baclayon_cdo'),
+    import('./routeposition/dipolog_cdo'),
+    import('./routeposition/maasin_surigao'),
+    import('./routeposition/calbayog_palanas'),
+    import('./routeposition/bulan_palanas'),
+    import('./routeposition/siargao_claver'),
+    import('./routeposition/kinoguitan_camiguin'),
+    import('./routeposition/liloy_dipolog'),
+    import('./routeposition/mactan_maasin'),
+
   ]).then((modules) => ({
     default: () => (
       <>
