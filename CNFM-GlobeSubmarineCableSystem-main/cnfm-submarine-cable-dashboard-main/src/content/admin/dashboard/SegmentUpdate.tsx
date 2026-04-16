@@ -78,14 +78,14 @@ const SegmentUpdate = () => {
         { id: 's12', name: 'Segment 12' }
       ],
       fobn1: [
-        { id: 's1', name: 'Nasugbo-Mamburao' },
+        { id: 's1', name: 'Nasugbu-Mamburao' },
         { id: 's2', name: 'San Jose-Mamburao' },
         { id: 's3', name: 'San Jose-Roxas' },
         { id: 's4', name: 'Cadiz-Roxas' },
         { id: 's5', name: 'San Remigio-Cadiz' },
         { id: 's6', name: 'San Remigio-Lilo' },
         { id: 's7', name: 'Bacong-Talisay' },
-        { id: 's8', name: 'Bacong-Maticao' },
+        { id: 's8', name: 'Bacong-Manticao' },
       ],
       fobn2:[
         {id: 's1', name: 'Legaspi-Calbayog'},
@@ -163,7 +163,9 @@ const SegmentUpdate = () => {
     setIsUploading(true);
     if(philMap.includes(selectedCable)) {
         try {
-          const segment = getSegmentsForCable(selectedCable).find(segment => segment.id === selectedSegment)?.name;
+          let segment = getSegmentsForCable(selectedCable).find(segment => segment.id === selectedSegment)?.name;
+          if(segment === "Nasugbu-Mamburao") segment = "Nasugbo-Mamburao";
+          if(segment === "Bacong-Manticao") segment = "Bacong-Maticao";
           const lowerSegment = segment.toLowerCase().replaceAll('-', '_').replaceAll(' ', '_');
           // Create FormData and upload to dynamic API endpoint
           const formData = new FormData();

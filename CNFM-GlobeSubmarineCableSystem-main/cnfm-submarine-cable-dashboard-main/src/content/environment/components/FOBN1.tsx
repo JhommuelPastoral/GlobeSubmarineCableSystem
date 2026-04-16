@@ -33,14 +33,14 @@ type SegmentData = {
 
 // Segment list
 const SEGMENTS: SegmentData[] = [
-  { id: 'S1', label: 'S1 | Nasugbo - Mamburao', start: 'Nasugbo', end: 'Mamburao', endpoint: '/nasugbo_mamburao' },
+  { id: 'S1', label: 'S1 | Nasugbu - Mamburao', start: 'Nasugbu', end: 'Mamburao', endpoint: '/nasugbo_mamburao' },
   { id: 'S2', label: 'S2 | San Jose - Mamburao', start: 'San Jose', end: 'Mamburao', endpoint: '/san_jose_mamburao' },
   { id: 'S3', label: 'S3 | San Jose - Roxas', start: 'San Jose', end: 'Roxas', endpoint: '/san_jose_roxas' },
   { id: 'S4', label: 'S4 | Cadiz - Roxas', start: 'Cadiz', end: 'Roxas', endpoint: '/cadiz_roxas' },
   { id: 'S5', label: 'S5 | San Remigio - Cadiz', start: 'San Remigio', end: 'Cadiz', endpoint: '/san_remigio_cadiz' },
   { id: 'S6', label: 'S6 | San Remigio - Lilo', start: 'San Remigio', end: 'Lilo', endpoint: '/san_remigio_lilo' },
   { id: 'S7', label: 'S7 | Bacong - Talisay', start: 'Bacong', end: 'Talisay', endpoint: '/bacong_talisay' },
-  { id: 'S8', label: 'S8 | Bacong - Maticao', start: 'Bacong', end: 'Maticao', endpoint: '/bacong_maticao' }
+  { id: 'S8', label: 'S8 | Bacong - Manticao', start: 'Bacong', end: 'Manticao', endpoint: '/bacong_maticao' }
 ];
 
 const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost';
