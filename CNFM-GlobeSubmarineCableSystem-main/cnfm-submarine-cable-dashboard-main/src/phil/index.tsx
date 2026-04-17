@@ -70,6 +70,7 @@ const AllRoutes = lazy(() =>
     import('./routeposition/kinoguitan_camiguin'),
     import('./routeposition/liloy_dipolog'),
     import('./routeposition/mactan_maasin'),
+    import('./routeposition/liloy_zamboanga'),
 
   ]).then((modules) => ({
     default: () => (

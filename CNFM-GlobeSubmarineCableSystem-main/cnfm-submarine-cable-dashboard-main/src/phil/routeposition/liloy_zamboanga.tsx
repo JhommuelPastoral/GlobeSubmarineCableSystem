@@ -5,7 +5,7 @@ import CutCable from "../cutCable";
 import {useCableId} from "../../store/store"
 
 
-export default function PlacerPalompon() {
+export default function LiloyZamboanga() {
 
   const [Polyline, setPolyline] = useState<any>(null);
   const [Data, setData] = useState(null);
@@ -81,7 +81,7 @@ function getTotalDistance(route: number[][]) {
   useEffect(()=>{
     const fetchPolylines = async () => {
       try {
-        const response = await fetch(`${apiConfig.apiBaseUrl}${apiConfig.port}/placer_palompon`);
+        const response = await fetch(`${apiConfig.apiBaseUrl}${apiConfig.port}/liloy_zamboanga`);
         const result = await response.json();
         const formatted = result
           .filter((item: any) =>
@@ -130,7 +130,7 @@ function getTotalDistance(route: number[][]) {
       : '--';
   return (
     <>
-      <CutCable cableSegment="Placer-Palompon"></CutCable>
+      <CutCable cableSegment="Zamboanga-Liloy"></CutCable>
       <Polyline
         positions={location}
         pathOptions={getPathOptions()}
@@ -140,7 +140,7 @@ function getTotalDistance(route: number[][]) {
               const layer = e.target;
               const latlng = e.latlng;
               layer
-                .bindTooltip(`<div style="text-align: center; font-size: 12.5px; line-height: 1.35;"><div style="font-weight: 600; font-size: 13px; margin-bottom: 2px;">Placer - Palompon </div><div style="color: #4b5563; margin-bottom: 4px;">${totalLengthKm.toFixed(4)} Km</div><div style="color: #111827;">${segmentEventLabel} </div></div>`, {
+                .bindTooltip(`<div style="text-align: center; font-size: 12.5px; line-height: 1.35;"><div style="font-weight: 600; font-size: 13px; margin-bottom: 2px;">Liloy - Zamboanga </div><div style="color: #4b5563; margin-bottom: 4px;">${totalLengthKm.toFixed(4)} Km</div><div style="color: #111827;">${segmentEventLabel} </div></div>`, {
                   permanent: false,
                   direction: 'top',
                   offset: [0, -10],

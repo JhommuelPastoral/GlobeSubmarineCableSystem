@@ -130,7 +130,7 @@ function getTotalDistance(route: number[][]) {
       : '--';
   return (
     <>
-      {/* <CutCable cableSegment="Legaspi-Calbayog"></CutCable> */}
+      <CutCable cableSegment="Zamboanguita-Dipolog"></CutCable>
       <Polyline
         positions={location}
         pathOptions={getPathOptions()}

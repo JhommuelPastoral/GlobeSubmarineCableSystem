@@ -62,6 +62,7 @@ const GetMarker = lazy(() => import('src/content/environment/components/GetMarke
 import Fobn1Button from './FOBN1';
 import Fobn2Button from './FOBN2';
 import NDTNButton from './NDTN';
+import PDSCNButton from './PDSCN';
 import { useLastUpdate } from 'src/hooks/useApi';
 
 const AllRoutes = lazy(() =>
@@ -123,6 +124,7 @@ const AllRoutes = lazy(() =>
     import('src/phil/routeposition/kinoguitan_camiguin'),
     import('src/phil/routeposition/liloy_dipolog'),
     import('src/phil/routeposition/mactan_maasin'),
+    import('src/phil/routeposition/liloy_zamboanga'),
   ]).then((modules) => ({
     default: () => (
       <>
@@ -714,6 +716,7 @@ const SimulationMap: React.FC<SimulationMapProps> = ({ selectedCable, mapRef: ex
             <Fobn1Button />
             <Fobn2Button />
             <NDTNButton/>
+            <PDSCNButton/>
             <Suspense>
             <ResetButtonPhil/>
               

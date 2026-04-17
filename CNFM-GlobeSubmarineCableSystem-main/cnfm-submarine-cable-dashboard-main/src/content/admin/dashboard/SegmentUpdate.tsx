@@ -124,7 +124,7 @@ const SegmentUpdate = () => {
         {id: 's11', name: 'Caticlan-Boracay'},
         // {id: 's12', name: 'Claver-Siargao'},
         {id: 's13', name: 'Placer-Palompon'},
-        {id: 's14', name: 'Palompon-Boracay'},
+        {id: 's14', name: 'Zamboanga-Liloy'},
         {id: 's15', name: 'Talisay-Tagbilaran'},
         {id: 's16', name: 'Baclayon-CDO'},
         {id: 's17', name: 'Dipolog-CDO'},

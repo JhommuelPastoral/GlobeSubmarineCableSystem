@@ -523,7 +523,18 @@ app.get("/mactan_palompon", (req, res) => {
   });
 });
 
+app.get("/liloy_zamboanga", (req, res) => {
+  const query = "SELECT * FROM liloy_zamboanga";
 
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching data:", err);
+      return res.status(500).json({ error: "Failed to fetch data" });
+    }
+
+    res.json(results);
+  });
+});
 app.get("/caticlan_boracay", (req, res) => {
   const query = "SELECT * FROM caticlan_boracay";
 
@@ -3089,8 +3100,8 @@ app.post("/upload-rpl/:cable/:segment", upload.single("file"), (req, res) => {
               return;
             }
     
-            row.latitude1 = lat !== null ?  (lat).toFixed(4) : null;
-            row.longitude1 = lng !== null ? (lng).toFixed(4) : null;
+            row.latitude1 = lat !== null ?  (lat/60).toFixed(4) : null;
+            row.longitude1 = lng !== null ? (lng/60).toFixed(4) : null;
             results.push(row);
         }
         else{
