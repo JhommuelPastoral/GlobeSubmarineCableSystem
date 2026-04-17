@@ -764,9 +764,12 @@ const DeletedCablesSidebarPhil: React.FC<DeletedCablesSidebarProps> = ({
                                                         const fobn1:string[] = ['nasugbu', 'san jose', 'cadiz', 'san remigio' ,'bacong', 'manticao'];
                                                         const fobn2:string[] = ['legaspi', 'duero', 'potuhan', 'maasin' ,'banate', 'capoocan'];
                                                         const fobn3:string[] = ['boracay', 'taytay', 'bu', 'dalahican', 'mansalay', 'hamtik', 'telicphil', 'bacong'];
+                                                        const pdscn: string[] = ['ilijan', 'pinamalayan', 'lucena', 'boac', 'calatrava', 'roxas', 'iloilo', 'san carlos', 'zamboanguita', 'mactan', 'caticlan', 'placer', 'talisay', 'baclayon', 'dipolog', 'maasin', 'calbayog', 'bulan', 'siargao', 'kinoguitan', 'liloy', 'zamboanga'];
+
                                                         if (fobn1.includes(prefix)) cableName = 'FOBN-1';
                                                         else if (fobn2.includes(prefix)) cableName = 'FOBN-2';
                                                         else if (fobn3.includes(prefix)) cableName = 'FOBN-3';
+                                                        else if (pdscn.includes(prefix)) cableName = 'PDSCN';
                                                     }
                                                     return cableName !== 'Unknown' && cableNumber
                                                         ? `${cableName} Segment ${cableNumber}`

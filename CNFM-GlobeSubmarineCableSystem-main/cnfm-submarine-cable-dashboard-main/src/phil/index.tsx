@@ -734,6 +734,16 @@ export default function PhilMap() {
             <RectangleIcon sx={{ fontSize: 15, color: 'Blue' }} />
             FOBN3 
           </Typography>
+          <Typography variant="body2" color="black" 
+            sx={{
+            display: 'flex',
+            gap: 1,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <RectangleIcon sx={{ fontSize: 15, color: 'Orange' }} />
+            PDSCN 
+          </Typography>
         </Box>
     </Box>
 
