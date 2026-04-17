@@ -94,14 +94,15 @@ const USGS_PH_URL = (() => {
   const now = new Date();
   const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-  const starttime = yesterday.toISOString().split("T")[0]; // YYYY-MM-DD
-  const endtime = now.toISOString().split("T")[0];         // YYYY-MM-DD
+  const starttime = yesterday.toISOString();
+  const endtime = now.toISOString();
 
   return `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson` +
          `&minlatitude=5.441022&maxlatitude=19.766704` +
          `&minlongitude=116.539649&maxlongitude=127.700261` +
          `&minmagnitude=2.5` +
-         `&starttime=${starttime}&endtime=${endtime}` +
+         `&starttime=${encodeURIComponent(starttime)}` +
+         `&endtime=${encodeURIComponent(endtime)}` +
          `&orderby=time`;
 })();
 // Helper to convert lat/lon to directions
@@ -116,7 +117,6 @@ const fetchEarthquakes = async () => {
   const res = await fetch(USGS_PH_URL);
   if (!res.ok) throw new Error("Failed to fetch earthquakes");
   const data = await res.json();
-
   // Transform the GeoJSON features to simple objects
   return data.features
     .map((feature: any) => {
@@ -156,6 +156,7 @@ export default function PhilMap() {
     refetchOnWindowFocus: false,
     retry: 1,
   });
+  console.log(earthquakes);
 
 
   const LoadingSpinner: React.FC<{ message?: string }> = ({

@@ -193,14 +193,15 @@ const USGS_PH_URL = (() => {
   const now = new Date();
   const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-  const starttime = yesterday.toISOString().split("T")[0]; // YYYY-MM-DD
-  const endtime = now.toISOString().split("T")[0];         // YYYY-MM-DD
+  const starttime = yesterday.toISOString();
+  const endtime = now.toISOString();
 
   return `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson` +
          `&minlatitude=1.406109&maxlatitude=39.707187` +
          `&minlongitude=98.957096&maxlongitude=141.138936` +
          `&minmagnitude=2.5` +
-         `&starttime=${starttime}&endtime=${endtime}` +
+         `&starttime=${encodeURIComponent(starttime)}` +
+         `&endtime=${encodeURIComponent(endtime)}` +
          `&orderby=time`;
 })();
 // Helper to convert lat/lon to directions
