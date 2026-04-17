@@ -156,7 +156,6 @@ export default function PhilMap() {
     refetchOnWindowFocus: false,
     retry: 1,
   });
-  console.log(earthquakes);
 
 
   const LoadingSpinner: React.FC<{ message?: string }> = ({
