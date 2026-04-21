@@ -176,7 +176,35 @@ function findCableType({
   }
   return closestItem?.cable_type || 'Unknown';
 }
+function findNearestDepth({
+  lat,
+  lng,
+  rawData,
+}: {
+  lat: number;
+  lng: number;
+  rawData: any[];
+}): number {
+  if (!rawData || rawData.length === 0) return 0;
 
+  let closestItem = null;
+  let minDistance = Infinity;
+
+  for (const item of rawData) {
+    if(item.latitude === null || item.latitude1 === null || item.longitude === null || item.longitude1 === null) continue;
+    const itemLat = Number(item.latitude) + Number(item.latitude1);
+    const itemLng = Number(item.longitude) + Number(item.longitude1);
+
+    const distance = haversineDistance(lat, lng, itemLat, itemLng);
+
+    if (distance < minDistance) {
+      minDistance = distance;
+      closestItem = item;
+    }
+  }
+  console.log(closestItem);
+  return closestItem?.corr_depth ?? closestItem?.core_depth ?? 100;
+}
 
 // ---------------------------
 // Dialog Component
@@ -197,6 +225,7 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
   const [position, setPosition] = useState<number[][]>([]);
   const [cable, setCable] = useState<string>('');
   const [direction, setDirection] = useState<'forward' | 'reverse'>('forward');
+  const [depth, setDepth] = useState(0);
   const map = useMap();
 
   // const handleChangeCutDistance = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -243,11 +272,13 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
       const nearest = findNearestPoint(reversedPosition, num);
       setCutPoint(nearest);
       setCable(findCableType({lat: nearest?.lat || 0, lng: nearest?.lng || 0, rawData:reversedRawData}));
+      setDepth(findNearestDepth({lat: nearest?.lat || 0, lng: nearest?.lng || 0, rawData: reversedRawData}));
     }
     else{
       const nearest = findNearestPoint(position, num);
       setCutPoint(nearest);
       setCable(findCableType({lat: nearest?.lat || 0, lng: nearest?.lng || 0, rawData}));
+      setDepth(findNearestDepth({lat: nearest?.lat || 0, lng: nearest?.lng || 0, rawData: rawData}));
     }
   };
 
@@ -303,7 +334,7 @@ function Fobn1Dialog({ open, onClose }: Fobn1DialogProps) {
         simulated: `${faultDate}T${faultTime}`,
         latitude: cutPoint?.lat || 0,
         longitude: cutPoint?.lng || 0,
-        depth: 100,
+        depth: depth,
         cable_type: cable,
         point_a: direction === "reverse" ? endSegment : startPosition,
         point_b: direction === "reverse" ? startPosition : endSegment
