@@ -163,7 +163,7 @@ function RPLSJC6() {
       try {
         const response = await fetch(`${apiBaseUrl}${port}/sjc-rpl-s6`);
         const result = await response.json();
-
+        console.log("sjc rpl s6", result);
         if (Array.isArray(result) && result.length > 0) {
           const cumulativeValues = result
             .map((item: any) => item.cable_cumulative_total)

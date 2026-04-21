@@ -51,7 +51,7 @@ export default function GetMarker() {
   // });
 
   const customIcon = (marker_type: string) => {
-    const iconUrl = marker_type === "EarthQuake" ? "/static/images/overview/red-marker.png" : marker_type === "Cable Crossing" ? "/static/images/overview/blue-marker.png" :"/static/images/overview/orange-marker.png";
+    const iconUrl = marker_type === "EarthQuake" ? "/static/images/overview/black-marker.png" : marker_type === "Cable Crossing" ? "/static/images/overview/blue-marker.png" :"/static/images/overview/orange-marker.png";
     return L.icon({
       iconUrl: iconUrl,
       iconSize: [25, 25 ],

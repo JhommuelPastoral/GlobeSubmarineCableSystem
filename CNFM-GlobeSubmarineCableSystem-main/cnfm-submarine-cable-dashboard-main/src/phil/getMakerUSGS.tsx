@@ -30,7 +30,7 @@ export function GetMarkerUSGS({ data }: GetMarkerProps) {
 
   // Custom Leaflet icon
   const earthquakeIcon = L.icon({
-    iconUrl: "/static/images/overview/red-marker.png", // replace with your icon
+    iconUrl: "/static/images/overview/black-marker.png", // replace with your icon
     iconSize: [25, 25 ],
     iconAnchor: [12, 25],
   });
