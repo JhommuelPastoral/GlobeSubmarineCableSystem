@@ -4332,7 +4332,29 @@ app.post("/login", async (req, res) => {
           error: "Invalid credentials. Please try again.",
         });
       }
+      const date = new Date();
 
+      const formattedDate = date.toLocaleDateString('en-PH', {
+        month: 'long',   
+        day: 'numeric',  
+        year: 'numeric', 
+      });
+
+      const formattedTime = date.toLocaleTimeString('en-PH', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+      });
+
+      const insertSql ="INSERT INTO access_history (user_fname, user_lname, user_email, user_role, activity, access_at, access_time) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        db.query(
+          insertSql,
+          [user.user_fname, user.user_lname, user_email, user.user_role, 'Login', formattedDate, formattedTime],
+          (err, result) => {
+            if (err)return res.status(500).json({ status: 0, message: "Registration Failed" });
+            console.log("Access History Inserted:");
+          }
+      );
       res.json({
         success: true,
         user_id: user.user_id,
@@ -4346,6 +4368,18 @@ app.post("/login", async (req, res) => {
         .status(500)
         .json({ success: false, error: "Hash Comparison Error" });
     }
+  });
+});
+
+app.get("/access-history", (req, res) => {
+  const sql = "SELECT * FROM access_history ORDER BY access_at DESC, access_time DESC";
+   db.query(sql, (error, results) => {
+    if (error) {
+      console.error("Database Error:", error);
+      return res.status(500).json({ success: false, error: "Database Error" });
+    }
+    console.log("Access History Data:", results); // Debugging line to check retrieved data
+    res.status(200).json({ results });
   });
 });
 

@@ -72,7 +72,7 @@ function HeaderUserbox() {
   const navigate = useNavigate();
 
   // Check if user is Administrator
-  const isAdministrator = role === 'Administrator';
+  const isAdministrator = role === 'Administrator' || role === 'Simulator';
 
   const handleOpen = (): void => {
     setOpen(true);

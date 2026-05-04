@@ -128,7 +128,7 @@ const LoginPage = () => {
         localStorage.setItem('user_lname', response.data.user_lname);
         localStorage.setItem('user_id', response.data.user_id);
         localStorage.setItem('user_role', response.data.user_role);
-
+        
         console.log(response.data.user_role, 'Login Successful!');
         axios.defaults.headers.common['Authorization'] = response.data.user_id;
 
@@ -335,7 +335,7 @@ const LoginPage = () => {
                 id="login-btn"
                 name="login-btn"
                 sx={{ marginBottom: 3, marginTop: 1 }}
-                onClick={handleButtonClick}
+                // onClick={handleButtonClick}
               >
                 Login
               </Button>

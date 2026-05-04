@@ -12,12 +12,30 @@ import Swal from 'sweetalert2';
 import CableMap from '../components/CableMap';
 import React, { useEffect, useState, useCallback } from 'react';
 import SegmentUpdate from './SegmentUpdate';
+import ArticleIcon from '@mui/icons-material/Article';
+import {useActivityLogs} from 'src/hooks/useApi';
+
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from '@mui/material';
+
+import CloseIcon from '@mui/icons-material/Close';
 
 function AdminDashboard() {
   const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
   const port = process.env.REACT_APP_PORT;
   const fileInputRef = React.useRef(null);
   const [lastUpdate, setLastUpdate] = useState(null);
+  const [openLogs, setOpenLogs] = useState(false);
 
   const fetchLastUpdate = useCallback(async () => {
     try {
@@ -40,7 +58,7 @@ function AdminDashboard() {
   const handleNewDataClick = () => {
     fileInputRef.current?.click();
   };
-
+  const { data: activityLogs } = useActivityLogs();
   const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -112,7 +130,8 @@ function AdminDashboard() {
                     display: 'flex',
                     flexDirection: 'column',
                     gap: 1,
-                    alignItems: 'center'
+                    alignItems: 'stretch',
+                    width: 180,
                   }}
                 >
                   {/* <Typography variant="body2" sx={{ color: '#fff' }}>
@@ -124,13 +143,24 @@ function AdminDashboard() {
                     startIcon={<UploadFileIcon />}
                     onClick={handleNewDataClick}
                     sx={{
-                      px:4
+                      px:2
                     }}
                   >
                     New Data
                   </Button>
 
+
                   <SegmentUpdate />
+                  <Button
+                    variant="contained"
+                    onClick={() => setOpenLogs(true)}
+                    startIcon={<ArticleIcon/>}
+                    sx={{
+                      px:2
+                    }}
+                  >
+                    Access History
+                  </Button>
 
                   <input
                     type="file"
@@ -149,6 +179,54 @@ function AdminDashboard() {
         </Grid>
 
       </Container>
+      <Dialog
+        open={openLogs}
+        onClose={() => setOpenLogs(false)}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>
+          Access History
+          <IconButton
+            onClick={() => setOpenLogs(false)}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+
+        <DialogContent dividers>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Role</TableCell>
+                <TableCell>Activity</TableCell>
+                <TableCell>Date</TableCell>
+                <TableCell>Time</TableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {activityLogs?.map((log, index) => (
+                <TableRow key={index}>
+                  <TableCell>{log.user_fname} {log.user_lname}</TableCell>
+                  <TableCell>{log.user_email}</TableCell>
+                  <TableCell>{log.user_role}</TableCell>
+                  <TableCell>{log.activity}</TableCell>
+                  <TableCell>{log.access_at}</TableCell>
+                  <TableCell>{log.access_time}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => setOpenLogs(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>      
     </>
   );
 }

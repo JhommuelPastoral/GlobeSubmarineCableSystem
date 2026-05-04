@@ -193,6 +193,35 @@ export const useDeletedCablesPhil = (lastUpdate?: string) => {
     retry: 3,
   });
 };
+
+const fetchActivityLogs = async (): Promise<any[]> => {
+  const { baseUrl, port } = getApiConfig();
+  const response = await fetch(`${baseUrl}${port}/access-history`, { method: 'GET' });
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch activity logs: ${response.status}`);
+  }
+  const result = await response.json();
+  console.log('Fetched activity logs:', result);
+  if (!Array.isArray(result.results)) {
+    return [];
+  }
+  
+  return result.results;
+};
+
+export const useActivityLogs = () => {
+  return useQuery({
+    queryKey: ['activityLogs'],
+    queryFn: fetchActivityLogs,
+    // staleTime: 2 * 60 * 1000, // 2 minutes
+    // gcTime: 10 * 60 * 1000, // 10 minutes
+    retry: 3,
+    refetchInterval: 1 * 60 * 1000, // Refetch every 5 minutes
+  });
+};
+
+
 const fetchDeletedCablesPhil = async (): Promise<CableCut[]> => {
   const { baseUrl, port } = getApiConfig();
   const response = await fetch(`${baseUrl}${port}/cable_cuts_phil`, { method: 'GET' });
