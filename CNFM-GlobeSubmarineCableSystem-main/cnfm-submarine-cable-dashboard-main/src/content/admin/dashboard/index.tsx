@@ -10,7 +10,7 @@ import {
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import Swal from 'sweetalert2';
 import CableMap from '../components/CableMap';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, memo } from 'react';
 import SegmentUpdate from './SegmentUpdate';
 import ArticleIcon from '@mui/icons-material/Article';
 import {useActivityLogs} from 'src/hooks/useApi';
@@ -29,6 +29,68 @@ import {
 } from '@mui/material';
 
 import CloseIcon from '@mui/icons-material/Close';
+
+type AccessHistoryDialogProps = {
+  openLogs: boolean;
+  setOpenLogs: (toggle: boolean) => void;
+  activityLogs: any[]
+};
+
+const MemoAccessHistoryDialog = React.memo(function({openLogs, setOpenLogs, activityLogs}: AccessHistoryDialogProps) {
+  return(
+      <Dialog
+        open={openLogs}
+        onClose={() => setOpenLogs(false)}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>
+          Access History
+          <IconButton
+            onClick={() => setOpenLogs(false)}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+
+        <DialogContent dividers>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Role</TableCell>
+                <TableCell>Activity</TableCell>
+                <TableCell>Date</TableCell>
+                <TableCell>Time</TableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {activityLogs?.map((log, index) => (
+                <TableRow key={index}>
+                  <TableCell>{log.user_fname} {log.user_lname}</TableCell>
+                  <TableCell>{log.user_email}</TableCell>
+                  <TableCell>{log.user_role}</TableCell>
+                  <TableCell>{log.activity}</TableCell>
+                  <TableCell>{log.access_at}</TableCell>
+                  <TableCell>{log.access_time}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => setOpenLogs(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>      
+  )
+
+
+});
+
 
 function AdminDashboard() {
   const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
@@ -96,6 +158,8 @@ function AdminDashboard() {
       fileInputRef.current.value = '';
     }
   };
+
+
 
   useEffect(() => {
     fetchLastUpdate();
@@ -179,54 +243,8 @@ function AdminDashboard() {
         </Grid>
 
       </Container>
-      <Dialog
-        open={openLogs}
-        onClose={() => setOpenLogs(false)}
-        fullWidth
-        maxWidth="md"
-      >
-        <DialogTitle>
-          Access History
-          <IconButton
-            onClick={() => setOpenLogs(false)}
-            sx={{ position: 'absolute', right: 8, top: 8 }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
+      <MemoAccessHistoryDialog openLogs={openLogs} setOpenLogs={setOpenLogs} activityLogs={activityLogs}/>
 
-        <DialogContent dividers>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Role</TableCell>
-                <TableCell>Activity</TableCell>
-                <TableCell>Date</TableCell>
-                <TableCell>Time</TableCell>
-              </TableRow>
-            </TableHead>
-
-            <TableBody>
-              {activityLogs?.map((log, index) => (
-                <TableRow key={index}>
-                  <TableCell>{log.user_fname} {log.user_lname}</TableCell>
-                  <TableCell>{log.user_email}</TableCell>
-                  <TableCell>{log.user_role}</TableCell>
-                  <TableCell>{log.activity}</TableCell>
-                  <TableCell>{log.access_at}</TableCell>
-                  <TableCell>{log.access_time}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={() => setOpenLogs(false)}>Close</Button>
-        </DialogActions>
-      </Dialog>      
     </>
   );
 }
